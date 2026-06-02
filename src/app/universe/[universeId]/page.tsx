@@ -32,6 +32,15 @@ const isValidHex = (hex: string) => {
   return /^#[0-9A-Fa-f]{6}$|^#[0-9A-Fa-f]{3}$/.test(hex);
 };
 
+const getDisplayColor = (text: string) => {
+  if (!text) return '#FBBF24';
+  if (text.startsWith('#')) return text;
+  if (/^[0-9A-Fa-f]{3}$|^[0-9A-Fa-f]{6}$/.test(text)) {
+    return `#${text}`;
+  }
+  return text;
+};
+
 interface Params {
   params: Promise<{ universeId: string }>;
 }
@@ -479,7 +488,7 @@ export default function SolarSystemsHubPage({ params }: Params) {
                     <div className={styles.colorSlideContainer}>
                       <div 
                         className={styles.colorSlide} 
-                        style={{ backgroundColor: isValidHex(starColor) ? starColor : '#FBBF24' }} 
+                        style={{ backgroundColor: getDisplayColor(customColorText) }} 
                       />
                     </div>
                     <input
@@ -606,7 +615,7 @@ export default function SolarSystemsHubPage({ params }: Params) {
                     <div className={styles.colorSlideContainer}>
                       <div 
                         className={styles.colorSlide} 
-                        style={{ backgroundColor: isValidHex(editSystemColor) ? editSystemColor : '#FBBF24' }} 
+                        style={{ backgroundColor: getDisplayColor(editCustomColorText) }} 
                       />
                     </div>
                     <input

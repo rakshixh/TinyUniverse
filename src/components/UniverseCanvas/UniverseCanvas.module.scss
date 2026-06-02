@@ -63,41 +63,91 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
   border-radius: $radius-full;
   @include transition(width height, $duration-slow);
+  animation: sun-glow-slow var(--pulse-speed, 8s) ease-in-out infinite;
 }
 
 .sunPulse {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.04);
   border-radius: $radius-full;
   @include transition(width height, $duration-slow);
+  animation: sun-pulse-ripple var(--pulse-speed, 8s) linear infinite;
 }
 
 .pulsarBeacon {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 320px;
-  height: 4px;
+  width: 380px;
+  height: 1px;
   pointer-events: none;
   z-index: 1;
-  animation: pulsar-spin 20s linear infinite;
-  filter: blur(1px);
+  animation: pulsar-spin 28s linear infinite;
+  filter: blur(0.5px);
+  opacity: 0.65;
 }
 
 .nebulaCloud {
   position: absolute;
   top: 50%;
   left: 50%;
-  border-radius: 40% 60% 50% 50% / 50% 40% 60% 50%;
+  border-radius: 45% 55% 50% 50% / 50% 45% 55% 50%;
   pointer-events: none;
   z-index: 1;
-  animation: nebula-spin 45s linear infinite;
+  animation: nebula-spin 60s linear infinite;
+}
+
+.starRing {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: $radius-full;
+  pointer-events: none;
+  z-index: 1;
+  @include transition(width height, $duration-slow);
+}
+
+.starRingInner {
+  border-style: dashed;
+}
+
+.starRingOuter {
+  border-style: solid;
+  opacity: 0.45;
+}
+
+@keyframes sun-glow-slow {
+  0%, 100% {
+    opacity: 0.35;
+    transform: translate(-50%, -50%) scale(0.96);
+  }
+  50% {
+    opacity: 0.6;
+    transform: translate(-50%, -50%) scale(1.04);
+  }
+}
+
+@keyframes sun-pulse-ripple {
+  0% {
+    transform: translate(-50%, -50%) scale(0.85);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.2;
+  }
+  90% {
+    opacity: 0.03;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.18);
+    opacity: 0;
+  }
 }
 
 @keyframes pulsar-spin {

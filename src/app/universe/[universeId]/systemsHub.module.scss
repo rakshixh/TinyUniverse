@@ -594,6 +594,7 @@
 
 .colorSlideContainer {
   flex: 1;
+  min-width: 120px;
   height: 44px;
   border-radius: $radius-full;
   border: 2px solid $color-primary; // purple border to hold the slide
@@ -611,7 +612,8 @@
 }
 
 .hexTextInput {
-  width: 110px;
+  width: 110px !important;
+  flex-shrink: 0 !important;
   height: 44px;
   border-radius: $radius-md;
   border: 1px solid rgba($color-border, 0.4);

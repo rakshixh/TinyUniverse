@@ -312,19 +312,12 @@ return (
           className={styles.sunCore}
           style={{
             background: renderProps.isNebula
-              ? `radial-gradient(circle at 50% 50%, #ffffff 0%, ${starColor} 50%, rgba(139, 92, 246, 0.4) 80%, rgba(0,0,0,0.95) 100%)`
-              : `radial-gradient(circle at 35% 35%, #ffffff 0%, ${starColor} 65%, rgba(0,0,0,0.85) 100%)`,
-            boxShadow: renderProps.isPulsar
-              ? `
-                  0 0 32px rgba(${starGlowRgb}, 1),
-                  0 0 64px #ffffff,
-                  0 0 128px rgba(${starGlowRgb}, 0.5)
-                `
-              : `
-                  0 0 24px rgba(${starGlowRgb}, 0.9),
-                  0 0 48px rgba(${starGlowRgb}, 0.65),
-                  0 0 96px rgba(${starGlowRgb}, 0.3)
-                `,
+              ? `radial-gradient(circle at 50% 50%, #ffffff 0%, ${starColor} 45%, rgba(${starGlowRgb}, 0.35) 75%, rgba(${starGlowRgb}, 0) 100%)`
+              : `radial-gradient(circle at 35% 35%, #ffffff 0%, ${starColor} 60%, rgba(${starGlowRgb}, 0.2) 100%)`,
+            boxShadow: `
+              0 0 24px rgba(${starGlowRgb}, 0.45),
+              0 0 48px rgba(${starGlowRgb}, 0.15)
+            `,
           }}
         />
         <div
@@ -332,26 +325,59 @@ return (
           style={{
             width: renderProps.glowSize,
             height: renderProps.glowSize,
-            background: `radial-gradient(circle, rgba(${starGlowRgb}, 0.45) 0%, rgba(${starGlowRgb}, 0.15) 55%, transparent 75%)`,
-            animation: `pulse-glow ${renderProps.pulseSpeed} ease-in-out infinite`,
-          }}
+            background: `radial-gradient(circle, rgba(${starGlowRgb}, 0.35) 0%, rgba(${starGlowRgb}, 0.1) 50%, rgba(${starGlowRgb}, 0) 80%)`,
+            '--pulse-speed': renderProps.pulseSpeed,
+          } as React.CSSProperties}
         />
         <div
           className={styles.sunPulse}
           style={{
             width: renderProps.pulseSize,
             height: renderProps.pulseSize,
-            borderColor: `rgba(${starGlowRgb}, 0.2)`,
-            animation: `pulse-glow ${renderProps.pulseSpeed} ease-in-out infinite 0.5s`,
-          }}
+            borderColor: `rgba(${starGlowRgb}, 0.08)`,
+            '--pulse-speed': renderProps.pulseSpeed,
+          } as React.CSSProperties}
         />
         
+        {solarSystem.starType === 'giant' && (
+          <div
+            className={styles.starRing}
+            style={{
+              width: size * 1.5,
+              height: size * 1.5,
+              borderColor: `rgba(${starGlowRgb}, 0.15)`,
+            }}
+          />
+        )}
+
+        {solarSystem.starType === 'supergiant' && (
+          <>
+            <div
+              className={`${styles.starRing} ${styles.starRingInner}`}
+              style={{
+                width: size * 1.35,
+                height: size * 1.35,
+                borderColor: `rgba(${starGlowRgb}, 0.15)`,
+                animation: 'rotate-slow 35s linear infinite',
+              }}
+            />
+            <div
+              className={`${styles.starRing} ${styles.starRingOuter}`}
+              style={{
+                width: size * 1.65,
+                height: size * 1.65,
+                borderColor: `rgba(${starGlowRgb}, 0.08)`,
+                animation: 'rotate-counter 55s linear infinite',
+              }}
+            />
+          </>
+        )}
+
         {renderProps.isPulsar && (
           <div
             className={styles.pulsarBeacon}
             style={{
-              background: `linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.9) 30%, rgba(${starGlowRgb}, 0.9) 50%, rgba(255,255,255,0.9) 70%, transparent 100%)`,
-              boxShadow: `0 0 15px rgba(${starGlowRgb}, 0.8)`,
+              background: `linear-gradient(90deg, rgba(${starGlowRgb}, 0) 0%, rgba(255, 255, 255, 0.75) 50%, rgba(${starGlowRgb}, 0) 100%)`,
             }}
           />
         )}
@@ -360,11 +386,10 @@ return (
           <div
             className={styles.nebulaCloud}
             style={{
-              width: renderProps.glowSize * 1.3,
-              height: renderProps.glowSize * 1.3,
-              background: `radial-gradient(circle, rgba(${starGlowRgb}, 0.08) 0%, rgba(139, 92, 246, 0.05) 50%, transparent 80%)`,
-              border: `1.5px dashed rgba(${starGlowRgb}, 0.3)`,
-              boxShadow: `inset 0 0 20px rgba(${starGlowRgb}, 0.2)`,
+              width: renderProps.glowSize * 1.25,
+              height: renderProps.glowSize * 1.25,
+              background: `radial-gradient(circle, rgba(${starGlowRgb}, 0.1) 0%, rgba(139, 92, 246, 0.03) 60%, rgba(${starGlowRgb}, 0) 90%)`,
+              border: `1px dashed rgba(${starGlowRgb}, 0.15)`,
             }}
           />
         )}
