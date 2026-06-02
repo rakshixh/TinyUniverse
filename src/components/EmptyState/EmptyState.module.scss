@@ -1,0 +1,105 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.container {
+  @include flex-column-center;
+  gap: $space-8;
+  padding: $space-12 $space-6;
+  text-align: center;
+  animation: fadeIn $duration-slow $ease-smooth both;
+}
+
+.illustration {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  @include flex-center;
+  flex-shrink: 0;
+}
+
+.ring1,
+.ring2,
+.ring3 {
+  position: absolute;
+  border-radius: $radius-full;
+  border: 1px dashed;
+}
+
+.ring1 {
+  width: 80px;
+  height: 80px;
+  border-color: rgba($color-primary, 0.4);
+  animation: rotate-slow 6s linear infinite;
+}
+
+.ring2 {
+  width: 130px;
+  height: 130px;
+  border-color: rgba($color-secondary, 0.25);
+  animation: rotate-counter 9s linear infinite;
+}
+
+.ring3 {
+  width: 180px;
+  height: 180px;
+  border-color: rgba($color-border, 0.3);
+  animation: rotate-slow 14s linear infinite;
+}
+
+.center {
+  position: relative;
+  z-index: 2;
+}
+
+.emoji {
+  font-size: 3rem;
+  display: block;
+  filter: brightness(0.7);
+  animation: float 4s ease-in-out infinite;
+}
+
+.content {
+  @include flex-column;
+  gap: $space-3;
+}
+
+.title {
+  font-size: $font-2xl;
+  font-weight: $font-semibold;
+  color: $color-text;
+  letter-spacing: -0.02em;
+
+  @include mobile {
+    font-size: $font-xl;
+  }
+}
+
+.description {
+  font-size: $font-base;
+  color: $color-text-muted;
+  line-height: 1.7;
+  max-width: 360px;
+}
+
+.button {
+  @include button-base;
+  background: $color-primary;
+  color: $color-text;
+  padding: $space-4 $space-10;
+  font-size: $font-base;
+  font-weight: $font-semibold;
+  height: 52px;
+  letter-spacing: 0.02em;
+  margin-top: $space-2;
+  @include transition(all);
+
+  &:hover {
+    background: $color-primary-dim;
+    transform: translateY(-2px);
+    box-shadow: $glow-primary;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}

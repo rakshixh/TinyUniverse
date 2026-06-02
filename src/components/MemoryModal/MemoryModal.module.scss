@@ -1,0 +1,323 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba($color-bg, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: $z-modal;
+  @include flex-center;
+  padding: $space-4;
+  animation: fadeIn $duration-base $ease-smooth both;
+}
+
+.modal {
+  @include card;
+  width: 100%;
+  max-width: 520px;
+  max-height: calc(100vh - $space-8);
+  overflow-y: auto;
+  @include custom-scrollbar;
+  animation: scaleIn $duration-slow $ease-spring both;
+
+  @include mobile {
+    max-width: 100%;
+    max-height: calc(100dvh - $space-6);
+    margin-top: auto;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: $radius-xl;
+    border-top-right-radius: $radius-xl;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+}
+
+// ─── Header ──────────────────────────────────────────────────
+.header {
+  @include flex-between;
+  padding: $space-5 $space-6;
+  border-bottom: 1px solid $color-border;
+  position: sticky;
+  top: 0;
+  background: $color-bg-card;
+  z-index: 2;
+  border-radius: $radius-lg $radius-lg 0 0;
+
+  @include mobile {
+    padding: $space-4;
+    border-radius: $radius-xl $radius-xl 0 0;
+  }
+}
+
+.headerMeta {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+}
+
+.orbitBadge {
+  font-size: $font-xs;
+  font-weight: $font-medium;
+  color: $color-primary;
+  background: rgba($color-primary, 0.12);
+  border: 1px solid rgba($color-primary, 0.25);
+  padding: $space-1 $space-3;
+  border-radius: $radius-full;
+  letter-spacing: 0.05em;
+}
+
+.date {
+  font-size: $font-sm;
+  color: $color-text-muted;
+}
+
+.closeButton {
+  @include button-base;
+  width: 32px;
+  height: 32px;
+  background: rgba($color-border, 0.4);
+  color: $color-text-muted;
+  font-size: $font-sm;
+  border-radius: $radius-full;
+  padding: 0;
+  @include transition(all);
+
+  &:hover {
+    background: $color-border;
+    color: $color-text;
+  }
+}
+
+// ─── Body ────────────────────────────────────────────────────
+.body {
+  padding: $space-6;
+  @include flex-column;
+  gap: $space-5;
+
+  @include mobile {
+    padding: $space-4;
+    gap: $space-4;
+  }
+}
+
+// ─── Image ───────────────────────────────────────────────────
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  border-radius: $radius-md;
+  overflow: hidden;
+  background: $color-bg;
+  border: 1px solid $color-border;
+
+  @include mobile {
+    height: 160px;
+  }
+}
+
+.image {
+  object-fit: cover;
+}
+
+// ─── View Mode ───────────────────────────────────────────────
+.viewContent {
+  @include flex-column;
+  gap: $space-4;
+  animation: fadeIn $duration-base $ease-smooth both;
+}
+
+.title {
+  font-size: $font-2xl;
+  font-weight: $font-semibold;
+  color: $color-text;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+
+  @include mobile {
+    font-size: $font-xl;
+  }
+}
+
+.description {
+  font-size: $font-base;
+  color: $color-text-muted;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.actions {
+  display: flex;
+  gap: $space-3;
+  padding-top: $space-2;
+  border-top: 1px solid $color-border;
+}
+
+.editButton {
+  @include button-base;
+  background: rgba($color-primary, 0.12);
+  color: $color-primary;
+  border: 1px solid rgba($color-primary, 0.25);
+  padding: $space-2 $space-4;
+  font-size: $font-sm;
+  height: 36px;
+  @include transition(all);
+
+  &:hover {
+    background: rgba($color-primary, 0.2);
+  }
+}
+
+.deleteButton {
+  @include button-base;
+  background: rgba($color-error, 0.08);
+  color: $color-error;
+  border: 1px solid rgba($color-error, 0.2);
+  padding: $space-2 $space-4;
+  font-size: $font-sm;
+  height: 36px;
+  @include transition(all);
+
+  &:hover {
+    background: rgba($color-error, 0.15);
+  }
+}
+
+// ─── Edit Mode ───────────────────────────────────────────────
+.editContent {
+  @include flex-column;
+  gap: $space-4;
+  animation: fadeIn $duration-base $ease-smooth both;
+}
+
+.field {
+  @include flex-column;
+  gap: $space-2;
+}
+
+.label {
+  font-size: $font-sm;
+  font-weight: $font-medium;
+  color: $color-text-muted;
+  letter-spacing: 0.04em;
+}
+
+.input {
+  @include input-base;
+  height: 48px;
+}
+
+.textarea {
+  @include input-base;
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.6;
+}
+
+.editActions {
+  display: flex;
+  gap: $space-3;
+  justify-content: flex-end;
+  padding-top: $space-2;
+}
+
+.cancelButton {
+  @include button-base;
+  background: rgba($color-border, 0.5);
+  color: $color-text-muted;
+  padding: $space-2 $space-5;
+  height: 40px;
+  font-size: $font-sm;
+
+  &:hover {
+    background: $color-border;
+    color: $color-text;
+  }
+}
+
+.saveButton {
+  @include button-base;
+  background: $color-primary;
+  color: $color-text;
+  padding: $space-2 $space-6;
+  height: 40px;
+  font-size: $font-sm;
+  @include transition(all);
+
+  &:hover:not(:disabled) {
+    background: $color-primary-dim;
+    transform: translateY(-1px);
+    box-shadow: $glow-primary;
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+// ─── Delete Confirm ───────────────────────────────────────────
+.deleteConfirm {
+  @include flex-column-center;
+  gap: $space-4;
+  text-align: center;
+  padding: $space-4 0;
+  animation: fadeIn $duration-base $ease-smooth both;
+}
+
+.deleteIcon {
+  font-size: 3rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+.deleteTitle {
+  font-size: $font-xl;
+  font-weight: $font-semibold;
+  color: $color-text;
+}
+
+.deleteText {
+  font-size: $font-sm;
+  color: $color-text-muted;
+  line-height: 1.6;
+  max-width: 300px;
+}
+
+.deleteActions {
+  display: flex;
+  gap: $space-3;
+  margin-top: $space-2;
+}
+
+.confirmDeleteButton {
+  @include button-base;
+  background: $color-error;
+  color: $color-text;
+  padding: $space-2 $space-6;
+  height: 40px;
+  font-size: $font-sm;
+  @include transition(all);
+
+  &:hover:not(:disabled) {
+    background: #d93232;
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba($color-text, 0.3);
+  border-top-color: $color-text;
+  border-radius: $radius-full;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}

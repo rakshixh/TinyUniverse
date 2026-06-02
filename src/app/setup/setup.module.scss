@@ -1,0 +1,84 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.main {
+  position: relative;
+  min-height: 100dvh;
+  @include flex-center;
+  overflow: hidden;
+  background: $color-bg;
+}
+
+.nebula {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(
+    ellipse,
+    rgba($color-secondary, 0.07) 0%,
+    rgba($color-primary, 0.05) 40%,
+    transparent 70%
+  );
+  border-radius: $radius-full;
+  pointer-events: none;
+
+  @include mobile {
+    width: 300px;
+    height: 300px;
+  }
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  @include flex-column;
+  align-items: center;
+  gap: $space-8;
+  padding: $space-8 $space-6;
+  width: 100%;
+  max-width: 520px;
+  text-align: center;
+
+  @include mobile {
+    gap: $space-6;
+    padding: $space-6 $space-4;
+  }
+}
+
+.icon {
+  font-size: 3.5rem;
+  animation: float 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba($color-primary, 0.4));
+}
+
+.header {
+  @include flex-column;
+  gap: $space-3;
+}
+
+.title {
+  font-size: $font-3xl;
+  font-weight: $font-bold;
+  color: $color-text;
+  letter-spacing: -0.03em;
+
+  @include mobile {
+    font-size: $font-2xl;
+  }
+}
+
+.subtitle {
+  font-size: $font-base;
+  color: $color-text-muted;
+  line-height: 1.6;
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+.formSection {
+  width: 100%;
+  text-align: left;
+}

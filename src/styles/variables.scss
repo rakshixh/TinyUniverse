@@ -1,0 +1,116 @@
+// ============================================================
+// Tiny Universe — Design Tokens
+// ============================================================
+
+// ─── Colors ─────────────────────────────────────────────────
+$color-bg:          #050816;
+$color-bg-card:     #0B1120;
+$color-bg-elevated: #0F1A2E;
+$color-border:      #1E293B;
+$color-border-glow: #2D3F5E;
+
+$color-primary:     #8B5CF6;
+$color-primary-dim: #6D3FCC;
+$color-primary-glow:rgba(139, 92, 246, 0.35);
+
+$color-secondary:   #38BDF8;
+$color-secondary-glow: rgba(56, 189, 248, 0.3);
+
+$color-text:        #FFFFFF;
+$color-text-muted:  #94A3B8;
+$color-text-subtle: #475569;
+
+$color-success:     #22C55E;
+$color-error:       #EF4444;
+$color-warning:     #F59E0B;
+
+// ─── Planet Color Palette (for hashing) ──────────────────────
+$planet-colors: (
+  #8B5CF6,  // violet
+  #38BDF8,  // sky
+  #F472B6,  // pink
+  #FB923C,  // orange
+  #34D399,  // emerald
+  #FBBF24,  // amber
+  #A78BFA,  // purple
+  #60A5FA,  // blue
+  #F87171,  // red
+  #4ADE80,  // green
+);
+
+// ─── Spacing Scale ───────────────────────────────────────────
+$space-1:   4px;
+$space-2:   8px;
+$space-3:   12px;
+$space-4:   16px;
+$space-5:   20px;
+$space-6:   24px;
+$space-8:   32px;
+$space-10:  40px;
+$space-12:  48px;
+$space-16:  64px;
+$space-20:  80px;
+$space-24:  96px;
+
+// ─── Font Scale ──────────────────────────────────────────────
+$font-family-primary:   'Space Grotesk', 'Inter', sans-serif;
+$font-family-mono:      'JetBrains Mono', monospace;
+
+$font-xs:    0.75rem;   // 12px
+$font-sm:    0.875rem;  // 14px
+$font-base:  1rem;      // 16px
+$font-lg:    1.125rem;  // 18px
+$font-xl:    1.25rem;   // 20px
+$font-2xl:   1.5rem;    // 24px
+$font-3xl:   1.875rem;  // 30px
+$font-4xl:   2.25rem;   // 36px
+$font-5xl:   3rem;      // 48px
+
+$font-normal:   400;
+$font-medium:   500;
+$font-semibold: 600;
+$font-bold:     700;
+
+// ─── Breakpoints ─────────────────────────────────────────────
+$bp-xs:   320px;
+$bp-sm:   375px;
+$bp-md:   768px;
+$bp-lg:   1024px;
+$bp-xl:   1280px;
+$bp-2xl:  1440px;
+
+// ─── Border Radius ───────────────────────────────────────────
+$radius-sm:   6px;
+$radius-md:   10px;
+$radius-lg:   16px;
+$radius-xl:   24px;
+$radius-full: 9999px;
+
+// ─── Shadows & Glows ─────────────────────────────────────────
+$shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+$shadow-modal: 0 8px 48px rgba(0, 0, 0, 0.6);
+$glow-primary: 0 0 20px $color-primary-glow, 0 0 40px rgba(139, 92, 246, 0.15);
+$glow-secondary: 0 0 20px $color-secondary-glow;
+
+// ─── Animation Durations ─────────────────────────────────────
+$duration-fast:   150ms;
+$duration-base:   250ms;
+$duration-slow:   400ms;
+$duration-slower: 600ms;
+
+$ease-smooth:  cubic-bezier(0.4, 0, 0.2, 1);
+$ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
+$ease-out:     cubic-bezier(0, 0, 0.2, 1);
+
+// ─── Z-Index ─────────────────────────────────────────────────
+$z-base:    1;
+$z-canvas:  10;
+$z-overlay: 100;
+$z-modal:   200;
+$z-toast:   300;
+
+// ─── Orbit Radii (px, used in UniverseCanvas) ────────────────
+$orbit-1-radius: 160px;
+$orbit-2-radius: 280px;
+$orbit-3-radius: 400px;
+$orbit-4-radius: 520px;

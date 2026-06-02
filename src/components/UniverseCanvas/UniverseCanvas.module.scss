@@ -1,0 +1,96 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.container {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  @include flex-center;
+  overflow: hidden;
+  min-height: 0; // important for flex children
+}
+
+.canvas {
+  position: relative;
+  flex-shrink: 0;
+  // Transition scale changes smoothly
+  transition: transform 0.3s $ease-smooth;
+}
+
+// ─── Orbit Rings ─────────────────────────────────────────────
+.orbitRing {
+  position: absolute;
+  border-radius: $radius-full;
+  border: 1px solid rgba($color-border, 0.25);
+  pointer-events: none;
+  @include transition(border-color, $duration-slow);
+}
+
+.orbitActive {
+  border-color: rgba($color-border-glow, 0.4);
+  box-shadow: 0 0 0 1px rgba($color-primary, 0.06);
+}
+
+// ─── Sun ─────────────────────────────────────────────────────
+.sun {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  pointer-events: none;
+}
+
+.sunCore {
+  width: 36px;
+  height: 36px;
+  background: radial-gradient(
+    circle at 40% 40%,
+    #FEF3C7 0%,
+    #FCD34D 40%,
+    #F59E0B 70%,
+    #D97706 100%
+  );
+  border-radius: $radius-full;
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  box-shadow:
+    0 0 20px rgba(252, 211, 77, 0.8),
+    0 0 40px rgba(245, 158, 11, 0.5),
+    0 0 80px rgba(217, 119, 6, 0.2);
+}
+
+.sunGlow {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle,
+    rgba(252, 211, 77, 0.3) 0%,
+    rgba(245, 158, 11, 0.1) 50%,
+    transparent 70%
+  );
+  border-radius: $radius-full;
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.sunPulse {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(252, 211, 77, 0.15);
+  border-radius: $radius-full;
+  animation: pulse-glow 3s ease-in-out infinite 1.5s;
+}
+
+// ─── Planet Wrapper ───────────────────────────────────────────
+.planetWrapper {
+  position: absolute;
+  // Planet component uses transform: translate(-50%, -50%) so this is the center point
+  pointer-events: auto;
+}

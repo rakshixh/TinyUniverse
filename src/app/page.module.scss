@@ -1,0 +1,135 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.main {
+  position: relative;
+  min-height: 100dvh;
+  @include flex-center;
+  overflow: hidden;
+  background: $color-bg;
+}
+
+.nebula {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba($color-primary, 0.08) 0%,
+    rgba($color-secondary, 0.04) 40%,
+    transparent 70%
+  );
+  border-radius: $radius-full;
+  pointer-events: none;
+  animation: pulse-glow 5s ease-in-out infinite;
+
+  @include mobile {
+    width: 320px;
+    height: 320px;
+  }
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  @include flex-column-center;
+  gap: $space-8;
+  padding: $space-8 $space-6;
+  width: 100%;
+  max-width: 480px;
+  text-align: center;
+  animation: fadeIn $duration-slow $ease-smooth both;
+
+  @include mobile {
+    gap: $space-6;
+    padding: $space-6 $space-4;
+  }
+}
+
+// ─── Logo ────────────────────────────────────────────────────
+.logo {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  @include flex-center;
+  flex-shrink: 0;
+}
+
+.logoOrbit {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border: 1px solid rgba($color-primary, 0.35);
+  border-radius: $radius-full;
+  animation: rotate-slow 5s linear infinite;
+}
+
+.logoPlanet {
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  background: $color-primary;
+  border-radius: $radius-full;
+  box-shadow: $glow-primary;
+}
+
+.logoCore {
+  font-size: 2.5rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 16px rgba($color-primary, 0.5));
+  animation: float 4s ease-in-out infinite;
+}
+
+// ─── Header ──────────────────────────────────────────────────
+.header {
+  @include flex-column;
+  gap: $space-3;
+}
+
+.title {
+  font-size: $font-5xl;
+  font-weight: $font-bold;
+  letter-spacing: -0.04em;
+  color: $color-text;
+  line-height: 1;
+
+  @include mobile {
+    font-size: $font-4xl;
+  }
+}
+
+.titleAccent {
+  background: linear-gradient(135deg, $color-primary 0%, $color-secondary 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  font-size: $font-lg;
+  color: $color-text-muted;
+  letter-spacing: 0.02em;
+  font-weight: $font-normal;
+
+  @include mobile {
+    font-size: $font-base;
+  }
+}
+
+// ─── Form Section ─────────────────────────────────────────────
+.formSection {
+  width: 100%;
+}
+
+// ─── Footer ───────────────────────────────────────────────────
+.footer {
+  font-size: $font-sm;
+  color: $color-text-subtle;
+  letter-spacing: 0.04em;
+}
