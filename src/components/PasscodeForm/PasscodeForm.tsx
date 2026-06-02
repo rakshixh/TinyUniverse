@@ -40,16 +40,7 @@ export default function PasscodeForm() {
       }
 
       toast.success('Welcome to your universe ✨');
-
-      // Check if universe exists
-      const universeRes = await fetch('/api/universe');
-      const universeData = await universeRes.json();
-
-      if (!universeData.universe) {
-        router.push('/setup');
-      } else {
-        router.push('/universe');
-      }
+      router.push('/universe');
     } catch {
       toast.error('Something went wrong. Try again.');
     } finally {

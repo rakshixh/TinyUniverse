@@ -17,15 +17,21 @@ interface AddMemoryModalProps {
   isOpen: boolean;
   onClose: () => void;
   onCreated: (memory: IMemory) => void;
+  systemId: string;
+  universeId: string;
 }
 
 export default function AddMemoryModal({
   isOpen,
   onClose,
   onCreated,
+  systemId,
+  universeId,
 }: AddMemoryModalProps) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [orbit, setOrbit] = useState(1);
+  const [date, setDate] = useState(() => new Date().toISOString().substring(0, 10));
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -43,6 +49,8 @@ export default function AddMemoryModal({
   const resetForm = useCallback(() => {
     setTitle('');
     setDescription('');
+    setOrbit(1);
+    setDate(new Date().toISOString().substring(0, 10));
     setImageFile(null);
     setImagePreview(null);
     setIsDragging(false);
@@ -86,13 +94,12 @@ export default function AddMemoryModal({
   }, [isOpen, handleClose]);
 
   const handleImageFile = (file: File) => {
-    // Validate
     if (!ALLOWED_IMAGE_TYPES.includes(file.type as typeof ALLOWED_IMAGE_TYPES[number])) {
       toast.error('Please use JPG, PNG or WebP images');
       return;
     }
     if (file.size > MAX_IMAGE_SIZE_BYTES) {
-      toast.error('Image must be under 5MB');
+      toast.error('Image must be under 3MB');
       return;
     }
 
@@ -111,7 +118,7 @@ export default function AddMemoryModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || isLoading) return;
+    if (!title.trim() || !date || isLoading) return;
 
     let imageUrl = '';
 
@@ -161,6 +168,10 @@ export default function AddMemoryModal({
           title: title.trim(),
           description: description.trim(),
           imageUrl,
+          orbit,
+          date,
+          systemId,
+          universeId,
         }),
       });
 
@@ -196,7 +207,7 @@ export default function AddMemoryModal({
       <div className={styles.modal}>
         {/* Header */}
         <div className={styles.header}>
-          <h2 className={styles.title}>New Memory</h2>
+          <h2 className={styles.title}>New Memory Planet</h2>
           <button
             className={styles.closeButton}
             onClick={handleClose}
@@ -230,6 +241,46 @@ export default function AddMemoryModal({
             <span className={styles.charCount}>{title.length}/{MAX_TITLE_LENGTH}</span>
           </div>
 
+          {/* Date Selector */}
+          <div className={styles.field}>
+            <label htmlFor="memory-date" className={styles.label}>
+              Memory Date <span className={styles.required} aria-hidden="true">*</span>
+            </label>
+            <input
+              id="memory-date"
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className={styles.input}
+              disabled={isLoading}
+              required
+              aria-required="true"
+            />
+          </div>
+
+          {/* Orbit Selector */}
+          <div className={styles.field}>
+            <label className={styles.label}>
+              Orbit Ring <span className={styles.required} aria-hidden="true">*</span>
+            </label>
+            <div className={styles.orbitSelector}>
+              {[1, 2, 3, 4].map((ring) => (
+                <label key={ring} className={`${styles.orbitOption} ${orbit === ring ? styles.selected : ''}`}>
+                  <input
+                    type="radio"
+                    name="orbit-ring"
+                    value={ring}
+                    checked={orbit === ring}
+                    onChange={() => setOrbit(ring)}
+                    disabled={isLoading}
+                    className={styles.radioInput}
+                  />
+                  Ring {ring} {ring === 1 && '(Inner)'} {ring === 4 && '(Outer)'}
+                </label>
+              ))}
+            </div>
+          </div>
+
           {/* Description */}
           <div className={styles.field}>
             <label htmlFor="memory-description" className={styles.label}>
@@ -251,7 +302,7 @@ export default function AddMemoryModal({
           {/* Image Upload */}
           <div className={styles.field}>
             <span className={styles.label}>
-              Image <span className={styles.optional}>(optional · JPG, PNG, WebP · max 5MB)</span>
+              Image <span className={styles.optional}>(optional · JPG, PNG, WebP · max 3MB)</span>
             </span>
 
             {imagePreview ? (

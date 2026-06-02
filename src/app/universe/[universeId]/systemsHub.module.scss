@@ -1,0 +1,571 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.page {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  @include flex-column;
+  background: $color-bg;
+}
+
+// ─── Header ──────────────────────────────────────────────────
+.header {
+  @include flex-between;
+  padding: $space-4 $space-6;
+  border-bottom: 1px solid rgba($color-border, 0.4);
+  background: rgba($color-bg, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 10;
+  position: sticky;
+  top: 0;
+  flex-shrink: 0;
+
+  @include mobile {
+    padding: $space-3 $space-4;
+    flex-direction: column;
+    align-items: stretch;
+    gap: $space-3;
+  }
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+  min-width: 0;
+  flex: 1;
+
+  @include mobile {
+    gap: $space-3;
+  }
+}
+
+.backLink {
+  color: $color-text-muted;
+  text-decoration: none;
+  font-size: $font-sm;
+  font-weight: $font-semibold;
+  padding: $space-2 $space-3;
+  border-radius: $radius-md;
+  background: rgba($color-border, 0.2);
+  border: 1px solid rgba($color-border, 0.25);
+  @include transition(all);
+  white-space: nowrap;
+
+  &:hover {
+    color: $color-text;
+    background: rgba($color-border, 0.4);
+  }
+}
+
+.titleArea {
+  min-width: 0;
+  flex: 1;
+}
+
+.universeTitle {
+  font-size: $font-xl;
+  font-weight: $font-semibold;
+  color: $color-text;
+  letter-spacing: -0.02em;
+  @include text-truncate;
+  
+  @include mobile {
+    font-size: $font-lg;
+  }
+}
+
+.universeDesc {
+  font-size: $font-xs;
+  color: $color-text-muted;
+  @include text-truncate;
+  margin-top: 2px;
+}
+
+.igniteButton {
+  @include button-base;
+  background: $color-primary;
+  color: $color-text;
+  padding: $space-2 $space-5;
+  font-size: $font-sm;
+  height: 38px;
+  @include transition(all);
+
+  &:hover {
+    background: $color-primary-dim;
+    transform: translateY(-1px);
+    box-shadow: $glow-primary;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// ─── Main ────────────────────────────────────────────────────
+.main {
+  flex: 1;
+  padding: $space-8 $space-6;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  z-index: 2;
+
+  @include mobile {
+    padding: $space-6 $space-4;
+  }
+}
+
+.emptyState {
+  @include flex-column-center;
+  text-align: center;
+  padding: $space-12 0;
+  max-width: 480px;
+  margin: 0 auto;
+  gap: $space-4;
+
+  h2 {
+    font-size: $font-2xl;
+    font-weight: $font-semibold;
+    color: $color-text;
+  }
+
+  p {
+    font-size: $font-base;
+    color: $color-text-muted;
+    line-height: 1.6;
+  }
+}
+
+.ctaButton {
+  @include button-base;
+  background: $color-primary;
+  color: $color-text;
+  padding: $space-3 $space-6;
+  font-weight: $font-semibold;
+  margin-top: $space-2;
+  @include transition(all);
+
+  &:hover {
+    background: $color-primary-dim;
+    box-shadow: $glow-primary;
+  }
+}
+
+.emptyIcon {
+  font-size: 4rem;
+  animation: float 4s ease-in-out infinite;
+}
+
+// ─── Grid ────────────────────────────────────────────────────
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: $space-6;
+  width: 100%;
+}
+
+.createCard {
+  @include flex-column-center;
+  justify-content: center;
+  text-align: center;
+  border: 2px dashed rgba($color-border, 0.4);
+  background: rgba($color-border, 0.05);
+  border-radius: $radius-lg;
+  padding: $space-8 $space-6;
+  cursor: pointer;
+  @include transition(all);
+  min-height: 220px;
+
+  .plusIcon {
+    font-size: 2.25rem;
+    color: $color-primary;
+    margin-bottom: $space-2;
+    @include transition(transform, $duration-base, $ease-spring);
+  }
+
+  h3 {
+    font-size: $font-lg;
+    font-weight: $font-semibold;
+    color: $color-text;
+    margin-bottom: $space-1;
+  }
+
+  p {
+    font-size: $font-sm;
+    color: $color-text-subtle;
+    max-width: 240px;
+  }
+
+  &:hover {
+    border-color: $color-primary;
+    background: rgba($color-primary, 0.04);
+    
+    .plusIcon {
+      transform: scale(1.2) rotate(90deg);
+    }
+  }
+}
+
+.card {
+  @include card;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  text-decoration: none;
+  min-height: 220px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: rgba($color-primary, 0.35);
+
+    .deleteBtn {
+      opacity: 1;
+    }
+  }
+}
+
+.cardHeaderGlow {
+  position: absolute;
+  top: -80px;
+  left: -80px;
+  width: 160px;
+  height: 160px;
+  border-radius: $radius-full;
+  opacity: 0.15;
+  filter: blur(16px);
+  pointer-events: none;
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: $space-6;
+  gap: $space-3;
+  position: relative;
+  z-index: 2;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.cardHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  flex: 1;
+  min-width: 0;
+
+  h3 {
+    font-size: $font-lg;
+    font-weight: $font-semibold;
+    color: $color-text;
+    @include text-truncate;
+    max-width: 180px;
+  }
+}
+
+.infoBtn {
+  background: transparent;
+  border: none;
+  color: $color-primary;
+  cursor: pointer;
+  padding: $space-1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-full;
+  @include transition(all);
+  opacity: 0.6;
+  flex-shrink: 0;
+
+  .infoSvg {
+    stroke: $color-primary;
+    @include transition(stroke filter);
+  }
+
+  &:hover {
+    opacity: 1;
+    transform: scale(1.1) rotate(5deg);
+    .infoSvg {
+      stroke: $color-secondary;
+      filter: drop-shadow(0 0 6px rgba($color-secondary, 0.6));
+    }
+  }
+}
+
+.starPreview {
+  width: 28px;
+  height: 28px;
+  border-radius: $radius-full;
+  flex-shrink: 0;
+}
+
+.starTypeBadge {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: $color-text-subtle;
+  letter-spacing: 0.05em;
+}
+
+.cardDesc {
+  font-size: $font-sm;
+  color: $color-text-muted;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1;
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: $font-xs;
+  color: $color-text-subtle;
+  border-top: 1px solid rgba($color-border, 0.3);
+  padding-top: $space-3;
+  margin-top: auto;
+  gap: $space-2;
+}
+
+.cardActions {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+}
+
+.editBtn {
+  background: transparent;
+  border: 1px solid rgba($color-primary, 0.3);
+  color: rgba($color-text, 0.9);
+  padding: 4px 10px;
+  font-size: $font-xs;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  font-weight: $font-medium;
+  @include transition(all);
+
+  &:hover {
+    background: rgba($color-primary, 0.15);
+    border-color: $color-primary;
+    color: $color-text;
+  }
+}
+
+.deleteBtn {
+  background: transparent;
+  border: 1px solid rgba($color-error, 0.25);
+  color: rgba($color-text, 0.8);
+  padding: 4px 10px;
+  font-size: $font-xs;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  font-weight: $font-medium;
+  @include transition(all);
+
+  &:hover {
+    background: rgba($color-error, 0.15);
+    border-color: $color-error;
+    color: $color-text;
+    box-shadow: 0 0 10px rgba($color-error, 0.25);
+  }
+}
+
+// ─── Modal ────────────────────────────────────────────────────
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba($color-bg, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 100;
+  @include flex-center;
+  padding: $space-4;
+  animation: fadeIn $duration-base both;
+}
+
+.modal {
+  @include card;
+  width: 100%;
+  max-width: 480px;
+  animation: scaleIn $duration-slow $ease-spring both;
+  padding: $space-6;
+}
+
+.modalHeader {
+  @include flex-between;
+  margin-bottom: $space-5;
+  border-bottom: 1px solid rgba($color-border, 0.5);
+  padding-bottom: $space-3;
+
+  h2 {
+    font-size: $font-xl;
+    font-weight: $font-semibold;
+    color: $color-text;
+  }
+}
+
+.closeButton {
+  background: transparent;
+  border: none;
+  color: $color-text-subtle;
+  font-size: $font-lg;
+  cursor: pointer;
+  
+  &:hover {
+    color: $color-text;
+  }
+}
+
+.form {
+  @include flex-column;
+  gap: $space-4;
+}
+
+.field {
+  @include flex-column;
+  gap: $space-2;
+
+  label,
+  .fieldLabel {
+    font-size: $font-sm;
+    font-weight: $font-medium;
+    color: $color-text-muted;
+  }
+
+  input,
+  textarea,
+  .selectInput {
+    @include input-base;
+    font-size: $font-sm;
+  }
+
+  input {
+    height: 44px;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 70px;
+  }
+
+  .selectInput {
+    height: 44px;
+    background-color: $color-bg;
+    color: $color-text;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5z' fill='%239ca3af'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 20px;
+    padding-right: 36px;
+
+    option {
+      background-color: $color-bg-card;
+      color: $color-text;
+    }
+  }
+}
+
+// Color option picker
+.colorGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: $space-2;
+  margin-top: $space-1;
+}
+
+.colorOption {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: $radius-full;
+  border: 2px solid transparent;
+  background: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  @include flex-center;
+  @include transition(all);
+  padding: 0;
+
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+  }
+
+  &.selectedColor {
+    border-color: $color-text;
+    transform: scale(1.1);
+  }
+}
+
+.colorDot {
+  width: 75%;
+  height: 75%;
+  border-radius: $radius-full;
+}
+
+.submitButton {
+  @include button-base;
+  background: $color-primary;
+  color: $color-text;
+  height: 46px;
+  font-weight: $font-semibold;
+  margin-top: $space-2;
+  @include transition(all);
+
+  &:hover:not(:disabled) {
+    background: $color-primary-dim;
+    transform: translateY(-1px);
+    box-shadow: $glow-primary;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.titleWithAction {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+}
+
+.editUnivBtn {
+  @include button-base;
+  background: rgba($color-text, 0.08);
+  color: $color-text-muted;
+  border: 1px solid rgba($color-border, 0.25);
+  padding: 0 $space-2.5;
+  font-size: 11px;
+  font-weight: $font-semibold;
+  height: 24px;
+  border-radius: $radius-md;
+  cursor: pointer;
+  @include transition(all);
+
+  &:hover {
+    background: rgba($color-primary, 0.15);
+    color: $color-text;
+    border-color: rgba($color-primary, 0.35);
+  }
+}
+

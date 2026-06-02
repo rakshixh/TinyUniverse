@@ -10,3 +10,8 @@ export interface CreateUniverseInput {
   title: string;
   description?: string;
 }
+
+export interface UpdateUniverseInput {
+  title?: string;
+  description?: string;
+}

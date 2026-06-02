@@ -2,7 +2,6 @@
 
 import useSWR from 'swr';
 import type { IMemory } from '@/types/memory';
-import { API_PATHS } from '@/lib/constants';
 
 interface MemoriesResponse {
   memories: IMemory[];
@@ -17,9 +16,9 @@ const fetcher = async (url: string): Promise<MemoriesResponse> => {
   return res.json();
 };
 
-export function useMemories() {
+export function useMemories(systemId: string | null) {
   const { data, error, isLoading, mutate } = useSWR<MemoriesResponse>(
-    API_PATHS.memories,
+    systemId ? `/api/memories?systemId=${systemId}` : null,
     fetcher,
     {
       revalidateOnFocus: false,

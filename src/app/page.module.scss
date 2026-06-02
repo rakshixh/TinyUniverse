@@ -93,29 +93,37 @@
 }
 
 .title {
-  font-size: $font-5xl;
-  font-weight: $font-bold;
-  letter-spacing: -0.04em;
-  color: $color-text;
-  line-height: 1;
+  font-family: 'Outfit', sans-serif;
+  font-size: 3.5rem;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #ffffff 20%, rgba(255, 255, 255, 0.75) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.1;
+  text-shadow: 0 0 32px rgba($color-primary, 0.2);
 
   @include mobile {
-    font-size: $font-4xl;
+    font-size: 2.75rem;
   }
 }
 
 .titleAccent {
-  background: linear-gradient(135deg, $color-primary 0%, $color-secondary 100%);
+  background: linear-gradient(90deg, #a855f7 0%, $color-primary 45%, $color-secondary 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  filter: drop-shadow(0 0 20px rgba($color-primary, 0.5));
 }
 
 .subtitle {
+  font-family: 'Outfit', sans-serif;
   font-size: $font-lg;
   color: $color-text-muted;
-  letter-spacing: 0.02em;
-  font-weight: $font-normal;
+  letter-spacing: 0.04em;
+  font-weight: 400;
 
   @include mobile {
     font-size: $font-base;

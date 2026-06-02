@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { getUniverse, createUniverse } from '@/services/universe.service';
+import { getUniverses, createUniverse } from '@/services/universe.service';
 import { SESSION_COOKIE_NAME, SESSION_COOKIE_VALUE } from '@/lib/constants';
 
 function isAuthenticated(request: NextRequest): boolean {
@@ -8,20 +8,17 @@ function isAuthenticated(request: NextRequest): boolean {
   return cookie?.value === SESSION_COOKIE_VALUE;
 }
 
-/** GET /api/universe — Fetch universe info */
+/** GET /api/universe — List all universes */
 export async function GET(request: NextRequest) {
   if (!isAuthenticated(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
-    const universe = await getUniverse();
-    if (!universe) {
-      return NextResponse.json({ universe: null }, { status: 200 });
-    }
-    return NextResponse.json({ universe }, { status: 200 });
+    const universes = await getUniverses();
+    return NextResponse.json({ universes }, { status: 200 });
   } catch {
-    return NextResponse.json({ error: 'Failed to fetch universe' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to fetch universes' }, { status: 500 });
   }
 }
 
@@ -30,7 +27,7 @@ const CreateUniverseSchema = z.object({
   description: z.string().max(500, 'Description too long').optional().default(''),
 });
 
-/** POST /api/universe — Create the universe (first-time setup) */
+/** POST /api/universe — Create a new universe */
 export async function POST(request: NextRequest) {
   if (!isAuthenticated(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

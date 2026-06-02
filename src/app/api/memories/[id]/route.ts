@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { updateMemory, deleteMemory } from '@/services/memory.service';
-import { getUniverse } from '@/services/universe.service';
 import { SESSION_COOKIE_NAME, SESSION_COOKIE_VALUE } from '@/lib/constants';
 
 function isAuthenticated(request: NextRequest): boolean {
@@ -23,6 +22,9 @@ const UpdateMemorySchema = z.object({
     .max(1000, 'Description cannot exceed 1000 characters')
     .optional(),
   imageUrl: z.string().url('Invalid image URL').optional().or(z.literal('')),
+  orbit: z.number().min(1).max(4).optional(),
+  date: z.string().optional(),
+  universeId: z.string().min(1, 'Universe ID is required'),
 });
 
 /** PATCH /api/memories/:id — Update a memory */
@@ -34,11 +36,6 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   const { id } = await params;
 
   try {
-    const universe = await getUniverse();
-    if (!universe) {
-      return NextResponse.json({ error: 'Universe not found' }, { status: 404 });
-    }
-
     const body = await request.json();
     const parsed = UpdateMemorySchema.safeParse(body);
 
@@ -49,7 +46,9 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       );
     }
 
-    const memory = await updateMemory(id, universe._id, parsed.data);
+    const { universeId, ...updateData } = parsed.data;
+
+    const memory = await updateMemory(id, universeId, updateData);
 
     if (!memory) {
       return NextResponse.json({ error: 'Memory not found' }, { status: 404 });
@@ -68,14 +67,15 @@ export async function DELETE(request: NextRequest, { params }: Params) {
   }
 
   const { id } = await params;
+  const { searchParams } = new URL(request.url);
+  const universeId = searchParams.get('universeId');
+
+  if (!universeId) {
+    return NextResponse.json({ error: 'universeId query parameter is required' }, { status: 400 });
+  }
 
   try {
-    const universe = await getUniverse();
-    if (!universe) {
-      return NextResponse.json({ error: 'Universe not found' }, { status: 404 });
-    }
-
-    const deleted = await deleteMemory(id, universe._id);
+    const deleted = await deleteMemory(id, universeId);
 
     if (!deleted) {
       return NextResponse.json({ error: 'Memory not found' }, { status: 404 });

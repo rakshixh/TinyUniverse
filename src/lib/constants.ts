@@ -20,7 +20,7 @@ export const ALLOWED_IMAGE_TYPES = [
   'image/webp',
 ] as const;
 
-export const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
+export const MAX_IMAGE_SIZE_BYTES = 3 * 1024 * 1024; // 3 MB
 
 // ─── Cookie ───────────────────────────────────────────────────
 export const SESSION_COOKIE_NAME = 'tiny_universe_session';

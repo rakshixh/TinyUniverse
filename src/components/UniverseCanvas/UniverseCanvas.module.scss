@@ -8,89 +8,146 @@
   @include flex-center;
   overflow: hidden;
   min-height: 0; // important for flex children
+  user-select: none;
+  touch-action: none; // prevent browser scrolling/pinching
 }
 
 .canvas {
   position: relative;
   flex-shrink: 0;
-  // Transition scale changes smoothly
-  transition: transform 0.3s $ease-smooth;
+  // Make transition smooth for controls-based zoom and recentering
+  transition: transform 0.35s $ease-smooth;
+
+  &.zoomedOut {
+    // When zoomed out, fade the planet labels to reduce visual clutter
+    .planetWrapper button > span:last-child {
+      opacity: 0.2;
+      transform: scale(0.8);
+      filter: blur(0.5px);
+    }
+  }
 }
 
 // ─── Orbit Rings ─────────────────────────────────────────────
 .orbitRing {
   position: absolute;
   border-radius: $radius-full;
-  border: 1px solid rgba($color-border, 0.25);
+  border: 1px dashed rgba($color-border, 0.16);
   pointer-events: none;
   @include transition(border-color, $duration-slow);
 }
 
 .orbitActive {
-  border-color: rgba($color-border-glow, 0.4);
-  box-shadow: 0 0 0 1px rgba($color-primary, 0.06);
+  border-color: rgba($color-border-glow, 0.32);
+  box-shadow: 0 0 1px rgba($color-primary, 0.08);
 }
 
-// ─── Sun ─────────────────────────────────────────────────────
+// ─── Sun (Star Core) ─────────────────────────────────────────
 .sun {
   position: absolute;
-  width: 36px;
-  height: 36px;
+  width: 52px;
+  height: 52px;
   pointer-events: none;
+  z-index: 2;
 }
 
 .sunCore {
-  width: 36px;
-  height: 36px;
-  background: radial-gradient(
-    circle at 40% 40%,
-    #FEF3C7 0%,
-    #FCD34D 40%,
-    #F59E0B 70%,
-    #D97706 100%
-  );
+  width: 52px;
+  height: 52px;
   border-radius: $radius-full;
   position: absolute;
   inset: 0;
   z-index: 3;
-  box-shadow:
-    0 0 20px rgba(252, 211, 77, 0.8),
-    0 0 40px rgba(245, 158, 11, 0.5),
-    0 0 80px rgba(217, 119, 6, 0.2);
 }
 
 .sunGlow {
-  position: absolute;
-  width: 80px;
-  height: 80px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: radial-gradient(
-    circle,
-    rgba(252, 211, 77, 0.3) 0%,
-    rgba(245, 158, 11, 0.1) 50%,
-    transparent 70%
-  );
-  border-radius: $radius-full;
-  animation: pulse-glow 3s ease-in-out infinite;
-}
-
-.sunPulse {
   position: absolute;
   width: 120px;
   height: 120px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  border: 1px solid rgba(252, 211, 77, 0.15);
   border-radius: $radius-full;
-  animation: pulse-glow 3s ease-in-out infinite 1.5s;
+  animation: pulse-glow 3.5s ease-in-out infinite;
+}
+
+.sunPulse {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: $radius-full;
+  animation: pulse-glow 3.5s ease-in-out infinite 1.75s;
 }
 
 // ─── Planet Wrapper ───────────────────────────────────────────
 .planetWrapper {
   position: absolute;
-  // Planet component uses transform: translate(-50%, -50%) so this is the center point
   pointer-events: auto;
+  z-index: 10;
+}
+
+// ─── Floating Controls ─────────────────────────────────────────
+.controls {
+  position: absolute;
+  bottom: $space-6;
+  left: $space-6;
+  @include flex-column;
+  gap: $space-2;
+  z-index: $z-modal;
+  background: rgba($color-bg, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: $space-2;
+  border-radius: $radius-lg;
+  border: 1px solid rgba($color-border, 0.25);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  button {
+    width: 38px;
+    height: 38px;
+    @include flex-center;
+    background: transparent;
+    border: none;
+    border-radius: $radius-md;
+    color: rgba($color-text, 0.75);
+    font-size: 18px;
+    font-weight: $font-bold;
+    cursor: pointer;
+    @include transition(background color transform, $duration-fast);
+
+    &:hover {
+      background: rgba($color-primary, 0.2);
+      color: $color-text;
+      transform: scale(1.05);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+
+  .recenterBtn {
+    font-size: 16px;
+    margin-top: $space-1;
+    border-top: 1px solid rgba($color-border, 0.15);
+    border-radius: 0;
+    padding-top: $space-1;
+    height: 34px;
+    width: 38px;
+    border-radius: $radius-md;
+  }
+}
+
+// Adjust controls placement for mobile
+@media (max-width: 600px) {
+  .controls {
+    bottom: calc(#{$space-6} + 64px);
+    left: $space-4;
+  }
 }
