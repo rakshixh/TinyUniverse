@@ -3,14 +3,14 @@
 
 .planet {
   position: absolute;
-  @include flex-column-center;
-  gap: $space-2;
   background: none;
   border: none;
   cursor: pointer;
   padding: 0;
   transform: translate(-50%, -50%);
   z-index: $z-canvas;
+  width: var(--planet-size, 44px);
+  height: var(--planet-size, 44px);
 
   // Accessibility: focus ring
   &:focus-visible {
@@ -27,7 +27,7 @@
   }
 
   &:hover .label {
-    transform: scale(1.05);
+    transform: translateX(-50%) scale(1.05);
     .dateText {
       color: rgba($color-text, 0.8);
     }
@@ -38,13 +38,11 @@
   }
 }
 
-// Keep classes for compatibility, but remove animations so planets remain static
-.floatA {}
-.floatB {}
 
 .globe {
-  width: var(--planet-size, 44px);
-  height: var(--planet-size, 44px);
+  display: block;
+  width: 100%;
+  height: 100%;
   border-radius: $radius-full;
   position: relative;
   box-shadow:
@@ -54,6 +52,7 @@
   overflow: hidden;
   flex-shrink: 0;
   background-color: #1e1b4b;
+  z-index: 2;
 }
 
 // ─── Textures ────────────────────────────────────────────────
@@ -153,27 +152,15 @@
   z-index: 4;
 }
 
-.ring {
-  position: absolute;
-  top: 50%;
-  left: -25%;
-  width: 150%;
-  height: 35%;
-  border-radius: $radius-full;
-  border: 2px solid rgba(255, 255, 255, 0.16);
-  box-shadow: 
-    0 0 8px rgba(var(--planet-color), 0.1),
-    inset 0 0 8px rgba(255, 255, 255, 0.05);
-  transform: translateY(-50%) rotateX(76deg) rotateY(-8deg);
-  pointer-events: none;
-  z-index: 5;
-}
-
 .label {
+  position: absolute;
+  top: calc(100% + #{$space-2});
+  left: 50%;
+  transform: translateX(-50%);
   @include flex-column-center;
   gap: 2px;
   pointer-events: none;
-  max-width: 100px;
+  width: 120px;
   text-align: center;
   text-shadow: 
     0 1px 3px rgba(0, 0, 0, 0.9),

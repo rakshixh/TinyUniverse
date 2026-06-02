@@ -44,16 +44,14 @@ interface PlanetProps {
   onClick: (memory: IMemory) => void;
   color?: string;
   textureType?: string;
-  hasRing?: boolean;
 }
 
-export default function Planet({ memory, onClick, color, textureType, hasRing }: PlanetProps) {
-  const finalColor = useMemo(() => color || getPlanetColor(memory.title), [color, memory.title]);
-  const finalTexture = useMemo(() => textureType || getPlanetTexture(memory.title), [textureType, memory.title]);
-  const finalHasRing = useMemo(() => hasRing !== undefined ? hasRing : hashString(memory.title) % 3 === 0, [hasRing, memory.title]);
+export default function Planet({ memory, onClick, color, textureType }: PlanetProps) {
+  const finalColor = useMemo(() => color || getPlanetColor(memory._id || memory.title), [color, memory._id, memory.title]);
+  const finalTexture = useMemo(() => textureType || getPlanetTexture(memory._id || memory.title), [textureType, memory._id, memory.title]);
 
   const size = ORBIT_SIZES[memory.orbit] ?? 40;
-  const rotationDuration = useMemo(() => `${(30 + (hashString(memory.title) % 30))}s`, [memory.title]);
+  const rotationDuration = useMemo(() => `${(30 + (hashString(memory._id || memory.title) % 30))}s`, [memory._id, memory.title]);
 
   // Format date nicely (e.g. Jun 2, 2026)
   const formattedDate = useMemo(() => {
@@ -87,7 +85,6 @@ export default function Planet({ memory, onClick, color, textureType, hasRing }:
         <span className={`${styles.texture} ${styles[finalTexture]}`} />
         <span className={styles.shading} />
         <span className={styles.shine} />
-        {finalHasRing && <span className={styles.ring} />}
       </span>
       <span className={styles.label}>
         <span className={styles.titleText}>{memory.title}</span>

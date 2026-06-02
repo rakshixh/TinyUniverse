@@ -63,6 +63,7 @@
   position: absolute;
   top: 50%;
   left: 50%;
+  transform: translate(-50%, -50%);
   border-radius: $radius-full;
   @include transition(width height, $duration-slow);
   animation: sun-glow-slow var(--pulse-speed, 8s) ease-in-out infinite;
@@ -72,6 +73,7 @@
   position: absolute;
   top: 50%;
   left: 50%;
+  transform: translate(-50%, -50%);
   border: 1px solid rgba(255, 255, 255, 0.04);
   border-radius: $radius-full;
   @include transition(width height, $duration-slow);
@@ -139,9 +141,11 @@
     opacity: 0;
   }
   10% {
+    transform: translate(-50%, -50%) scale(0.88);
     opacity: 0.2;
   }
   90% {
+    transform: translate(-50%, -50%) scale(1.14);
     opacity: 0.03;
   }
   100% {

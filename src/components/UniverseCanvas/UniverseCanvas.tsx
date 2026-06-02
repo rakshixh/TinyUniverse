@@ -35,6 +35,14 @@ function hexToRgb(hex: string): string {
   return `${r}, ${g}, ${b}`;
 }
 
+function hashString(str: string): number {
+  let hash = 5381;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) + hash) ^ str.charCodeAt(i);
+  }
+  return Math.abs(hash);
+}
+
 interface UniverseCanvasProps {
   solarSystem: ISolarSystem;
   memories: IMemory[];
@@ -95,7 +103,6 @@ export default function UniverseCanvas({ solarSystem, memories, onPlanetClick }:
       y: number;
       color: string;
       textureType: string;
-      hasRing: boolean;
     }> = [];
 
     // Distribute planets evenly per orbit ring
@@ -119,14 +126,14 @@ export default function UniverseCanvas({ solarSystem, memories, onPlanetClick }:
         const x = CENTER + radius * Math.cos(radians);
         const y = CENTER + radius * Math.sin(radians);
 
-        // Assign colors sequentially to avoid adjacent duplicate colors
-        const color = PLANET_COLORS[index % PLANET_COLORS.length];
+        // Generate a deterministic pseudo-random seed from memory ID or title
+        const seed = hashString(memory._id || memory.title);
+
+        // Assign colors randomly and deterministically based on seed
+        const color = PLANET_COLORS[seed % PLANET_COLORS.length];
         
-        // Distribute textures sequentially
-        const textureType = TEXTURE_TYPES[index % TEXTURE_TYPES.length];
-        
-        // Give rings to every third planet
-        const hasRing = index % 3 === 0;
+        // Distribute textures randomly and deterministically based on seed
+        const textureType = TEXTURE_TYPES[seed % TEXTURE_TYPES.length];
 
         // Override angle locally on the memory object so child components know their position
         const memoryWithUpdatedAngle = { ...memory, angle };
@@ -137,7 +144,6 @@ export default function UniverseCanvas({ solarSystem, memories, onPlanetClick }:
           y,
           color,
           textureType,
-          hasRing,
         });
       });
     });
@@ -291,6 +297,8 @@ return (
               height: diameter,
               top: CENTER - radius,
               left: CENTER - radius,
+              borderColor: isActive ? `rgba(${starGlowRgb}, 0.24)` : undefined,
+              boxShadow: isActive ? `0 0 6px rgba(${starGlowRgb}, 0.08)` : undefined,
             }}
             aria-hidden="true"
           />
@@ -396,7 +404,7 @@ return (
       </div>
 
         {/* Planets */}
-        {planetPositions.map(({ memory, x, y, color, textureType, hasRing }) => (
+        {planetPositions.map(({ memory, x, y, color, textureType }) => (
           <div
             key={memory._id}
             className={styles.planetWrapper}
@@ -407,7 +415,6 @@ return (
               onClick={handlePlanetClick}
               color={color}
               textureType={textureType}
-              hasRing={hasRing}
             />
           </div>
         ))}
