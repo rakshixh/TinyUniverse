@@ -173,8 +173,23 @@ export default function SolarSystemsHubPage({ params }: Params) {
       {/* Header */}
       <header className={styles.header}>
         <div className={styles.headerLeft}>
-          <Link href="/universe" className={styles.backLink} aria-label="Back to All Universes">
-            ← All Universes
+          <Link href="/universe" className={styles.backLink} aria-label="Back to Universes">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{ flexShrink: 0 }}
+              aria-hidden="true"
+            >
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Universes
           </Link>
           <div className={styles.titleArea}>
             <h1 className={styles.universeTitle}>{universe?.title || 'Loading Universe...'}</h1>
@@ -420,6 +435,21 @@ export default function SolarSystemsHubPage({ params }: Params) {
                     </button>
                   ))}
                 </div>
+
+                {/* Custom Color Selector */}
+                <div className={styles.customColorContainer}>
+                  <label htmlFor="custom-star-color">Or choose custom color:</label>
+                  <div className={styles.pickerWrapper}>
+                    <input
+                      id="custom-star-color"
+                      type="color"
+                      value={starColor}
+                      onChange={(e) => setStarColor(e.target.value)}
+                      className={styles.colorPicker}
+                    />
+                    <span className={styles.colorHex}>{starColor}</span>
+                  </div>
+                </div>
               </div>
 
               <button
@@ -519,6 +549,21 @@ export default function SolarSystemsHubPage({ params }: Params) {
                       <span className={styles.colorDot} style={{ backgroundColor: color.value }} />
                     </button>
                   ))}
+                </div>
+
+                {/* Custom Color Selector */}
+                <div className={styles.customColorContainer}>
+                  <label htmlFor="edit-custom-star-color">Or choose custom color:</label>
+                  <div className={styles.pickerWrapper}>
+                    <input
+                      id="edit-custom-star-color"
+                      type="color"
+                      value={editSystemColor}
+                      onChange={(e) => setEditSystemColor(e.target.value)}
+                      className={styles.colorPicker}
+                    />
+                    <span className={styles.colorHex}>{editSystemColor}</span>
+                  </div>
                 </div>
               </div>
 

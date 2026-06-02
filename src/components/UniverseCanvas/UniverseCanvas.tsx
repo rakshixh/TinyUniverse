@@ -242,75 +242,133 @@ export default function UniverseCanvas({ solarSystem, memories, onPlanetClick }:
     onPlanetClick(memory);
   }, [onPlanetClick]);
 
-  const starColor = solarSystem.starColor || '#FBBF24';
-  const starGlowRgb = hexToRgb(starColor);
+const STAR_RENDER_PROPS = {
+  dwarf: { size: 52, pulseSpeed: '3.5s', glowSize: 120, pulseSize: 180, isNebula: false, isPulsar: false },
+  giant: { size: 68, pulseSpeed: '2s', glowSize: 170, pulseSize: 250, isNebula: false, isPulsar: false },
+  supergiant: { size: 88, pulseSpeed: '6s', glowSize: 240, pulseSize: 340, isNebula: false, isPulsar: false },
+  nebula: { size: 58, pulseSpeed: '4.5s', glowSize: 190, pulseSize: 270, isNebula: true, isPulsar: false },
+  pulsar: { size: 36, pulseSpeed: '0.8s', glowSize: 130, pulseSize: 180, isNebula: false, isPulsar: true },
+};
 
-  return (
+const starColor = solarSystem.starColor || '#FBBF24';
+const starGlowRgb = hexToRgb(starColor);
+const renderProps = STAR_RENDER_PROPS[solarSystem.starType as keyof typeof STAR_RENDER_PROPS] || STAR_RENDER_PROPS.dwarf;
+const size = renderProps.size;
+const centerOffset = size / 2;
+
+return (
+  <div
+    ref={containerRef}
+    className={styles.container}
+    onPointerDown={handlePointerDown}
+    onPointerMove={handlePointerMove}
+    onPointerUp={handlePointerUp}
+    style={{ cursor: isDragging.current ? 'grabbing' : 'grab' }}
+    aria-label={`${solarSystem.name} canvas`}
+    role="region"
+  >
     <div
-      ref={containerRef}
-      className={styles.container}
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
-      style={{ cursor: isDragging.current ? 'grabbing' : 'grab' }}
-      aria-label={`${solarSystem.name} canvas`}
-      role="region"
+      className={`${styles.canvas} ${zoomLevel < 0.65 ? styles.zoomedOut : ''}`}
+      style={{
+        width: CANVAS_SIZE,
+        height: CANVAS_SIZE,
+        transform: `translate(${panOffset.x}px, ${panOffset.y}px) scale(${finalScale})`,
+        transformOrigin: 'center center',
+      }}
     >
+      {/* Concentric Orbit Rings */}
+      {ORBIT_RADII.map((radius, i) => {
+        const orbit = i + 1;
+        const diameter = radius * 2;
+        const isActive = activeOrbits.has(orbit);
+
+        return (
+          <div
+            key={`orbit-${orbit}`}
+            className={`${styles.orbitRing} ${isActive ? styles.orbitActive : ''}`}
+            style={{
+              width: diameter,
+              height: diameter,
+              top: CENTER - radius,
+              left: CENTER - radius,
+            }}
+            aria-hidden="true"
+          />
+        );
+      })}
+
+      {/* Central Sun / Star */}
       <div
-        className={`${styles.canvas} ${zoomLevel < 0.65 ? styles.zoomedOut : ''}`}
+        className={styles.sun}
         style={{
-          width: CANVAS_SIZE,
-          height: CANVAS_SIZE,
-          transform: `translate(${panOffset.x}px, ${panOffset.y}px) scale(${finalScale})`,
-          transformOrigin: 'center center',
+          width: size,
+          height: size,
+          top: CENTER - centerOffset,
+          left: CENTER - centerOffset,
         }}
+        aria-hidden="true"
       >
-        {/* Concentric Orbit Rings */}
-        {ORBIT_RADII.map((radius, i) => {
-          const orbit = i + 1;
-          const diameter = radius * 2;
-          const isActive = activeOrbits.has(orbit);
-
-          return (
-            <div
-              key={`orbit-${orbit}`}
-              className={`${styles.orbitRing} ${isActive ? styles.orbitActive : ''}`}
-              style={{
-                width: diameter,
-                height: diameter,
-                top: CENTER - radius,
-                left: CENTER - radius,
-              }}
-              aria-hidden="true"
-            />
-          );
-        })}
-
-        {/* Central Sun / Star */}
         <div
-          className={styles.sun}
-          style={{ top: CENTER - 26, left: CENTER - 26 }}
-          aria-hidden="true"
-        >
+          className={styles.sunCore}
+          style={{
+            background: renderProps.isNebula
+              ? `radial-gradient(circle at 50% 50%, #ffffff 0%, ${starColor} 50%, rgba(139, 92, 246, 0.4) 80%, rgba(0,0,0,0.95) 100%)`
+              : `radial-gradient(circle at 35% 35%, #ffffff 0%, ${starColor} 65%, rgba(0,0,0,0.85) 100%)`,
+            boxShadow: renderProps.isPulsar
+              ? `
+                  0 0 32px rgba(${starGlowRgb}, 1),
+                  0 0 64px #ffffff,
+                  0 0 128px rgba(${starGlowRgb}, 0.5)
+                `
+              : `
+                  0 0 24px rgba(${starGlowRgb}, 0.9),
+                  0 0 48px rgba(${starGlowRgb}, 0.65),
+                  0 0 96px rgba(${starGlowRgb}, 0.3)
+                `,
+          }}
+        />
+        <div
+          className={styles.sunGlow}
+          style={{
+            width: renderProps.glowSize,
+            height: renderProps.glowSize,
+            background: `radial-gradient(circle, rgba(${starGlowRgb}, 0.45) 0%, rgba(${starGlowRgb}, 0.15) 55%, transparent 75%)`,
+            animation: `pulse-glow ${renderProps.pulseSpeed} ease-in-out infinite`,
+          }}
+        />
+        <div
+          className={styles.sunPulse}
+          style={{
+            width: renderProps.pulseSize,
+            height: renderProps.pulseSize,
+            borderColor: `rgba(${starGlowRgb}, 0.2)`,
+            animation: `pulse-glow ${renderProps.pulseSpeed} ease-in-out infinite 0.5s`,
+          }}
+        />
+        
+        {renderProps.isPulsar && (
           <div
-            className={styles.sunCore}
+            className={styles.pulsarBeacon}
             style={{
-              background: `radial-gradient(circle at 35% 35%, #ffffff 0%, ${starColor} 65%, rgba(0,0,0,0.85) 100%)`,
-              boxShadow: `
-                0 0 24px rgba(${starGlowRgb}, 0.9),
-                0 0 48px rgba(${starGlowRgb}, 0.65),
-                0 0 96px rgba(${starGlowRgb}, 0.3)
-              `,
+              background: `linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.9) 30%, rgba(${starGlowRgb}, 0.9) 50%, rgba(255,255,255,0.9) 70%, transparent 100%)`,
+              boxShadow: `0 0 15px rgba(${starGlowRgb}, 0.8)`,
             }}
           />
+        )}
+
+        {renderProps.isNebula && (
           <div
-            className={styles.sunGlow}
+            className={styles.nebulaCloud}
             style={{
-              background: `radial-gradient(circle, rgba(${starGlowRgb}, 0.35) 0%, rgba(${starGlowRgb}, 0.1) 55%, transparent 75%)`,
+              width: renderProps.glowSize * 1.3,
+              height: renderProps.glowSize * 1.3,
+              background: `radial-gradient(circle, rgba(${starGlowRgb}, 0.08) 0%, rgba(139, 92, 246, 0.05) 50%, transparent 80%)`,
+              border: `1.5px dashed rgba(${starGlowRgb}, 0.3)`,
+              boxShadow: `inset 0 0 20px rgba(${starGlowRgb}, 0.2)`,
             }}
           />
-          <div className={styles.sunPulse} style={{ borderColor: `rgba(${starGlowRgb}, 0.15)` }} />
-        </div>
+        )}
+      </div>
 
         {/* Planets */}
         {planetPositions.map(({ memory, x, y, color, textureType, hasRing }) => (

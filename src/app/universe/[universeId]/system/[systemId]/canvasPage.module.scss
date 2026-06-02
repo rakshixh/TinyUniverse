@@ -35,11 +35,17 @@
 }
 
 .backLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 38px;
+  min-width: 120px;
   color: $color-text-muted;
   text-decoration: none;
-  font-size: $font-xs;
+  font-size: $font-sm;
   font-weight: $font-semibold;
-  padding: $space-1 $space-3;
+  padding: 0 16px;
   border-radius: $radius-md;
   background: rgba($color-border, 0.2);
   border: 1px solid rgba($color-border, 0.25);

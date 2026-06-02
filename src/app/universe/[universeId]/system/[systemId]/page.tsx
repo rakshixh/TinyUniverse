@@ -99,9 +99,24 @@ export default function SolarSystemCanvasPage({ params }: Params) {
           <Link
             href={`/universe/${universeId}`}
             className={styles.backLink}
-            aria-label={`Back to ${universe?.title || 'Universe'}`}
+            aria-label="Back to Systems"
           >
-            ← {universe?.title || 'Back to Universe'}
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{ flexShrink: 0 }}
+              aria-hidden="true"
+            >
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Systems
           </Link>
           <div className={styles.titleArea}>
             <h1 className={styles.systemName}>
