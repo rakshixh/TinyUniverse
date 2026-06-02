@@ -508,12 +508,10 @@
 
   &:hover {
     border-color: rgba(255, 255, 255, 0.3);
-    transform: scale(1.05);
   }
 
   &.selectedColor {
     border-color: $color-text;
-    transform: scale(1.1);
   }
 }
 
@@ -576,9 +574,9 @@
 }
 
 .customColorContainer {
-  margin-top: $space-3;
+  margin-top: $space-4;
   @include flex-column;
-  gap: $space-2;
+  gap: $space-2.5;
 
   label {
     font-size: $font-sm;
@@ -587,51 +585,47 @@
   }
 }
 
-.pickerWrapper {
+.customColorRow {
   display: flex;
   align-items: center;
   gap: $space-3;
+  width: 100%;
 }
 
-.colorPicker {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  width: 44px;
+.colorSlideContainer {
+  flex: 1;
   height: 44px;
   border-radius: $radius-full;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  background: transparent;
-  cursor: pointer;
-  padding: 0;
-  overflow: hidden;
-  @include transition(all);
-
-  &::-webkit-color-swatch-wrapper {
-    padding: 0;
-  }
-  &::-webkit-color-swatch {
-    border: none;
-    border-radius: $radius-full;
-  }
-  &::-moz-color-swatch {
-    border: none;
-    border-radius: $radius-full;
-  }
-
-  &:hover {
-    transform: scale(1.08);
-    border-color: rgba(255, 255, 255, 0.5);
-  }
+  border: 2px solid $color-primary; // purple border to hold the slide
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
 }
 
-.colorHex {
+.colorSlide {
+  width: 100%;
+  height: 100%;
+  border-radius: $radius-full;
+  @include transition(background-color, $duration-base);
+}
+
+.hexTextInput {
+  width: 110px;
+  height: 44px;
+  border-radius: $radius-md;
+  border: 1px solid rgba($color-border, 0.4);
+  background: rgba(255, 255, 255, 0.05);
+  color: $color-text;
   font-family: $font-family-mono;
   font-size: $font-sm;
-  color: $color-text-muted;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 4px 10px;
-  border-radius: $radius-sm;
-  border: 1px solid rgba($color-border, 0.5);
+  text-align: center;
+  @include transition(all);
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 0 8px rgba($color-primary, 0.25);
+  }
 }
 

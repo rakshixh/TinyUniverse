@@ -86,7 +86,7 @@
   height: 4px;
   pointer-events: none;
   z-index: 1;
-  animation: pulsar-spin 0.8s linear infinite;
+  animation: pulsar-spin 20s linear infinite;
   filter: blur(1px);
 }
 
@@ -97,7 +97,7 @@
   border-radius: 40% 60% 50% 50% / 50% 40% 60% 50%;
   pointer-events: none;
   z-index: 1;
-  animation: nebula-spin 12s linear infinite;
+  animation: nebula-spin 45s linear infinite;
 }
 
 @keyframes pulsar-spin {

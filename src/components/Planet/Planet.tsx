@@ -53,7 +53,7 @@ export default function Planet({ memory, onClick, color, textureType, hasRing }:
   const finalHasRing = useMemo(() => hasRing !== undefined ? hasRing : hashString(memory.title) % 3 === 0, [hasRing, memory.title]);
 
   const size = ORBIT_SIZES[memory.orbit] ?? 40;
-  const rotationDuration = useMemo(() => `${(15 + (hashString(memory.title) % 15))}s`, [memory.title]);
+  const rotationDuration = useMemo(() => `${(30 + (hashString(memory.title) % 30))}s`, [memory.title]);
 
   // Format date nicely (e.g. Jun 2, 2026)
   const formattedDate = useMemo(() => {

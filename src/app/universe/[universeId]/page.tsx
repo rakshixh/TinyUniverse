@@ -28,6 +28,10 @@ const STAR_TYPES = [
   { value: 'pulsar', name: 'Pulsar Core (Dense and active)' },
 ];
 
+const isValidHex = (hex: string) => {
+  return /^#[0-9A-Fa-f]{6}$|^#[0-9A-Fa-f]{3}$/.test(hex);
+};
+
 interface Params {
   params: Promise<{ universeId: string }>;
 }
@@ -44,6 +48,7 @@ export default function SolarSystemsHubPage({ params }: Params) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [starColor, setStarColor] = useState('#FBBF24');
+  const [customColorText, setCustomColorText] = useState('#FBBF24');
   const [starType, setStarType] = useState('dwarf');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -52,8 +57,34 @@ export default function SolarSystemsHubPage({ params }: Params) {
   const [editSystemName, setEditSystemName] = useState('');
   const [editSystemDesc, setEditSystemDesc] = useState('');
   const [editSystemColor, setEditSystemColor] = useState('#FBBF24');
+  const [editCustomColorText, setEditCustomColorText] = useState('#FBBF24');
   const [editSystemType, setEditSystemType] = useState('dwarf');
   const [isSubmittingEditSystem, setIsSubmittingEditSystem] = useState(false);
+
+  // Helper change handlers
+  const handleCustomColorChange = (val: string) => {
+    setCustomColorText(val);
+    const checkVal = val.startsWith('#') ? val : `#${val}`;
+    if (isValidHex(checkVal)) {
+      setStarColor(checkVal);
+    }
+  };
+
+  const handleCustomColorBlur = () => {
+    setCustomColorText(starColor);
+  };
+
+  const handleEditCustomColorChange = (val: string) => {
+    setEditCustomColorText(val);
+    const checkVal = val.startsWith('#') ? val : `#${val}`;
+    if (isValidHex(checkVal)) {
+      setEditSystemColor(checkVal);
+    }
+  };
+
+  const handleEditCustomColorBlur = () => {
+    setEditCustomColorText(editSystemColor);
+  };
 
   // Delete System Modal States
   const [systemToDelete, setSystemToDelete] = useState<ISolarSystem | null>(null);
@@ -90,6 +121,7 @@ export default function SolarSystemsHubPage({ params }: Params) {
       setName('');
       setDescription('');
       setStarColor('#FBBF24');
+      setCustomColorText('#FBBF24');
       setStarType('dwarf');
       setIsModalOpen(false);
     } catch {
@@ -321,6 +353,7 @@ export default function SolarSystemsHubPage({ params }: Params) {
                           setEditSystemName(system.name);
                           setEditSystemDesc(system.description || '');
                           setEditSystemColor(system.starColor);
+                          setEditCustomColorText(system.starColor);
                           setEditSystemType(system.starType);
                         }}
                         title="Edit system details"
@@ -426,7 +459,10 @@ export default function SolarSystemsHubPage({ params }: Params) {
                         '--star-color': color.value,
                         boxShadow: starColor === color.value ? `0 0 12px ${color.value}` : 'none',
                       } as React.CSSProperties}
-                      onClick={() => setStarColor(color.value)}
+                      onClick={() => {
+                        setStarColor(color.value);
+                        setCustomColorText(color.value);
+                      }}
                       disabled={isSubmitting}
                       title={color.name}
                       aria-label={color.name}
@@ -439,15 +475,24 @@ export default function SolarSystemsHubPage({ params }: Params) {
                 {/* Custom Color Selector */}
                 <div className={styles.customColorContainer}>
                   <label htmlFor="custom-star-color">Or choose custom color:</label>
-                  <div className={styles.pickerWrapper}>
+                  <div className={styles.customColorRow}>
+                    <div className={styles.colorSlideContainer}>
+                      <div 
+                        className={styles.colorSlide} 
+                        style={{ backgroundColor: isValidHex(starColor) ? starColor : '#FBBF24' }} 
+                      />
+                    </div>
                     <input
                       id="custom-star-color"
-                      type="color"
-                      value={starColor}
-                      onChange={(e) => setStarColor(e.target.value)}
-                      className={styles.colorPicker}
+                      type="text"
+                      value={customColorText}
+                      onChange={(e) => handleCustomColorChange(e.target.value)}
+                      onBlur={handleCustomColorBlur}
+                      className={styles.hexTextInput}
+                      placeholder="#FBBF24"
+                      maxLength={7}
+                      disabled={isSubmitting}
                     />
-                    <span className={styles.colorHex}>{starColor}</span>
                   </div>
                 </div>
               </div>
@@ -541,7 +586,10 @@ export default function SolarSystemsHubPage({ params }: Params) {
                         '--star-color': color.value,
                         boxShadow: editSystemColor === color.value ? `0 0 12px ${color.value}` : 'none',
                       } as React.CSSProperties}
-                      onClick={() => setEditSystemColor(color.value)}
+                      onClick={() => {
+                        setEditSystemColor(color.value);
+                        setEditCustomColorText(color.value);
+                      }}
                       disabled={isSubmittingEditSystem}
                       title={color.name}
                       aria-label={color.name}
@@ -554,15 +602,24 @@ export default function SolarSystemsHubPage({ params }: Params) {
                 {/* Custom Color Selector */}
                 <div className={styles.customColorContainer}>
                   <label htmlFor="edit-custom-star-color">Or choose custom color:</label>
-                  <div className={styles.pickerWrapper}>
+                  <div className={styles.customColorRow}>
+                    <div className={styles.colorSlideContainer}>
+                      <div 
+                        className={styles.colorSlide} 
+                        style={{ backgroundColor: isValidHex(editSystemColor) ? editSystemColor : '#FBBF24' }} 
+                      />
+                    </div>
                     <input
                       id="edit-custom-star-color"
-                      type="color"
-                      value={editSystemColor}
-                      onChange={(e) => setEditSystemColor(e.target.value)}
-                      className={styles.colorPicker}
+                      type="text"
+                      value={editCustomColorText}
+                      onChange={(e) => handleEditCustomColorChange(e.target.value)}
+                      onBlur={handleEditCustomColorBlur}
+                      className={styles.hexTextInput}
+                      placeholder="#FBBF24"
+                      maxLength={7}
+                      disabled={isSubmittingEditSystem}
                     />
-                    <span className={styles.colorHex}>{editSystemColor}</span>
                   </div>
                 </div>
               </div>

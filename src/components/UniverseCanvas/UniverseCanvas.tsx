@@ -243,11 +243,11 @@ export default function UniverseCanvas({ solarSystem, memories, onPlanetClick }:
   }, [onPlanetClick]);
 
 const STAR_RENDER_PROPS = {
-  dwarf: { size: 52, pulseSpeed: '3.5s', glowSize: 120, pulseSize: 180, isNebula: false, isPulsar: false },
-  giant: { size: 68, pulseSpeed: '2s', glowSize: 170, pulseSize: 250, isNebula: false, isPulsar: false },
-  supergiant: { size: 88, pulseSpeed: '6s', glowSize: 240, pulseSize: 340, isNebula: false, isPulsar: false },
-  nebula: { size: 58, pulseSpeed: '4.5s', glowSize: 190, pulseSize: 270, isNebula: true, isPulsar: false },
-  pulsar: { size: 36, pulseSpeed: '0.8s', glowSize: 130, pulseSize: 180, isNebula: false, isPulsar: true },
+  dwarf: { size: 52, pulseSpeed: '8s', glowSize: 120, pulseSize: 180, isNebula: false, isPulsar: false },
+  giant: { size: 68, pulseSpeed: '9s', glowSize: 170, pulseSize: 250, isNebula: false, isPulsar: false },
+  supergiant: { size: 88, pulseSpeed: '12s', glowSize: 240, pulseSize: 340, isNebula: false, isPulsar: false },
+  nebula: { size: 58, pulseSpeed: '10s', glowSize: 190, pulseSize: 270, isNebula: true, isPulsar: false },
+  pulsar: { size: 36, pulseSpeed: '6s', glowSize: 130, pulseSize: 180, isNebula: false, isPulsar: true },
 };
 
 const starColor = solarSystem.starColor || '#FBBF24';
