@@ -21,7 +21,6 @@ const UpdateMemorySchema = z.object({
     .string()
     .max(1000, 'Description cannot exceed 1000 characters')
     .optional(),
-  imageUrl: z.string().url('Invalid image URL').optional().or(z.literal('')),
   orbit: z.number().min(1).max(4).optional(),
   date: z.string().optional(),
   universeId: z.string().min(1, 'Universe ID is required'),

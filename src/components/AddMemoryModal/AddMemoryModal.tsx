@@ -1,15 +1,12 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import Image from 'next/image';
 import toast from 'react-hot-toast';
 import type { IMemory } from '@/types/memory';
 import {
   API_PATHS,
   MAX_TITLE_LENGTH,
   MAX_DESCRIPTION_LENGTH,
-  ALLOWED_IMAGE_TYPES,
-  MAX_IMAGE_SIZE_BYTES,
 } from '@/lib/constants';
 import styles from './AddMemoryModal.module.scss';
 
@@ -32,18 +29,12 @@ export default function AddMemoryModal({
   const [description, setDescription] = useState('');
   const [orbit, setOrbit] = useState(1);
   const [date, setDate] = useState(() => new Date().toISOString().substring(0, 10));
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
 
   const overlayRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLInputElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const isLoading = isUploading || isSubmitting;
+  const isLoading = isSubmitting;
 
   // Reset form
   const resetForm = useCallback(() => {
@@ -51,12 +42,7 @@ export default function AddMemoryModal({
     setDescription('');
     setOrbit(1);
     setDate(new Date().toISOString().substring(0, 10));
-    setImageFile(null);
-    setImagePreview(null);
-    setIsDragging(false);
-    setIsUploading(false);
     setIsSubmitting(false);
-    setUploadProgress(0);
   }, []);
 
   const handleClose = useCallback(() => {
@@ -93,70 +79,9 @@ export default function AddMemoryModal({
     return () => document.removeEventListener('keydown', handleKey);
   }, [isOpen, handleClose]);
 
-  const handleImageFile = (file: File) => {
-    if (!ALLOWED_IMAGE_TYPES.includes(file.type as typeof ALLOWED_IMAGE_TYPES[number])) {
-      toast.error('Please use JPG, PNG or WebP images');
-      return;
-    }
-    if (file.size > MAX_IMAGE_SIZE_BYTES) {
-      toast.error('Image must be under 3MB');
-      return;
-    }
-
-    setImageFile(file);
-    const reader = new FileReader();
-    reader.onload = (e) => setImagePreview(e.target?.result as string);
-    reader.readAsDataURL(file);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const file = e.dataTransfer.files[0];
-    if (file) handleImageFile(file);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim() || !date || isLoading) return;
-
-    let imageUrl = '';
-
-    // Upload image first if selected
-    if (imageFile) {
-      setIsUploading(true);
-      setUploadProgress(30);
-
-      try {
-        const formData = new FormData();
-        formData.append('file', imageFile);
-
-        const uploadRes = await fetch(API_PATHS.upload, {
-          method: 'POST',
-          body: formData,
-        });
-
-        setUploadProgress(80);
-        const uploadData = await uploadRes.json();
-
-        if (!uploadRes.ok) {
-          toast.error(uploadData.error || 'Image upload failed');
-          setIsUploading(false);
-          setUploadProgress(0);
-          return;
-        }
-
-        imageUrl = uploadData.url;
-        setUploadProgress(100);
-      } catch {
-        toast.error('Image upload failed. Try again.');
-        setIsUploading(false);
-        setUploadProgress(0);
-        return;
-      } finally {
-        setIsUploading(false);
-      }
-    }
 
     // Create memory
     setIsSubmitting(true);
@@ -167,7 +92,6 @@ export default function AddMemoryModal({
         body: JSON.stringify({
           title: title.trim(),
           description: description.trim(),
-          imageUrl,
           orbit,
           date,
           systemId,
@@ -299,79 +223,6 @@ export default function AddMemoryModal({
             <span className={styles.charCount}>{description.length}/{MAX_DESCRIPTION_LENGTH}</span>
           </div>
 
-          {/* Image Upload */}
-          <div className={styles.field}>
-            <span className={styles.label}>
-              Image <span className={styles.optional}>(optional · JPG, PNG, WebP · max 3MB)</span>
-            </span>
-
-            {imagePreview ? (
-              <div className={styles.imagePreview}>
-                <Image
-                  src={imagePreview}
-                  alt="Memory image preview"
-                  fill
-                  className={styles.previewImg}
-                  sizes="400px"
-                />
-                <button
-                  type="button"
-                  className={styles.removeImage}
-                  onClick={() => { setImageFile(null); setImagePreview(null); }}
-                  disabled={isLoading}
-                  aria-label="Remove selected image"
-                >
-                  ✕
-                </button>
-                {isUploading && (
-                  <div className={styles.uploadOverlay}>
-                    <div
-                      className={styles.progressBar}
-                      style={{ width: `${uploadProgress}%` }}
-                      role="progressbar"
-                      aria-valuenow={uploadProgress}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                    />
-                    <span className={styles.uploadText}>Uploading...</span>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div
-                className={`${styles.dropzone} ${isDragging ? styles.dragging : ''}`}
-                onDragEnter={(e) => { e.preventDefault(); setIsDragging(true); }}
-                onDragLeave={() => setIsDragging(false)}
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={handleDrop}
-                onClick={() => fileInputRef.current?.click()}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') fileInputRef.current?.click(); }}
-                aria-label="Upload image — click or drag and drop"
-              >
-                <span className={styles.dropIcon} aria-hidden="true">🌠</span>
-                <span className={styles.dropText}>
-                  {isDragging ? 'Drop it here!' : 'Click or drag image here'}
-                </span>
-              </div>
-            )}
-
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/jpeg,image/jpg,image/png,image/webp"
-              className={styles.hiddenInput}
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) handleImageFile(file);
-                e.target.value = '';
-              }}
-              aria-hidden="true"
-              tabIndex={-1}
-            />
-          </div>
-
           {/* Submit */}
           <button
             type="submit"
@@ -383,7 +234,7 @@ export default function AddMemoryModal({
             {isLoading ? (
               <>
                 <span className={styles.spinner} aria-hidden="true" />
-                {isUploading ? 'Uploading image...' : 'Creating planet...'}
+                Creating planet...
               </>
             ) : (
               <>

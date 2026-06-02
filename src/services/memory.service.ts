@@ -9,7 +9,6 @@ function toPlainMemory(doc: Record<string, unknown>): IMemory {
     systemId: doc.systemId?.toString() ?? '',
     title: doc.title as string,
     description: (doc.description as string) ?? '',
-    imageUrl: (doc.imageUrl as string) || undefined,
     orbit: doc.orbit as number,
     angle: (doc.angle as number) ?? 0,
     date: (doc.date as Date).toISOString(),
@@ -37,7 +36,6 @@ export async function createMemory(
     systemId: input.systemId,
     title: input.title,
     description: input.description ?? '',
-    imageUrl: input.imageUrl ?? '',
     orbit: input.orbit,
     date: new Date(input.date),
     angle: 0, // Computed dynamically on the client side
@@ -57,7 +55,6 @@ export async function updateMemory(
   const updateData: Record<string, unknown> = {};
   if (input.title !== undefined) updateData.title = input.title;
   if (input.description !== undefined) updateData.description = input.description;
-  if (input.imageUrl !== undefined) updateData.imageUrl = input.imageUrl;
   if (input.orbit !== undefined) updateData.orbit = input.orbit;
   if (input.date !== undefined) updateData.date = new Date(input.date);
 

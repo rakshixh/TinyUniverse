@@ -12,16 +12,6 @@ export const MAX_DESCRIPTION_LENGTH = 1000;
 export const MAX_UNIVERSE_TITLE_LENGTH = 100;
 export const MAX_UNIVERSE_DESC_LENGTH  = 500;
 
-// ─── Image Upload ─────────────────────────────────────────────
-export const ALLOWED_IMAGE_TYPES = [
-  'image/jpeg',
-  'image/jpg',
-  'image/png',
-  'image/webp',
-] as const;
-
-export const MAX_IMAGE_SIZE_BYTES = 3 * 1024 * 1024; // 3 MB
-
 // ─── Cookie ───────────────────────────────────────────────────
 export const SESSION_COOKIE_NAME = 'tiny_universe_session';
 export const SESSION_COOKIE_VALUE = 'authenticated';
@@ -32,5 +22,4 @@ export const API_PATHS = {
   universe:       '/api/universe',
   memories:       '/api/memories',
   memory:         (id: string) => `/api/memories/${id}`,
-  upload:         '/api/upload',
 } as const;

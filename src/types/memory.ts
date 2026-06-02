@@ -4,7 +4,6 @@ export interface IMemory {
   systemId: string;
   title: string;
   description: string;
-  imageUrl?: string;
   orbit: number;
   angle: number;
   date: string; // ISO String format
@@ -15,7 +14,6 @@ export interface IMemory {
 export interface CreateMemoryInput {
   title: string;
   description?: string;
-  imageUrl?: string;
   orbit: number;
   date: string;
   systemId: string;
@@ -24,7 +22,6 @@ export interface CreateMemoryInput {
 export interface UpdateMemoryInput {
   title?: string;
   description?: string;
-  imageUrl?: string;
   orbit?: number;
   date?: string;
 }

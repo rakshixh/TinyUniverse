@@ -5,7 +5,6 @@ export interface IMemoryDocument extends Document {
   systemId: Types.ObjectId;
   title: string;
   description: string;
-  imageUrl: string;
   orbit: number;
   angle: number;
   date: Date;
@@ -38,11 +37,6 @@ const MemorySchema = new Schema<IMemoryDocument>(
       default: '',
       trim: true,
       maxlength: [1000, 'Description cannot exceed 1000 characters'],
-    },
-    imageUrl: {
-      type: String,
-      default: '',
-      trim: true,
     },
     orbit: {
       type: Number,

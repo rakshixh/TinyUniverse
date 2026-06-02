@@ -40,7 +40,6 @@ const CreateMemorySchema = z.object({
     .max(1000, 'Description cannot exceed 1000 characters')
     .optional()
     .default(''),
-  imageUrl: z.string().url('Invalid image URL').optional().or(z.literal('')),
   orbit: z.number().min(1).max(4),
   date: z.string().min(1, 'Date is required'),
   systemId: z.string().min(1, 'System ID is required'),
