@@ -245,6 +245,11 @@
   gap: $space-3;
   position: relative;
   z-index: 2;
+
+  @include mobile {
+    padding: $space-4;
+    gap: $space-2;
+  }
 }
 
 .cardHeader {
@@ -347,7 +352,8 @@
     background: transparent;
     border: 1px solid rgba($color-primary, 0.3);
     color: rgba($color-text, 0.9);
-    padding: 4px 10px;
+    height: 30px;
+    padding: 0 $space-3;
     font-size: $font-xs;
     border-radius: $radius-sm;
     cursor: pointer;
@@ -382,7 +388,8 @@
     background: transparent;
     border: 1px solid rgba($color-error, 0.25);
     color: rgba($color-text, 0.8);
-    padding: 4px 10px;
+    height: 30px;
+    padding: 0 $space-3;
     font-size: $font-xs;
     border-radius: $radius-sm;
     cursor: pointer;
