@@ -5,7 +5,6 @@
   @include glass;
   border-radius: $radius-lg;
   box-shadow: $shadow-card;
-  padding: $space-6;
   position: relative;
   @include transition(transform border-color box-shadow, $duration-base);
   overflow: hidden;

@@ -351,73 +351,79 @@
   display: flex;
   align-items: center;
   gap: $space-2;
-}
+  flex: 1;
+  max-width: 170px;
 
-button.editBtn {
-  background: transparent;
-  border: 1px solid rgba($color-primary, 0.3);
-  color: rgba($color-text, 0.9);
-  padding: 4px 10px;
-  font-size: $font-xs;
-  border-radius: $radius-sm;
-  cursor: pointer;
-  font-weight: $font-medium;
-  @include transition(all);
-  outline: none;
+  button.editBtn {
+    background: transparent;
+    border: 1px solid rgba($color-primary, 0.3);
+    color: rgba($color-text, 0.9);
+    padding: 4px 10px;
+    font-size: $font-xs;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    font-weight: $font-medium;
+    @include transition(all);
+    outline: none;
+    flex: 1;
+    justify-content: center;
 
-  &:hover {
-    background: rgba($color-primary, 0.15);
-    border-color: $color-primary;
-    color: $color-text;
+    &:hover {
+      background: rgba($color-primary, 0.15);
+      border-color: $color-primary;
+      color: $color-text;
+    }
+
+    // Reset focused-but-not-hovered state (prevents back-nav focus restoration from showing hover style)
+    &:focus:not(:hover) {
+      background: transparent;
+      border-color: rgba($color-primary, 0.3);
+      color: rgba($color-text, 0.9);
+      box-shadow: none;
+    }
+
+    // Only show a subtle accessibility ring for keyboard navigation
+    &:focus-visible {
+      outline: 2px solid rgba($color-primary, 0.5);
+      outline-offset: 2px;
+    }
   }
 
-  // Reset focused-but-not-hovered state (prevents back-nav focus restoration from showing hover style)
-  &:focus:not(:hover) {
-    background: transparent !important;
-    border-color: rgba($color-primary, 0.3) !important;
-    color: rgba($color-text, 0.9) !important;
-    box-shadow: none !important;
-  }
+  button.deleteBtn {
+    background: transparent;
+    border: 1px solid rgba($color-error, 0.25);
+    color: rgba($color-text, 0.8);
+    padding: 4px 10px;
+    font-size: $font-xs;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    font-weight: $font-medium;
+    @include transition(all);
+    // Prevent browser focus-restoration after back-nav from triggering red hover
+    outline: none;
+    flex: 1;
+    justify-content: center;
 
-  // Only show a subtle accessibility ring for keyboard navigation
-  &:focus-visible {
-    outline: 2px solid rgba($color-primary, 0.5) !important;
-    outline-offset: 2px;
-  }
-}
+    &:hover {
+      background: rgba($color-error, 0.15);
+      border-color: $color-error;
+      color: $color-text;
+      box-shadow: 0 0 10px rgba($color-error, 0.25);
+    }
 
-button.deleteBtn {
-  background: transparent;
-  border: 1px solid rgba($color-error, 0.25);
-  color: rgba($color-text, 0.8);
-  padding: 4px 10px;
-  font-size: $font-xs;
-  border-radius: $radius-sm;
-  cursor: pointer;
-  font-weight: $font-medium;
-  @include transition(all);
-  // Prevent browser focus-restoration after back-nav from triggering red hover
-  outline: none;
+    // Reset focused-but-not-hovered: guarantees back-nav never shows the red active state
+    &:focus:not(:hover) {
+      background: transparent;
+      border-color: rgba($color-error, 0.25);
+      color: rgba($color-text, 0.8);
+      box-shadow: none;
+    }
 
-  &:hover {
-    background: rgba($color-error, 0.15);
-    border-color: $color-error;
-    color: $color-text;
-    box-shadow: 0 0 10px rgba($color-error, 0.25);
-  }
-
-  // Reset focused-but-not-hovered: guarantees back-nav never shows the red active state
-  &:focus:not(:hover) {
-    background: transparent !important;
-    border-color: rgba($color-error, 0.25) !important;
-    color: rgba($color-text, 0.8) !important;
-    box-shadow: none !important;
-  }
-
-  // Subtle keyboard focus ring only
-  &:focus-visible {
-    outline: 2px solid rgba($color-error, 0.4) !important;
-    outline-offset: 2px;
+    // Subtle keyboard focus ring only
+    &:focus-visible {
+      outline: 2px solid rgba($color-error, 0.4);
+      outline-offset: 2px;
+    }
   }
 }
 
