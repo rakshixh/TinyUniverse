@@ -1,0 +1,52 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.card {
+  @include glass;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  padding: $space-6;
+  position: relative;
+  @include transition(transform border-color box-shadow, $duration-base);
+  overflow: hidden;
+
+  // Background decoration inside card for premium cosmos look
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+      800px circle at var(--mouse-x, 0) var(--mouse-y, 0),
+      rgba(255, 255, 255, 0.04),
+      transparent 40%
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+.hoverable {
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.6),
+      0 0 20px rgba($color-primary, 0.05);
+  }
+}
+
+.clickable {
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  @include focus-ring;
+}

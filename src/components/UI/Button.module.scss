@@ -1,0 +1,132 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.button {
+  @include button-base;
+  height: 44px;
+  padding: 0 $space-6;
+  white-space: nowrap;
+  
+  &.loading {
+    cursor: wait;
+  }
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// ─── Button Variants ─────────────────────────────────────────
+
+.primary {
+  background: $color-primary;
+  color: $color-text;
+  box-shadow: $glow-primary;
+
+  &:hover:not(:disabled) {
+    background: $color-primary-dim;
+    transform: translateY(-1px);
+    box-shadow: 0 0 25px rgba($color-primary, 0.5);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+.secondary {
+  @include glass;
+  color: $color-text;
+
+  &:hover:not(:disabled) {
+    background: rgba($color-bg-elevated, 0.7);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+.create {
+  @include glass;
+  background: rgba($color-primary, 0.04);
+  border: 1px dashed rgba($color-primary, 0.25);
+  color: rgba($color-text, 0.85);
+
+  &:hover:not(:disabled) {
+    border-color: $color-primary;
+    background: rgba($color-primary, 0.08);
+    color: $color-text;
+    transform: scale(1.01);
+    box-shadow: 0 0 16px rgba($color-primary, 0.08);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.99);
+  }
+}
+
+.danger {
+  background: rgba($color-error, 0.15);
+  border: 1px solid $color-error;
+  color: #FF8A8A;
+  box-shadow: 0 0 12px rgba($color-error, 0.15);
+
+  &:hover:not(:disabled) {
+    background: rgba($color-error, 0.25);
+    transform: translateY(-1px);
+    box-shadow: 0 0 16px rgba($color-error, 0.3);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+.cancel {
+  background: transparent;
+  border: 1px solid $color-border;
+  color: $color-text-muted;
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: $color-text;
+  }
+}
+
+.icon {
+  background: transparent;
+  border: none;
+  padding: 0;
+  height: auto;
+  border-radius: $radius-full;
+  color: $color-text-muted;
+
+  &:hover:not(:disabled) {
+    color: $color-text;
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+// ─── Loading Spinner ─────────────────────────────────────────
+
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: $color-text;
+  animation: button-spin 0.6s linear infinite;
+}
+
+@keyframes button-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

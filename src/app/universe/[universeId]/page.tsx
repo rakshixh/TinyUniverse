@@ -7,26 +7,16 @@ import toast from 'react-hot-toast';
 import { useUniverseDetail } from '@/hooks/useUniverse';
 import { useSolarSystems } from '@/hooks/useSolarSystems';
 import Loader from '@/components/Loader/Loader';
+import Button from '@/components/UI/Button';
+import Card from '@/components/UI/Card';
+import Modal from '@/components/UI/Modal';
+import { CONTENT } from '@/lib/content';
 import styles from './systemsHub.module.scss';
 import type { ISolarSystem } from '@/types/solarsystem';
 
-// Available colors for the custom stars
-const STAR_COLORS = [
-  { name: 'Amber Sun', value: '#FBBF24' },
-  { name: 'Sky Giant', value: '#38BDF8' },
-  { name: 'Pink Dwarf', value: '#F472B6' },
-  { name: 'Crimson Giant', value: '#F87171' },
-  { name: 'Emerald Nebula', value: '#34D399' },
-  { name: 'Ametrine Star', value: '#8B5CF6' },
-];
-
-const STAR_TYPES = [
-  { value: 'dwarf', name: 'Yellow Dwarf (Balanced)' },
-  { value: 'giant', name: 'Blue Giant (Glows brightly)' },
-  { value: 'supergiant', name: 'Red Supergiant (Massive)' },
-  { value: 'nebula', name: 'Nebular Core (Mystical clouds)' },
-  { value: 'pulsar', name: 'Pulsar Core (Dense and active)' },
-];
+// Star colors and types are sourced from CONTENT
+const STAR_COLORS = CONTENT.systemsHub.starColors;
+const STAR_TYPES = CONTENT.systemsHub.starTypes;
 
 const isValidHex = (hex: string) => {
   return /^#[0-9A-Fa-f]{6}$|^#[0-9A-Fa-f]{3}$/.test(hex);
@@ -121,11 +111,11 @@ export default function SolarSystemsHubPage({ params }: Params) {
       const data = await res.json();
 
       if (!res.ok) {
-        toast.error(data.error || 'Failed to create solar system');
+        toast.error(data.error || CONTENT.common.genericError);
         return;
       }
 
-      toast.success('Star ignited and system formed! 🌟');
+      toast.success(CONTENT.systemsHub.igniteModal.successToast);
       mutate({ systems: [...systems, data.system] }, { revalidate: false });
       setName('');
       setDescription('');
@@ -134,7 +124,7 @@ export default function SolarSystemsHubPage({ params }: Params) {
       setStarType('dwarf');
       setIsModalOpen(false);
     } catch {
-      toast.error('Something went wrong. Try again.');
+      toast.error(CONTENT.common.genericError);
     } finally {
       setIsSubmitting(false);
     }
@@ -160,11 +150,11 @@ export default function SolarSystemsHubPage({ params }: Params) {
       const data = await res.json();
 
       if (!res.ok) {
-        toast.error(data.error || 'Failed to update star system');
+        toast.error(data.error || CONTENT.common.genericError);
         return;
       }
 
-      toast.success('Star system details updated ✨');
+      toast.success(CONTENT.systemsHub.editModal.successToast);
       mutate(
         {
           systems: systems.map((s) =>
@@ -175,13 +165,13 @@ export default function SolarSystemsHubPage({ params }: Params) {
       );
       setEditSystem(null);
     } catch {
-      toast.error('Something went wrong. Try again.');
+      toast.error(CONTENT.common.genericError);
     } finally {
       setIsSubmittingEditSystem(false);
     }
   };
 
-  const handleDeleteSystem = async (id: string, systemName: string) => {
+  const handleDeleteSystem = async (id: string) => {
     try {
       const res = await fetch(`/api/universe/${universeId}/systems?systemId=${id}`, {
         method: 'DELETE',
@@ -189,15 +179,15 @@ export default function SolarSystemsHubPage({ params }: Params) {
 
       if (!res.ok) {
         const data = await res.json();
-        toast.error(data.error || 'Failed to delete system');
+        toast.error(data.error || CONTENT.common.genericError);
         return;
       }
 
-      toast.success('Star system dissolved into stardust 🌑');
+      toast.success(CONTENT.systemsHub.deleteModal.successToast);
       mutate({ systems: systems.filter((s) => s._id !== id) }, { revalidate: false });
       setSystemToDelete(null);
     } catch {
-      toast.error('Something went wrong.');
+      toast.error(CONTENT.common.genericError);
     }
   };
 
@@ -214,7 +204,7 @@ export default function SolarSystemsHubPage({ params }: Params) {
       {/* Header */}
       <header className={styles.header}>
         <div className={styles.headerLeft}>
-          <Link href="/universe" className={styles.backLink} aria-label="Back to Universes">
+          <Link href="/universe" className={styles.backLink} aria-label={CONTENT.systemsHub.backBtn}>
             <svg
               width="16"
               height="16"
@@ -237,59 +227,55 @@ export default function SolarSystemsHubPage({ params }: Params) {
           </div>
         </div>
         {!isLoading && (
-          <button
-            className={styles.igniteButton}
+          <Button
             onClick={() => setIsModalOpen(true)}
-            aria-label="Ignite new star system"
+            aria-label={CONTENT.systemsHub.header.igniteBtn}
           >
-            Ignite Star System
-          </button>
+            {CONTENT.systemsHub.header.igniteBtn}
+          </Button>
         )}
       </header>
 
       {/* Main Content */}
       <main className={styles.main}>
         {isLoading ? (
-          <Loader message="Traversing stellar systems..." />
+          <Loader message={CONTENT.systemsHub.loader} />
         ) : systems.length === 0 ? (
           <div className={styles.emptyState}>
-            <div className={styles.emptyIcon} aria-hidden="true">☀️</div>
-            <h2>Universe is cold and silent</h2>
-            <p>This universe has no star systems yet. Ignite a custom star system to start mapping your memories in orbits.</p>
-            <button
-              className={styles.ctaButton}
+            <div className={styles.emptyIcon} aria-hidden="true">
+              {CONTENT.systemsHub.emptyState.icon}
+            </div>
+            <h2>{CONTENT.systemsHub.emptyState.title}</h2>
+            <p>{CONTENT.systemsHub.emptyState.subtitle}</p>
+            <Button
               onClick={() => setIsModalOpen(true)}
+              variant="primary"
             >
-              Ignite Your First Star System
-            </button>
+              {CONTENT.systemsHub.emptyState.cta}
+            </Button>
           </div>
         ) : (
           <div className={styles.grid}>
             {/* Create Card */}
-            <button
-              className={styles.createCard}
+            <Card
               onClick={() => setIsModalOpen(true)}
-              aria-label="Ignite new star system"
+              className={styles.createCard}
+              ariaLabel={CONTENT.systemsHub.grid.createCard.title}
             >
-              <span className={styles.plusIcon} aria-hidden="true">＋</span>
-              <h3>Ignite New Star</h3>
-              <p>Forge a new star system in this universe</p>
-            </button>
+              <span className={styles.plusIcon} aria-hidden="true">
+                {CONTENT.systemsHub.grid.createCard.plus}
+              </span>
+              <h3>{CONTENT.systemsHub.grid.createCard.title}</h3>
+              <p>{CONTENT.systemsHub.grid.createCard.desc}</p>
+            </Card>
 
             {/* System Cards */}
             {systems.map((system) => (
-              <div
+              <Card
                 key={system._id}
-                className={styles.card}
                 onClick={() => handleCardClick(system._id)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    handleCardClick(system._id);
-                  }
-                }}
-                aria-label={`Enter system ${system.name}`}
+                className={styles.card}
+                ariaLabel={`Enter system ${system.name}`}
               >
                 <div
                   className={styles.cardHeaderGlow}
@@ -316,15 +302,15 @@ export default function SolarSystemsHubPage({ params }: Params) {
                       </div>
                     </div>
                     {system.description && (
-                      <button
-                        type="button"
+                      <Button
+                        variant="icon"
                         className={styles.infoBtn}
                         onClick={(e) => {
                           e.stopPropagation();
                           setInfoSystem(system);
                         }}
-                        title="Show full description"
-                        aria-label="Show full description"
+                        title={CONTENT.systemsHub.grid.card.infoTooltip}
+                        aria-label={CONTENT.systemsHub.grid.card.infoTooltip}
                       >
                         <svg
                           width="16"
@@ -342,19 +328,19 @@ export default function SolarSystemsHubPage({ params }: Params) {
                           <path d="M12 16v-4" />
                           <path d="M12 8h.01" />
                         </svg>
-                      </button>
+                      </Button>
                     )}
                   </div>
 
                   <p className={styles.cardDesc}>
-                    {system.description || 'No description provided.'}
+                    {system.description || CONTENT.systemsHub.grid.card.noDesc}
                   </p>
 
                   <div className={styles.cardFooter}>
                     <span>Click to enter system ➔</span>
                     <div className={styles.cardActions}>
-                      <button
-                        type="button"
+                      <Button
+                        variant="secondary"
                         className={styles.editBtn}
                         onClick={(e) => {
                           e.stopPropagation();
@@ -365,399 +351,330 @@ export default function SolarSystemsHubPage({ params }: Params) {
                           setEditCustomColorText(system.starColor);
                           setEditSystemType(system.starType);
                         }}
-                        title="Edit system details"
+                        title={`Edit ${system.name}`}
                         aria-label={`Edit ${system.name}`}
                       >
-                        ✏️ Edit
-                      </button>
-                      <button
-                        type="button"
+                        {CONTENT.systemsHub.grid.card.editBtn}
+                      </Button>
+                      <Button
+                        variant="danger"
                         className={styles.deleteBtn}
                         onClick={(e) => {
                           e.stopPropagation();
                           setSystemToDelete(system);
                         }}
-                        title="Dissolve star system"
+                        title={`Dissolve ${system.name}`}
                         aria-label={`Dissolve ${system.name}`}
                       >
-                        Dissolve
-                      </button>
+                        {CONTENT.systemsHub.grid.card.deleteBtn}
+                      </Button>
                     </div>
                   </div>
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
         )}
       </main>
 
       {/* Ignite Star System Modal */}
-      {isModalOpen && (
-        <div
-          className={styles.modalOverlay}
-          onClick={(e) => { if (e.target === e.currentTarget) setIsModalOpen(false); }}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Ignite new star system"
-        >
-          <div className={styles.modal}>
-            <div className={styles.modalHeader}>
-              <h2>Ignite Star System</h2>
-              <button
-                className={styles.closeButton}
-                onClick={() => setIsModalOpen(false)}
-                disabled={isSubmitting}
-              >
-                ✕
-              </button>
-            </div>
-            <form onSubmit={handleSubmit} className={styles.form}>
-              <div className={styles.field}>
-                <label htmlFor="system-name">System Name *</label>
-                <input
-                  id="system-name"
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g., Solar System, Alpha Centauri, Chronos"
-                  maxLength={100}
-                  disabled={isSubmitting}
-                />
-              </div>
-
-              <div className={styles.field}>
-                <label htmlFor="system-desc">Description (optional)</label>
-                <textarea
-                  id="system-desc"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="What memories reside in this star system?"
-                  maxLength={500}
-                  rows={3}
-                  disabled={isSubmitting}
-                />
-              </div>
-
-              {/* Star Type Selector */}
-              <div className={styles.field}>
-                <label htmlFor="system-startype">Star Type</label>
-                <select
-                  id="system-startype"
-                  value={starType}
-                  onChange={(e) => setStarType(e.target.value)}
-                  disabled={isSubmitting}
-                  className={styles.selectInput}
-                >
-                  {STAR_TYPES.map((t) => (
-                    <option key={t.value} value={t.value}>{t.name}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Star Color Selection */}
-              <div className={styles.field}>
-                <span className={styles.fieldLabel}>Star Glow Color</span>
-                <div className={styles.colorGrid}>
-                  {STAR_COLORS.map((color) => (
-                    <button
-                      key={color.value}
-                      type="button"
-                      className={`${styles.colorOption} ${starColor === color.value ? styles.selectedColor : ''}`}
-                      style={{
-                        '--star-color': color.value,
-                        boxShadow: starColor === color.value ? `0 0 12px ${color.value}` : 'none',
-                      } as React.CSSProperties}
-                      onClick={() => {
-                        setStarColor(color.value);
-                        setCustomColorText(color.value);
-                      }}
-                      disabled={isSubmitting}
-                      title={color.name}
-                      aria-label={color.name}
-                    >
-                      <span className={styles.colorDot} style={{ backgroundColor: color.value }} />
-                    </button>
-                  ))}
-                </div>
-
-                {/* Custom Color Selector */}
-                <div className={styles.customColorContainer}>
-                  <label htmlFor="custom-star-color">Or choose custom color:</label>
-                  <div className={styles.customColorRow}>
-                    <div className={styles.colorSlideContainer}>
-                      <div 
-                        className={styles.colorSlide} 
-                        style={{ backgroundColor: getDisplayColor(customColorText) }} 
-                      />
-                    </div>
-                    <input
-                      id="custom-star-color"
-                      type="text"
-                      value={customColorText}
-                      onChange={(e) => handleCustomColorChange(e.target.value)}
-                      onBlur={handleCustomColorBlur}
-                      className={styles.hexTextInput}
-                      placeholder="#FBBF24"
-                      maxLength={7}
-                      disabled={isSubmitting}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                className={styles.submitButton}
-                disabled={isSubmitting || !name.trim()}
-              >
-                {isSubmitting ? 'Igniting Star...' : 'Forge Star System'}
-              </button>
-            </form>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={CONTENT.systemsHub.igniteModal.title}
+        disabled={isSubmitting}
+      >
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <div className={styles.field}>
+            <label htmlFor="system-name">
+              {CONTENT.systemsHub.igniteModal.fieldName}
+            </label>
+            <input
+              id="system-name"
+              type="text"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder={CONTENT.systemsHub.igniteModal.fieldNamePlaceholder}
+              maxLength={100}
+              disabled={isSubmitting}
+            />
           </div>
-        </div>
-      )}
+
+          <div className={styles.field}>
+            <label htmlFor="system-desc">
+              {CONTENT.systemsHub.igniteModal.fieldDesc}
+            </label>
+            <textarea
+              id="system-desc"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder={CONTENT.systemsHub.igniteModal.fieldDescPlaceholder}
+              maxLength={500}
+              rows={3}
+              disabled={isSubmitting}
+            />
+          </div>
+
+          {/* Star Type Selector */}
+          <div className={styles.field}>
+            <label htmlFor="system-startype">
+              {CONTENT.systemsHub.igniteModal.fieldType}
+            </label>
+            <select
+              id="system-startype"
+              value={starType}
+              onChange={(e) => setStarType(e.target.value)}
+              disabled={isSubmitting}
+              className={styles.selectInput}
+            >
+              {STAR_TYPES.map((t) => (
+                <option key={t.value} value={t.value}>{t.name}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Star Color Selection */}
+          <div className={styles.field}>
+            <span className={styles.fieldLabel}>
+              {CONTENT.systemsHub.igniteModal.fieldColor}
+            </span>
+            <div className={styles.colorGrid}>
+              {STAR_COLORS.map((color) => (
+                <button
+                  key={color.value}
+                  type="button"
+                  className={`${styles.colorOption} ${starColor === color.value ? styles.selectedColor : ''}`}
+                  style={{
+                    '--star-color': color.value,
+                    boxShadow: starColor === color.value ? `0 0 12px ${color.value}` : 'none',
+                  } as React.CSSProperties}
+                  onClick={() => {
+                    setStarColor(color.value);
+                    setCustomColorText(color.value);
+                  }}
+                  disabled={isSubmitting}
+                  title={color.name}
+                  aria-label={color.name}
+                >
+                  <span className={styles.colorDot} style={{ backgroundColor: color.value }} />
+                </button>
+              ))}
+            </div>
+
+            {/* Custom Color Selector */}
+            <div className={styles.customColorContainer}>
+              <label htmlFor="custom-star-color">Or choose custom color:</label>
+              <div className={styles.customColorRow}>
+                <div className={styles.colorSlideContainer}>
+                  <div 
+                    className={styles.colorSlide} 
+                    style={{ backgroundColor: getDisplayColor(customColorText) }} 
+                  />
+                </div>
+                <input
+                  id="custom-star-color"
+                  type="text"
+                  value={customColorText}
+                  onChange={(e) => handleCustomColorChange(e.target.value)}
+                  onBlur={handleCustomColorBlur}
+                  className={styles.hexTextInput}
+                  placeholder={CONTENT.systemsHub.igniteModal.customColorPlaceholder}
+                  maxLength={7}
+                  disabled={isSubmitting}
+                />
+              </div>
+            </div>
+          </div>
+
+          <Button
+            type="submit"
+            isLoading={isSubmitting}
+            loadingText={CONTENT.systemsHub.igniteModal.submitBtnLoading}
+          >
+            {CONTENT.systemsHub.igniteModal.submitBtn}
+          </Button>
+        </form>
+      </Modal>
 
       {/* Edit Star System Modal */}
-      {editSystem && (
-        <div
-          className={styles.modalOverlay}
-          onClick={(e) => { if (e.target === e.currentTarget) setEditSystem(null); }}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Edit star system details"
-        >
-          <div className={styles.modal}>
-            <div className={styles.modalHeader}>
-              <h2>Edit Star System</h2>
-              <button
-                className={styles.closeButton}
-                onClick={() => setEditSystem(null)}
-                disabled={isSubmittingEditSystem}
-              >
-                ✕
-              </button>
-            </div>
-            <form onSubmit={handleEditSystemSubmit} className={styles.form}>
-              <div className={styles.field}>
-                <label htmlFor="edit-system-name">System Name *</label>
-                <input
-                  id="edit-system-name"
-                  type="text"
-                  required
-                  value={editSystemName}
-                  onChange={(e) => setEditSystemName(e.target.value)}
-                  placeholder="e.g., Solar System, Alpha Centauri, Chronos"
-                  maxLength={100}
-                  disabled={isSubmittingEditSystem}
-                />
-              </div>
-
-              <div className={styles.field}>
-                <label htmlFor="edit-system-desc">Description (optional)</label>
-                <textarea
-                  id="edit-system-desc"
-                  value={editSystemDesc}
-                  onChange={(e) => setEditSystemDesc(e.target.value)}
-                  placeholder="What memories reside in this star system?"
-                  maxLength={500}
-                  rows={3}
-                  disabled={isSubmittingEditSystem}
-                />
-              </div>
-
-              {/* Star Type Selector */}
-              <div className={styles.field}>
-                <label htmlFor="edit-system-startype">Star Type</label>
-                <select
-                  id="edit-system-startype"
-                  value={editSystemType}
-                  onChange={(e) => setEditSystemType(e.target.value)}
-                  disabled={isSubmittingEditSystem}
-                  className={styles.selectInput}
-                >
-                  {STAR_TYPES.map((t) => (
-                    <option key={t.value} value={t.value}>{t.name}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Star Color Selection */}
-              <div className={styles.field}>
-                <span className={styles.fieldLabel}>Star Glow Color</span>
-                <div className={styles.colorGrid}>
-                  {STAR_COLORS.map((color) => (
-                    <button
-                      key={color.value}
-                      type="button"
-                      className={`${styles.colorOption} ${editSystemColor === color.value ? styles.selectedColor : ''}`}
-                      style={{
-                        '--star-color': color.value,
-                        boxShadow: editSystemColor === color.value ? `0 0 12px ${color.value}` : 'none',
-                      } as React.CSSProperties}
-                      onClick={() => {
-                        setEditSystemColor(color.value);
-                        setEditCustomColorText(color.value);
-                      }}
-                      disabled={isSubmittingEditSystem}
-                      title={color.name}
-                      aria-label={color.name}
-                    >
-                      <span className={styles.colorDot} style={{ backgroundColor: color.value }} />
-                    </button>
-                  ))}
-                </div>
-
-                {/* Custom Color Selector */}
-                <div className={styles.customColorContainer}>
-                  <label htmlFor="edit-custom-star-color">Or choose custom color:</label>
-                  <div className={styles.customColorRow}>
-                    <div className={styles.colorSlideContainer}>
-                      <div 
-                        className={styles.colorSlide} 
-                        style={{ backgroundColor: getDisplayColor(editCustomColorText) }} 
-                      />
-                    </div>
-                    <input
-                      id="edit-custom-star-color"
-                      type="text"
-                      value={editCustomColorText}
-                      onChange={(e) => handleEditCustomColorChange(e.target.value)}
-                      onBlur={handleEditCustomColorBlur}
-                      className={styles.hexTextInput}
-                      placeholder="#FBBF24"
-                      maxLength={7}
-                      disabled={isSubmittingEditSystem}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                className={styles.submitButton}
-                disabled={isSubmittingEditSystem || !editSystemName.trim()}
-              >
-                {isSubmittingEditSystem ? 'Saving...' : 'Save Changes'}
-              </button>
-            </form>
+      <Modal
+        isOpen={!!editSystem}
+        onClose={() => setEditSystem(null)}
+        title={CONTENT.systemsHub.editModal.title}
+        disabled={isSubmittingEditSystem}
+      >
+        <form onSubmit={handleEditSystemSubmit} className={styles.form}>
+          <div className={styles.field}>
+            <label htmlFor="edit-system-name">
+              {CONTENT.systemsHub.editModal.fieldName}
+            </label>
+            <input
+              id="edit-system-name"
+              type="text"
+              required
+              value={editSystemName}
+              onChange={(e) => setEditSystemName(e.target.value)}
+              placeholder={CONTENT.systemsHub.editModal.fieldNamePlaceholder}
+              maxLength={100}
+              disabled={isSubmittingEditSystem}
+            />
           </div>
-        </div>
-      )}
+
+          <div className={styles.field}>
+            <label htmlFor="edit-system-desc">
+              {CONTENT.systemsHub.editModal.fieldDesc}
+            </label>
+            <textarea
+              id="edit-system-desc"
+              value={editSystemDesc}
+              onChange={(e) => setEditSystemDesc(e.target.value)}
+              placeholder={CONTENT.systemsHub.editModal.fieldDescPlaceholder}
+              maxLength={500}
+              rows={3}
+              disabled={isSubmittingEditSystem}
+            />
+          </div>
+
+          {/* Star Type Selector */}
+          <div className={styles.field}>
+            <label htmlFor="edit-system-startype">
+              {CONTENT.systemsHub.editModal.fieldType}
+            </label>
+            <select
+              id="edit-system-startype"
+              value={editSystemType}
+              onChange={(e) => setEditSystemType(e.target.value)}
+              disabled={isSubmittingEditSystem}
+              className={styles.selectInput}
+            >
+              {STAR_TYPES.map((t) => (
+                <option key={t.value} value={t.value}>{t.name}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Star Color Selection */}
+          <div className={styles.field}>
+            <span className={styles.fieldLabel}>
+              {CONTENT.systemsHub.editModal.fieldColor}
+            </span>
+            <div className={styles.colorGrid}>
+              {STAR_COLORS.map((color) => (
+                <button
+                  key={color.value}
+                  type="button"
+                  className={`${styles.colorOption} ${editSystemColor === color.value ? styles.selectedColor : ''}`}
+                  style={{
+                    '--star-color': color.value,
+                    boxShadow: editSystemColor === color.value ? `0 0 12px ${color.value}` : 'none',
+                  } as React.CSSProperties}
+                  onClick={() => {
+                    setEditSystemColor(color.value);
+                    setEditCustomColorText(color.value);
+                  }}
+                  disabled={isSubmittingEditSystem}
+                  title={color.name}
+                  aria-label={color.name}
+                >
+                  <span className={styles.colorDot} style={{ backgroundColor: color.value }} />
+                </button>
+              ))}
+            </div>
+
+            {/* Custom Color Selector */}
+            <div className={styles.customColorContainer}>
+              <label htmlFor="edit-custom-star-color">Or choose custom color:</label>
+              <div className={styles.customColorRow}>
+                <div className={styles.colorSlideContainer}>
+                  <div 
+                    className={styles.colorSlide} 
+                    style={{ backgroundColor: getDisplayColor(editCustomColorText) }} 
+                  />
+                </div>
+                <input
+                  id="edit-custom-star-color"
+                  type="text"
+                  value={editCustomColorText}
+                  onChange={(e) => handleEditCustomColorChange(e.target.value)}
+                  onBlur={handleEditCustomColorBlur}
+                  className={styles.hexTextInput}
+                  placeholder={CONTENT.systemsHub.editModal.customColorPlaceholder}
+                  maxLength={7}
+                  disabled={isSubmittingEditSystem}
+                />
+              </div>
+            </div>
+          </div>
+
+          <Button
+            type="submit"
+            isLoading={isSubmittingEditSystem}
+            loadingText={CONTENT.systemsHub.editModal.submitBtnLoading}
+          >
+            {CONTENT.systemsHub.editModal.submitBtn}
+          </Button>
+        </form>
+      </Modal>
 
       {/* Delete Confirmation Modal */}
-      {systemToDelete && (
-        <div
-          className={styles.modalOverlay}
-          onClick={(e) => { if (e.target === e.currentTarget) setSystemToDelete(null); }}
-          role="dialog"
-          aria-modal="true"
-          aria-label={`Dissolve ${systemToDelete.name}`}
-        >
-          <div className={`${styles.modal} ${styles.deleteModal}`}>
-            <div className={styles.modalHeader}>
-              <h2 className={styles.deleteTitle} style={{ color: '#EF4444' }}>Dissolve Star System</h2>
-              <button
-                className={styles.closeButton}
-                onClick={() => setSystemToDelete(null)}
-              >
-                ✕
-              </button>
-            </div>
-            <div className={styles.modalBody} style={{ margin: '16px 0 24px 0' }}>
-              <p className={styles.warningMessage} style={{ fontSize: '1rem', color: '#FFFFFF', marginBottom: '12px', lineHeight: '1.5' }}>
-                Are you sure you want to dissolve the star system <strong>{systemToDelete.name}</strong>?
-              </p>
-              <p className={styles.warningSubtext} style={{ fontSize: '0.875rem', color: '#94A3B8', lineHeight: '1.6' }}>
-                All orbit rings, planets, and memories mapped within its orbits will be permanently dissolved into stardust.
-              </p>
-            </div>
-            <div className={styles.modalActions} style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
-              <button
-                type="button"
-                className={styles.cancelBtn}
-                onClick={() => setSystemToDelete(null)}
-                style={{
-                  background: 'transparent',
-                  border: '1px solid #1E293B',
-                  color: '#94A3B8',
-                  padding: '8px 16px',
-                  borderRadius: '10px',
-                  cursor: 'pointer',
-                  fontWeight: 500,
-                  fontSize: '0.875rem'
-                }}
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                className={styles.confirmDeleteBtn}
-                onClick={() => handleDeleteSystem(systemToDelete._id, systemToDelete.name)}
-                style={{
-                  background: 'rgba(239, 68, 68, 0.15)',
-                  border: '1px solid #EF4444',
-                  color: '#FF8A8A',
-                  padding: '8px 16px',
-                  borderRadius: '10px',
-                  cursor: 'pointer',
-                  fontWeight: 600,
-                  fontSize: '0.875rem',
-                  boxShadow: '0 0 12px rgba(239, 68, 68, 0.15)'
-                }}
-              >
-                Dissolve Star
-              </button>
-            </div>
-          </div>
+      <Modal
+        isOpen={!!systemToDelete}
+        onClose={() => setSystemToDelete(null)}
+        title={CONTENT.systemsHub.deleteModal.title}
+        variant="danger"
+      >
+        <div className={styles.modalBody}>
+          <p className={styles.warningMessage}>
+            {CONTENT.systemsHub.deleteModal.warningPrefix}
+            <strong>{systemToDelete?.name}</strong>
+            {CONTENT.systemsHub.deleteModal.warningSuffix}
+          </p>
+          <p className={styles.warningSubtext}>
+            {CONTENT.systemsHub.deleteModal.subtext}
+          </p>
         </div>
-      )}
+        <div className={styles.modalActions}>
+          <Button
+            variant="cancel"
+            onClick={() => setSystemToDelete(null)}
+          >
+            {CONTENT.systemsHub.deleteModal.cancelBtn}
+          </Button>
+          <Button
+            variant="danger"
+            onClick={() => systemToDelete && handleDeleteSystem(systemToDelete._id)}
+          >
+            {CONTENT.systemsHub.deleteModal.confirmBtn}
+          </Button>
+        </div>
+      </Modal>
 
       {/* Info Popup Modal */}
-      {infoSystem && (
-        <div
-          className={styles.modalOverlay}
-          onClick={(e) => { if (e.target === e.currentTarget) setInfoSystem(null); }}
-          role="dialog"
-          aria-modal="true"
-          aria-label={`About ${infoSystem.name}`}
-        >
-          <div className={styles.modal}>
-            <div className={styles.modalHeader}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div
-                  style={{
-                    width: '16px',
-                    height: '16px',
-                    borderRadius: '50%',
-                    backgroundColor: infoSystem.starColor,
-                    boxShadow: `0 0 10px ${infoSystem.starColor}`,
-                  }}
-                />
-                <h2>{infoSystem.name}</h2>
-              </div>
-              <button
-                className={styles.closeButton}
-                onClick={() => setInfoSystem(null)}
-              >
-                ✕
-              </button>
-            </div>
-            <div className={styles.infoContent}>
-              <span className={styles.starTypeBadge} style={{ display: 'inline-block', marginBottom: '16px' }}>
-                {infoSystem.starType} Star System
-              </span>
-              <p className={styles.fullDesc} style={{ whiteSpace: 'pre-wrap', color: '#E2E8F0', fontSize: '0.95rem', lineHeight: '1.6' }}>
-                {infoSystem.description || 'No description provided.'}
-              </p>
-              <div className={styles.infoFooter} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#64748B', marginTop: '24px', borderTop: '1px solid rgba(30, 41, 59, 0.5)', paddingTop: '12px' }}>
-                <span>Created: {new Date(infoSystem.createdAt).toLocaleDateString()}</span>
-                <span>Last Updated: {new Date(infoSystem.updatedAt).toLocaleDateString()}</span>
-              </div>
-            </div>
+      <Modal
+        isOpen={!!infoSystem}
+        onClose={() => setInfoSystem(null)}
+        title={infoSystem?.name || ''}
+      >
+        <div className={styles.infoContent}>
+          <span className={styles.starTypeBadge}>
+            {infoSystem?.starType} Star System
+          </span>
+          <p className={styles.fullDesc}>
+            {infoSystem?.description || CONTENT.systemsHub.infoModal.noDesc}
+          </p>
+          <div className={styles.infoFooter}>
+            <span>
+              {CONTENT.systemsHub.infoModal.created}{' '}
+              {infoSystem ? new Date(infoSystem.createdAt).toLocaleDateString() : ''}
+            </span>
+            <span>
+              {CONTENT.systemsHub.infoModal.updated}{' '}
+              {infoSystem ? new Date(infoSystem.updatedAt).toLocaleDateString() : ''}
+            </span>
           </div>
         </div>
-      )}
+      </Modal>
     </div>
   );
 }

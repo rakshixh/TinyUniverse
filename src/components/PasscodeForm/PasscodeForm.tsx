@@ -3,6 +3,8 @@
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import Button from '@/components/UI/Button';
+import { CONTENT } from '@/lib/content';
 import styles from './PasscodeForm.module.scss';
 
 export default function PasscodeForm() {
@@ -30,7 +32,7 @@ export default function PasscodeForm() {
 
       if (!res.ok) {
         setHasError(true);
-        toast.error(data.error || 'Invalid passcode');
+        toast.error(data.error || CONTENT.landingPage.invalidPasscodeError);
         setPasscode('');
         setTimeout(() => {
           setHasError(false);
@@ -39,10 +41,10 @@ export default function PasscodeForm() {
         return;
       }
 
-      toast.success('Welcome to your universe ✨');
+      toast.success(CONTENT.landingPage.welcomeToast);
       router.push('/universe');
     } catch {
-      toast.error('Something went wrong. Try again.');
+      toast.error(CONTENT.landingPage.genericError);
     } finally {
       setIsLoading(false);
     }
@@ -64,7 +66,7 @@ export default function PasscodeForm() {
           type="password"
           value={passcode}
           onChange={(e) => setPasscode(e.target.value)}
-          placeholder="Enter passcode..."
+          placeholder={CONTENT.landingPage.passcodePlaceholder}
           className={styles.input}
           autoComplete="off"
           autoFocus
@@ -75,28 +77,21 @@ export default function PasscodeForm() {
       </div>
 
       <p id="passcode-hint" className={styles.hint}>
-        Enter the secret passcode to unlock your universe
+        {CONTENT.landingPage.passcodeHint}
       </p>
 
-      <button
+      <Button
         type="submit"
-        className={styles.button}
         disabled={isLoading || !passcode.trim()}
-        aria-label={isLoading ? 'Verifying passcode...' : 'Unlock universe'}
+        isLoading={isLoading}
+        loadingText={CONTENT.landingPage.unlockingBtn}
         id="unlock-button"
+        aria-label={isLoading ? CONTENT.landingPage.unlockingAriaLabel : CONTENT.landingPage.unlockAriaLabel}
+        className={styles.submitButton}
       >
-        {isLoading ? (
-          <>
-            <span className={styles.spinner} aria-hidden="true" />
-            Unlocking...
-          </>
-        ) : (
-          <>
-            <span aria-hidden="true">🌌</span>
-            Unlock Universe
-          </>
-        )}
-      </button>
+        <span aria-hidden="true">🌌</span>
+        {CONTENT.landingPage.unlockBtn}
+      </Button>
     </form>
   );
 }

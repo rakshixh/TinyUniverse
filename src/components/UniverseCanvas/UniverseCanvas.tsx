@@ -4,6 +4,7 @@ import { useMemo, useRef, useState, useCallback, useEffect } from 'react';
 import type { IMemory } from '@/types/memory';
 import type { ISolarSystem } from '@/types/solarsystem';
 import Planet from '@/components/Planet/Planet';
+import { CONTENT } from '@/lib/content';
 import styles from './UniverseCanvas.module.scss';
 
 const CANVAS_SIZE = 1200; // logical px
@@ -58,9 +59,9 @@ export default function UniverseCanvas({ solarSystem, memories, onPlanetClick }:
   // User interactive states
   const [zoomLevel, setZoomLevel] = useState(1);
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
 
   // Refs for dragging math
-  const isDragging = useRef(false);
   const dragStart = useRef({ x: 0, y: 0 });
   const initialPanOffset = useRef({ x: 0, y: 0 });
   const wasDraggingRef = useRef(false);
@@ -204,7 +205,7 @@ export default function UniverseCanvas({ solarSystem, memories, onPlanetClick }:
       return;
     }
     
-    isDragging.current = true;
+    setIsDragging(true);
     dragStart.current = { x: e.clientX, y: e.clientY };
     initialPanOffset.current = panOffset;
     wasDraggingRef.current = false;
@@ -213,7 +214,7 @@ export default function UniverseCanvas({ solarSystem, memories, onPlanetClick }:
   };
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!isDragging.current) return;
+    if (!isDragging) return;
     
     const dx = e.clientX - dragStart.current.x;
     const dy = e.clientY - dragStart.current.y;
@@ -229,10 +230,10 @@ export default function UniverseCanvas({ solarSystem, memories, onPlanetClick }:
   };
 
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!isDragging.current) return;
+    if (!isDragging) return;
     
     e.currentTarget.releasePointerCapture(e.pointerId);
-    isDragging.current = false;
+    setIsDragging(false);
     
     if (wasDraggingRef.current) {
       preventClickRef.current = true;
@@ -269,10 +270,11 @@ return (
     onPointerDown={handlePointerDown}
     onPointerMove={handlePointerMove}
     onPointerUp={handlePointerUp}
-    style={{ cursor: isDragging.current ? 'grabbing' : 'grab' }}
+    style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
     aria-label={`${solarSystem.name} canvas`}
     role="region"
   >
+    {/* Zoomable & pannable canvas layer */}
     <div
       className={`${styles.canvas} ${zoomLevel < 0.65 ? styles.zoomedOut : ''}`}
       style={{
@@ -346,7 +348,7 @@ return (
             '--pulse-speed': renderProps.pulseSpeed,
           } as React.CSSProperties}
         />
-        
+
         {solarSystem.starType === 'giant' && (
           <div
             className={styles.starRing}
@@ -403,51 +405,52 @@ return (
         )}
       </div>
 
-        {/* Planets */}
-        {planetPositions.map(({ memory, x, y, color, textureType }) => (
-          <div
-            key={memory._id}
-            className={styles.planetWrapper}
-            style={{ top: y, left: x }}
-          >
-            <Planet
-              memory={memory}
-              onClick={handlePlanetClick}
-              color={color}
-              textureType={textureType}
-            />
-          </div>
-        ))}
-      </div>
-
-      {/* Glassmorphic Zoom Controls */}
-      <div className={styles.controls} aria-label="System controls">
-        <button
-          onClick={handleZoomIn}
-          title="Zoom In"
-          type="button"
-          aria-label="Zoom In"
+      {/* Planets — inside canvas so they pan/zoom with it */}
+      {planetPositions.map(({ memory, x, y, color, textureType }) => (
+        <div
+          key={memory._id}
+          className={styles.planetWrapper}
+          style={{ top: y, left: x }}
         >
-          ＋
-        </button>
-        <button
-          onClick={handleZoomOut}
-          title="Zoom Out"
-          type="button"
-          aria-label="Zoom Out"
-        >
-          －
-        </button>
-        <button
-          onClick={handleRecenter}
-          className={styles.recenterBtn}
-          title="Recenter View"
-          type="button"
-          aria-label="Recenter View"
-        >
-          ⟲
-        </button>
-      </div>
+          <Planet
+            memory={memory}
+            onClick={handlePlanetClick}
+            color={color}
+            textureType={textureType}
+          />
+        </div>
+      ))}
     </div>
-  );
+
+    {/* Glassmorphic Zoom Controls — outside canvas, stays fixed in viewport */}
+    <div className={styles.controls} aria-label="System controls">
+      <button
+        onClick={handleZoomIn}
+        title={CONTENT.canvas.zoomIn}
+        type="button"
+        aria-label={CONTENT.canvas.zoomIn}
+      >
+        ＋
+      </button>
+      <button
+        onClick={handleZoomOut}
+        title={CONTENT.canvas.zoomOut}
+        type="button"
+        aria-label={CONTENT.canvas.zoomOut}
+      >
+        －
+      </button>
+      <button
+        onClick={handleRecenter}
+        className={styles.recenterBtn}
+        title={CONTENT.canvas.recenter}
+        type="button"
+        aria-label={CONTENT.canvas.recenter}
+      >
+        ⟲
+      </button>
+    </div>
+  </div>
+);
 }
+

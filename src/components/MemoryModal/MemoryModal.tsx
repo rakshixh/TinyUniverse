@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import type { IMemory } from '@/types/memory';
 import {
@@ -8,6 +8,9 @@ import {
   MAX_TITLE_LENGTH,
   MAX_DESCRIPTION_LENGTH,
 } from '@/lib/constants';
+import Button from '../UI/Button';
+import Modal from '../UI/Modal';
+import { CONTENT } from '@/lib/content';
 import styles from './MemoryModal.module.scss';
 
 type ModalMode = 'view' | 'edit' | 'confirm-delete';
@@ -47,60 +50,18 @@ export default function MemoryModal({
   const [date, setDate] = useState('');
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const overlayRef = useRef<HTMLDivElement>(null);
-  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const [prevMemoryId, setPrevMemoryId] = useState<string | null>(null);
 
   const isLoading = isSubmitting;
 
-  useEffect(() => {
-    if (memory) {
-      setTitle(memory.title);
-      setDescription(memory.description || '');
-      setOrbit(memory.orbit || 1);
-      setDate(memory.date ? memory.date.substring(0, 10) : '');
-      setMode('view');
-    }
-  }, [memory]);
-
-  // Keyboard navigation
-  useEffect(() => {
-    if (!memory) return;
-
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        if (mode === 'edit') setMode('view');
-        else if (mode === 'confirm-delete') setMode('view');
-        else onClose();
-      }
-    };
-
-    document.addEventListener('keydown', handleKey);
-    return () => document.removeEventListener('keydown', handleKey);
-  }, [memory, mode, onClose]);
-
-  // Focus trap
-  useEffect(() => {
-    if (memory) {
-      setTimeout(() => closeButtonRef.current?.focus(), 100);
-    }
-  }, [memory]);
-
-  // Lock body scroll
-  useEffect(() => {
-    if (memory) {
-      document.body.style.overflow = 'hidden';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [memory]);
-
-  const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === overlayRef.current) {
-      if (mode === 'view') onClose();
-    }
-  };
+  if (memory && memory._id !== prevMemoryId) {
+    setPrevMemoryId(memory._id);
+    setTitle(memory.title);
+    setDescription(memory.description || '');
+    setOrbit(memory.orbit || 1);
+    setDate(memory.date ? memory.date.substring(0, 10) : '');
+    setMode('view');
+  }
 
   const handleUpdate = async () => {
     if (!memory || !title.trim() || !date) return;
@@ -126,15 +87,15 @@ export default function MemoryModal({
       const data = await res.json();
 
       if (!res.ok) {
-        toast.error(data.error || 'Failed to update memory');
+        toast.error(data.error || CONTENT.common.genericError);
         return;
       }
 
-      toast.success('Memory updated ✨');
+      toast.success(CONTENT.memoryModal.editMode.successToast);
       onUpdate(data.memory);
       setMode('view');
     } catch {
-      toast.error('Something went wrong. Try again.');
+      toast.error(CONTENT.memoryModal.editMode.errorToast);
     } finally {
       setIsSubmitting(false);
     }
@@ -151,15 +112,15 @@ export default function MemoryModal({
 
       if (!res.ok) {
         const data = await res.json();
-        toast.error(data.error || 'Failed to delete memory');
+        toast.error(data.error || CONTENT.common.genericError);
         return;
       }
 
-      toast.success('Memory released into the void 🌑');
+      toast.success(CONTENT.memoryModal.deleteConfirm.successToast);
       onDelete(memory._id);
       onClose();
     } catch {
-      toast.error('Something went wrong. Try again.');
+      toast.error(CONTENT.memoryModal.deleteConfirm.errorToast);
     } finally {
       setIsSubmitting(false);
     }
@@ -168,34 +129,20 @@ export default function MemoryModal({
   if (!memory) return null;
 
   return (
-    <div
-      className={styles.overlay}
-      ref={overlayRef}
-      onClick={handleOverlayClick}
-      role="dialog"
-      aria-modal="true"
-      aria-label={`Memory: ${memory.title}`}
-    >
-      <div className={styles.modal}>
-        {/* Header */}
-        <div className={styles.header}>
+    <>
+      {/* View & Edit Modal */}
+      <Modal
+        isOpen={mode !== 'confirm-delete'}
+        onClose={onClose}
+        title={mode === 'edit' ? CONTENT.memoryModal.editMode.saveBtn : `${CONTENT.memoryModal.orbitBadgePrefix}${memory.orbit}`}
+        disabled={isLoading}
+      >
+        {/* Header Meta (Only view mode) */}
+        {mode === 'view' && (
           <div className={styles.headerMeta}>
-            <span className={styles.orbitBadge} aria-label={`Orbit ${memory.orbit}`}>
-              Orbit {memory.orbit}
-            </span>
             <span className={styles.date}>{formatDate(memory.date)}</span>
           </div>
-          <button
-            ref={closeButtonRef}
-            className={styles.closeButton}
-            onClick={onClose}
-            aria-label="Close memory"
-            id="memory-modal-close"
-            disabled={isLoading}
-          >
-            ✕
-          </button>
-        </div>
+        )}
 
         {/* Content */}
         <div className={styles.body}>
@@ -207,22 +154,22 @@ export default function MemoryModal({
                 <p className={styles.description}>{memory.description}</p>
               )}
               <div className={styles.actions}>
-                <button
-                  className={styles.editButton}
+                <Button
+                  variant="secondary"
                   onClick={() => setMode('edit')}
                   id="edit-memory-button"
-                  aria-label="Edit this memory"
+                  aria-label={CONTENT.memoryModal.viewMode.editBtn}
                 >
-                  ✏️ Edit
-                </button>
-                <button
-                  className={styles.deleteButton}
+                  {CONTENT.memoryModal.viewMode.editBtn}
+                </Button>
+                <Button
+                  variant="danger"
                   onClick={() => setMode('confirm-delete')}
                   id="delete-memory-button"
-                  aria-label="Delete this memory"
+                  aria-label={CONTENT.memoryModal.viewMode.deleteBtn}
                 >
-                  🗑️ Delete
-                </button>
+                  {CONTENT.memoryModal.viewMode.deleteBtn}
+                </Button>
               </div>
             </div>
           )}
@@ -231,7 +178,9 @@ export default function MemoryModal({
           {mode === 'edit' && (
             <div className={styles.editContent}>
               <div className={styles.field}>
-                <label htmlFor="edit-title" className={styles.label}>Title</label>
+                <label htmlFor="edit-title" className={styles.label}>
+                  {CONTENT.memoryModal.editMode.fieldTitle}
+                </label>
                 <input
                   id="edit-title"
                   type="text"
@@ -246,7 +195,9 @@ export default function MemoryModal({
               </div>
 
               <div className={styles.field}>
-                <label htmlFor="edit-date" className={styles.label}>Memory Date</label>
+                <label htmlFor="edit-date" className={styles.label}>
+                  {CONTENT.memoryModal.editMode.fieldDate}
+                </label>
                 <input
                   id="edit-date"
                   type="date"
@@ -260,7 +211,9 @@ export default function MemoryModal({
               </div>
 
               <div className={styles.field}>
-                <label htmlFor="edit-orbit" className={styles.label}>Orbit Ring</label>
+                <label htmlFor="edit-orbit" className={styles.label}>
+                  {CONTENT.memoryModal.editMode.fieldOrbit}
+                </label>
                 <select
                   id="edit-orbit"
                   value={orbit}
@@ -268,15 +221,16 @@ export default function MemoryModal({
                   className={styles.select}
                   disabled={isLoading}
                 >
-                  <option value={1}>Ring 1 (Inner)</option>
-                  <option value={2}>Ring 2</option>
-                  <option value={3}>Ring 3</option>
-                  <option value={4}>Ring 4 (Outer)</option>
+                  {CONTENT.memoryModal.editMode.orbitOptions.map((opt) => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
                 </select>
               </div>
 
               <div className={styles.field}>
-                <label htmlFor="edit-description" className={styles.label}>Description</label>
+                <label htmlFor="edit-description" className={styles.label}>
+                  {CONTENT.memoryModal.editMode.fieldDesc}
+                </label>
                 <textarea
                   id="edit-description"
                   value={description}
@@ -289,8 +243,8 @@ export default function MemoryModal({
               </div>
 
               <div className={styles.editActions}>
-                <button
-                  className={styles.cancelButton}
+                <Button
+                  variant="cancel"
                   onClick={() => {
                     setTitle(memory.title);
                     setDescription(memory.description || '');
@@ -299,62 +253,62 @@ export default function MemoryModal({
                     setMode('view');
                   }}
                   disabled={isLoading}
-                  aria-label="Cancel editing"
+                  aria-label={CONTENT.memoryModal.editMode.cancelBtn}
                 >
-                  Cancel
-                </button>
-                <button
-                  className={styles.saveButton}
+                  {CONTENT.memoryModal.editMode.cancelBtn}
+                </Button>
+                <Button
+                  variant="primary"
                   onClick={handleUpdate}
                   disabled={isLoading || !title.trim()}
+                  isLoading={isLoading}
+                  loadingText={CONTENT.memoryModal.editMode.saveBtnLoading}
                   id="save-memory-button"
-                  aria-label={isLoading ? 'Saving...' : 'Save changes'}
                 >
-                  {isLoading ? (
-                    <><span className={styles.spinner} aria-hidden="true" /> Saving...</>
-                  ) : (
-                    'Save Changes'
-                  )}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Confirm Delete */}
-          {mode === 'confirm-delete' && (
-            <div className={styles.deleteConfirm} role="alertdialog" aria-label="Confirm delete">
-              <div className={styles.deleteIcon} aria-hidden="true">🌑</div>
-              <h3 className={styles.deleteTitle}>Release this memory?</h3>
-              <p className={styles.deleteText}>
-                &ldquo;{memory.title}&rdquo; will drift into the void and cannot be recovered.
-              </p>
-              <div className={styles.deleteActions}>
-                <button
-                  className={styles.cancelButton}
-                  onClick={() => setMode('view')}
-                  disabled={isLoading}
-                  aria-label="Cancel deletion"
-                >
-                  Keep it
-                </button>
-                <button
-                  className={styles.confirmDeleteButton}
-                  onClick={handleDelete}
-                  disabled={isLoading}
-                  id="confirm-delete-button"
-                  aria-label="Confirm delete memory"
-                >
-                  {isLoading ? (
-                    <><span className={styles.spinner} aria-hidden="true" /> Deleting...</>
-                  ) : (
-                    'Yes, Release'
-                  )}
-                </button>
+                  {CONTENT.memoryModal.editMode.saveBtn}
+                </Button>
               </div>
             </div>
           )}
         </div>
-      </div>
-    </div>
+      </Modal>
+
+      {/* Confirm Delete Modal */}
+      <Modal
+        isOpen={mode === 'confirm-delete'}
+        onClose={() => setMode('view')}
+        title={CONTENT.memoryModal.deleteConfirm.title}
+        variant="danger"
+      >
+        <div className={styles.deleteConfirm}>
+          <div className={styles.deleteIcon} aria-hidden="true">
+            {CONTENT.memoryModal.deleteConfirm.icon}
+          </div>
+          <p className={styles.deleteText}>
+            {CONTENT.memoryModal.deleteConfirm.warningPrefix}
+            {memory.title}
+            {CONTENT.memoryModal.deleteConfirm.warningSuffix}
+          </p>
+          <div className={styles.deleteActions}>
+            <Button
+              variant="cancel"
+              onClick={() => setMode('view')}
+              disabled={isLoading}
+            >
+              {CONTENT.memoryModal.deleteConfirm.cancelBtn}
+            </Button>
+            <Button
+              variant="danger"
+              onClick={handleDelete}
+              isLoading={isLoading}
+              loadingText={CONTENT.memoryModal.deleteConfirm.confirmBtnLoading}
+              id="confirm-delete-button"
+            >
+              {CONTENT.memoryModal.deleteConfirm.confirmBtn}
+            </Button>
+          </div>
+        </div>
+      </Modal>
+    </>
   );
 }

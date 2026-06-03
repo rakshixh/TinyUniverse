@@ -53,43 +53,16 @@
   line-height: 1.5;
 }
 
-.button {
-  @include button-base;
-  background: $color-primary;
-  color: $color-text;
-  padding: $space-4 $space-8;
-  font-size: $font-base;
-  font-weight: $font-semibold;
-  height: 52px;
-  border-radius: $radius-md;
+// Override Button component for full-width landing page style
+.submitButton {
+  width: 100% !important;
+  height: 52px !important;
+  font-size: $font-base !important;
   letter-spacing: 0.02em;
-  width: 100%;
-  @include transition(all);
+  padding: $space-4 $space-8 !important;
+  border-radius: $radius-md !important;
 
   &:hover:not(:disabled) {
-    background: $color-primary-dim;
-    transform: translateY(-1px);
-    box-shadow: $glow-primary;
+    transform: translateY(-1px) !important;
   }
-
-  &:active:not(:disabled) {
-    transform: translateY(0);
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-  }
-}
-
-.spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba($color-text, 0.3);
-  border-top-color: $color-text;
-  border-radius: $radius-full;
-  animation: spin 0.7s linear infinite;
-  display: inline-block;
-  flex-shrink: 0;
 }

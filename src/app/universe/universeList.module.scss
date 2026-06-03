@@ -293,7 +293,7 @@
   gap: $space-2;
 }
 
-.editBtn {
+button.editBtn {
   background: transparent;
   border: 1px solid rgba($color-primary, 0.3);
   color: rgba($color-text, 0.9);
@@ -303,15 +303,30 @@
   cursor: pointer;
   font-weight: $font-medium;
   @include transition(all);
+  outline: none;
 
   &:hover {
     background: rgba($color-primary, 0.15);
     border-color: $color-primary;
     color: $color-text;
   }
+
+  // Reset focused-but-not-hovered state (prevents back-nav focus restoration from showing hover style)
+  &:focus:not(:hover) {
+    background: transparent !important;
+    border-color: rgba($color-primary, 0.3) !important;
+    color: rgba($color-text, 0.9) !important;
+    box-shadow: none !important;
+  }
+
+  // Only show a subtle accessibility ring for keyboard navigation
+  &:focus-visible {
+    outline: 2px solid rgba($color-primary, 0.5) !important;
+    outline-offset: 2px;
+  }
 }
 
-.deleteBtn {
+button.deleteBtn {
   background: transparent;
   border: 1px solid rgba($color-error, 0.25);
   color: rgba($color-text, 0.8);
@@ -321,6 +336,7 @@
   cursor: pointer;
   font-weight: $font-medium;
   @include transition(all);
+  outline: none;
 
   &:hover {
     background: rgba($color-error, 0.15);
@@ -328,51 +344,19 @@
     color: $color-text;
     box-shadow: 0 0 10px rgba($color-error, 0.25);
   }
-}
 
-// ─── Modal ────────────────────────────────────────────────────
-.modalOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba($color-bg, 0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  z-index: 100;
-  @include flex-center;
-  padding: $space-4;
-  animation: fadeIn $duration-base both;
-}
-
-.modal {
-  @include card;
-  width: 100%;
-  max-width: 480px;
-  animation: scaleIn $duration-slow $ease-spring both;
-  padding: $space-6;
-}
-
-.modalHeader {
-  @include flex-between;
-  margin-bottom: $space-5;
-  border-bottom: 1px solid rgba($color-border, 0.5);
-  padding-bottom: $space-3;
-
-  h2 {
-    font-size: $font-xl;
-    font-weight: $font-semibold;
-    color: $color-text;
+  // Reset focused-but-not-hovered: guarantees back-nav never shows the red active state
+  &:focus:not(:hover) {
+    background: transparent !important;
+    border-color: rgba($color-error, 0.25) !important;
+    color: rgba($color-text, 0.8) !important;
+    box-shadow: none !important;
   }
-}
 
-.closeButton {
-  background: transparent;
-  border: none;
-  color: $color-text-subtle;
-  font-size: $font-lg;
-  cursor: pointer;
-  
-  &:hover {
-    color: $color-text;
+  // Subtle keyboard focus ring only
+  &:focus-visible {
+    outline: 2px solid rgba($color-error, 0.4) !important;
+    outline-offset: 2px;
   }
 }
 
@@ -407,88 +391,60 @@
   }
 }
 
-.submitButton {
-  @include button-base;
-  background: $color-primary;
-  color: $color-text;
-  height: 46px;
-  font-weight: $font-semibold;
-  margin-top: $space-2;
-  @include transition(all);
-
-  &:hover:not(:disabled) {
-    background: $color-primary-dim;
-    transform: translateY(-1px);
-    box-shadow: $glow-primary;
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-}
-
-.customColorContainer {
-  margin-top: $space-3;
-  @include flex-column;
-  gap: $space-2;
-
-  label {
-    font-size: $font-sm;
-    font-weight: $font-medium;
-    color: $color-text-muted;
-  }
-}
-
-.pickerWrapper {
-  display: flex;
-  align-items: center;
-  gap: $space-3;
-}
-
-.colorPicker {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  width: 44px;
-  height: 44px;
-  border-radius: $radius-full;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  background: transparent;
-  cursor: pointer;
-  padding: 0;
-  overflow: hidden;
-  @include transition(all);
-
-  &::-webkit-color-swatch-wrapper {
-    padding: 0;
-  }
-  &::-webkit-color-swatch {
-    border: none;
-    border-radius: $radius-full;
-  }
-  &::-moz-color-swatch {
-    border: none;
-    border-radius: $radius-full;
-  }
-
-  &:hover {
-    transform: scale(1.08);
-    border-color: rgba(255, 255, 255, 0.5);
-  }
-}
-
-.colorHex {
-  font-family: $font-family-mono;
-  font-size: $font-sm;
-  color: $color-text-muted;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 4px 10px;
-  border-radius: $radius-sm;
-  border: 1px solid rgba($color-border, 0.5);
-}
-
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
 }
+
+// ─── Delete Modal Body ────────────────────────────────────────
+.modalBody {
+  margin-bottom: $space-6;
+}
+
+.warningMessage {
+  font-size: $font-base;
+  color: $color-text;
+  line-height: 1.6;
+  margin-bottom: $space-3;
+
+  strong {
+    color: $color-text;
+    font-weight: $font-semibold;
+  }
+}
+
+.warningSubtext {
+  font-size: $font-sm;
+  color: $color-text-muted;
+  line-height: 1.6;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $space-3;
+}
+
+// ─── Info Modal ───────────────────────────────────────────────
+.infoContent {
+  @include flex-column;
+  gap: $space-4;
+}
+
+.fullDesc {
+  white-space: pre-wrap;
+  color: $color-text;
+  font-size: $font-sm;
+  line-height: 1.7;
+}
+
+.infoFooter {
+  display: flex;
+  justify-content: space-between;
+  font-size: $font-xs;
+  color: $color-text-subtle;
+  margin-top: $space-6;
+  border-top: 1px solid rgba($color-border, 0.5);
+  padding-top: $space-3;
+}
+

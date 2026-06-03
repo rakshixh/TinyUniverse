@@ -5,6 +5,10 @@ import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { useUniverses } from '@/hooks/useUniverse';
 import Loader from '@/components/Loader/Loader';
+import Button from '@/components/UI/Button';
+import Card from '@/components/UI/Card';
+import Modal from '@/components/UI/Modal';
+import { CONTENT } from '@/lib/content';
 import styles from './universeList.module.scss';
 import type { IUniverse } from '@/types/universe';
 
@@ -48,17 +52,17 @@ export default function UniverseDirectoryPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        toast.error(data.error || 'Failed to create universe');
+        toast.error(data.error || CONTENT.common.genericError);
         return;
       }
 
-      toast.success('New universe ignited ✨');
+      toast.success(CONTENT.universeList.igniteModal.successToast);
       mutate({ universes: [data.universe, ...universes] }, { revalidate: false });
       setTitle('');
       setDescription('');
       setIsModalOpen(false);
     } catch {
-      toast.error('Something went wrong. Try again.');
+      toast.error(CONTENT.common.genericError);
     } finally {
       setIsSubmitting(false);
     }
@@ -82,11 +86,11 @@ export default function UniverseDirectoryPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        toast.error(data.error || 'Failed to update universe');
+        toast.error(data.error || CONTENT.common.genericError);
         return;
       }
 
-      toast.success('Universe details updated ✨');
+      toast.success(CONTENT.universeList.editModal.successToast);
       mutate(
         {
           universes: universes.map((u) =>
@@ -97,13 +101,13 @@ export default function UniverseDirectoryPage() {
       );
       setEditUniverse(null);
     } catch {
-      toast.error('Something went wrong. Try again.');
+      toast.error(CONTENT.common.genericError);
     } finally {
       setIsSubmittingEdit(false);
     }
   };
 
-  const handleDeleteUniverse = async (id: string, name: string) => {
+  const handleDeleteUniverse = async (id: string) => {
     try {
       const res = await fetch(`/api/universe/${id}`, {
         method: 'DELETE',
@@ -111,18 +115,18 @@ export default function UniverseDirectoryPage() {
 
       if (!res.ok) {
         const data = await res.json();
-        toast.error(data.error || 'Failed to delete universe');
+        toast.error(data.error || CONTENT.common.genericError);
         return;
       }
 
-      toast.success('Universe dissolved into stardust 🌑');
+      toast.success(CONTENT.universeList.deleteModal.successToast);
       mutate(
         { universes: universes.filter((u) => u._id !== id) },
         { revalidate: false }
       );
       setUniverseToDelete(null);
     } catch {
-      toast.error('Something went wrong. Try again.');
+      toast.error(CONTENT.common.genericError);
     }
   };
 
@@ -139,78 +143,77 @@ export default function UniverseDirectoryPage() {
         <div className={styles.headerLeft}>
           <span className={styles.logoEmoji} aria-hidden="true">🌌</span>
           <h1 className={styles.title}>
-            Tiny <span className={styles.titleAccent}>Universe</span>
+            {CONTENT.universeList.header.title}{' '}
+            <span className={styles.titleAccent}>{CONTENT.universeList.header.titleAccent}</span>
           </h1>
         </div>
-        <button
-          className={styles.igniteButton}
+        <Button
           onClick={() => setIsModalOpen(true)}
-          aria-label="Create new universe"
+          aria-label={CONTENT.universeList.header.igniteBtn}
         >
-          Ignite Universe
-        </button>
+          {CONTENT.universeList.header.igniteBtn}
+        </Button>
       </header>
 
       {/* Main Content */}
       <main className={styles.main}>
         {isLoading ? (
-          <Loader message="Mapping the cosmos..." />
+          <Loader message={CONTENT.universeList.loader} />
         ) : universes.length === 0 ? (
           <div className={styles.emptyState}>
-            <div className={styles.emptyIcon} aria-hidden="true">🛸</div>
-            <h2>Your cosmos is currently void</h2>
-            <p>You haven&apos;t created any universes yet. Ignite the first universe to start recording memories.</p>
-            <button
-              className={styles.ctaButton}
+            <div className={styles.emptyIcon} aria-hidden="true">
+              {CONTENT.universeList.emptyState.icon}
+            </div>
+            <h2>{CONTENT.universeList.emptyState.title}</h2>
+            <p>{CONTENT.universeList.emptyState.subtitle}</p>
+            <Button
               onClick={() => setIsModalOpen(true)}
+              variant="primary"
             >
-              Ignite Your First Universe
-            </button>
+              {CONTENT.universeList.emptyState.cta}
+            </Button>
           </div>
         ) : (
           <div className={styles.grid}>
             {/* Create Card */}
-            <button
-              className={styles.createCard}
+            <Card
               onClick={() => setIsModalOpen(true)}
-              aria-label="Ignite new universe"
+              className={styles.createCard}
+              ariaLabel={CONTENT.universeList.grid.createCard.title}
             >
-              <span className={styles.plusIcon} aria-hidden="true">＋</span>
-              <h3>Ignite New Universe</h3>
-              <p>Create a brand new shared digital universe</p>
-            </button>
+              <span className={styles.plusIcon} aria-hidden="true">
+                {CONTENT.universeList.grid.createCard.plus}
+              </span>
+              <h3>{CONTENT.universeList.grid.createCard.title}</h3>
+              <p>{CONTENT.universeList.grid.createCard.desc}</p>
+            </Card>
 
             {/* Universe Cards */}
             {universes.map((univ) => (
-              <div
+              <Card
                 key={univ._id}
-                className={styles.card}
                 onClick={() => handleCardClick(univ._id)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    handleCardClick(univ._id);
-                  }
-                }}
-                aria-label={`Enter universe ${univ.title}`}
+                className={styles.card}
+                ariaLabel={`Enter universe ${univ.title}`}
               >
                 <div className={styles.cardContent}>
                   <div className={styles.cardHeader}>
                     <div className={styles.cardHeaderLeft}>
-                      <span className={styles.cardIcon} aria-hidden="true">🪐</span>
+                      <span className={styles.cardIcon} aria-hidden="true">
+                        {CONTENT.universeList.grid.card.icon}
+                      </span>
                       <h3>{univ.title}</h3>
                     </div>
                     {univ.description && (
-                      <button
-                        type="button"
+                      <Button
+                        variant="icon"
                         className={styles.infoBtn}
                         onClick={(e) => {
                           e.stopPropagation();
                           setInfoUniverse(univ);
                         }}
-                        title="Show full description"
-                        aria-label="Show full description"
+                        title={CONTENT.universeList.grid.card.infoTooltip}
+                        aria-label={CONTENT.universeList.grid.card.infoTooltip}
                       >
                         <svg
                           width="16"
@@ -228,17 +231,20 @@ export default function UniverseDirectoryPage() {
                           <path d="M12 16v-4" />
                           <path d="M12 8h.01" />
                         </svg>
-                      </button>
+                      </Button>
                     )}
                   </div>
                   <p className={styles.cardDesc}>
-                    {univ.description || 'No description provided.'}
+                    {univ.description || CONTENT.universeList.grid.card.noDesc}
                   </p>
                   <div className={styles.cardFooter}>
-                    <span>Created: {new Date(univ.createdAt).toLocaleDateString()}</span>
+                    <span>
+                      {CONTENT.universeList.grid.card.created}{' '}
+                      {new Date(univ.createdAt).toLocaleDateString()}
+                    </span>
                     <div className={styles.cardActions}>
-                      <button
-                        type="button"
+                      <Button
+                        variant="secondary"
                         className={styles.editBtn}
                         onClick={(e) => {
                           e.stopPropagation();
@@ -246,247 +252,181 @@ export default function UniverseDirectoryPage() {
                           setEditTitle(univ.title);
                           setEditDesc(univ.description || '');
                         }}
-                        title="Edit universe details"
+                        title={`Edit ${univ.title}`}
                         aria-label={`Edit ${univ.title}`}
                       >
-                        ✏️ Edit
-                      </button>
-                      <button
-                        type="button"
+                        {CONTENT.universeList.grid.card.editBtn}
+                      </Button>
+                      <Button
+                        variant="danger"
                         className={styles.deleteBtn}
                         onClick={(e) => {
                           e.stopPropagation();
                           setUniverseToDelete(univ);
                         }}
-                        title="Dissolve universe"
+                        title={`Dissolve ${univ.title}`}
                         aria-label={`Dissolve ${univ.title}`}
                       >
-                        Dissolve
-                      </button>
+                        {CONTENT.universeList.grid.card.deleteBtn}
+                      </Button>
                     </div>
                   </div>
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
         )}
       </main>
 
       {/* Ignite Modal */}
-      {isModalOpen && (
-        <div
-          className={styles.modalOverlay}
-          onClick={(e) => { if (e.target === e.currentTarget) setIsModalOpen(false); }}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Ignite new universe"
-        >
-          <div className={styles.modal}>
-            <div className={styles.modalHeader}>
-              <h2>Ignite New Universe</h2>
-              <button
-                className={styles.closeButton}
-                onClick={() => setIsModalOpen(false)}
-                disabled={isSubmitting}
-              >
-                ✕
-              </button>
-            </div>
-            <form onSubmit={handleSubmit} className={styles.form}>
-              <div className={styles.field}>
-                <label htmlFor="universe-title">Universe Title *</label>
-                <input
-                  id="universe-title"
-                  type="text"
-                  required
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="e.g., Rakshith's Galaxy, Memory Lane"
-                  maxLength={100}
-                  disabled={isSubmitting}
-                />
-              </div>
-              <div className={styles.field}>
-                <label htmlFor="universe-desc">Description (optional)</label>
-                <textarea
-                  id="universe-desc"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="What does this universe represent?"
-                  maxLength={500}
-                  rows={4}
-                  disabled={isSubmitting}
-                />
-              </div>
-              <button
-                type="submit"
-                className={styles.submitButton}
-                disabled={isSubmitting || !title.trim()}
-              >
-                {isSubmitting ? 'Creating Universe...' : 'Ignite Cosmos'}
-              </button>
-            </form>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={CONTENT.universeList.igniteModal.title}
+        disabled={isSubmitting}
+      >
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <div className={styles.field}>
+            <label htmlFor="universe-title">
+              {CONTENT.universeList.igniteModal.fieldTitle}
+            </label>
+            <input
+              id="universe-title"
+              type="text"
+              required
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder={CONTENT.universeList.igniteModal.fieldTitlePlaceholder}
+              maxLength={100}
+              disabled={isSubmitting}
+            />
           </div>
-        </div>
-      )}
+          <div className={styles.field}>
+            <label htmlFor="universe-desc">
+              {CONTENT.universeList.igniteModal.fieldDesc}
+            </label>
+            <textarea
+              id="universe-desc"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder={CONTENT.universeList.igniteModal.fieldDescPlaceholder}
+              maxLength={500}
+              rows={4}
+              disabled={isSubmitting}
+            />
+          </div>
+          <Button
+            type="submit"
+            isLoading={isSubmitting}
+            loadingText={CONTENT.universeList.igniteModal.submitBtnLoading}
+          >
+            {CONTENT.universeList.igniteModal.submitBtn}
+          </Button>
+        </form>
+      </Modal>
 
       {/* Edit Modal */}
-      {editUniverse && (
-        <div
-          className={styles.modalOverlay}
-          onClick={(e) => { if (e.target === e.currentTarget) setEditUniverse(null); }}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Edit universe details"
-        >
-          <div className={styles.modal}>
-            <div className={styles.modalHeader}>
-              <h2>Edit Universe Details</h2>
-              <button
-                className={styles.closeButton}
-                onClick={() => setEditUniverse(null)}
-                disabled={isSubmittingEdit}
-              >
-                ✕
-              </button>
-            </div>
-            <form onSubmit={handleEditSubmit} className={styles.form}>
-              <div className={styles.field}>
-                <label htmlFor="edit-universe-title">Universe Title *</label>
-                <input
-                  id="edit-universe-title"
-                  type="text"
-                  required
-                  value={editTitle}
-                  onChange={(e) => setEditTitle(e.target.value)}
-                  placeholder="e.g., Rakshith's Galaxy, Memory Lane"
-                  maxLength={100}
-                  disabled={isSubmittingEdit}
-                />
-              </div>
-              <div className={styles.field}>
-                <label htmlFor="edit-universe-desc">Description (optional)</label>
-                <textarea
-                  id="edit-universe-desc"
-                  value={editDesc}
-                  onChange={(e) => setEditDesc(e.target.value)}
-                  placeholder="What does this universe represent?"
-                  maxLength={500}
-                  rows={4}
-                  disabled={isSubmittingEdit}
-                />
-              </div>
-              <button
-                type="submit"
-                className={styles.submitButton}
-                disabled={isSubmittingEdit || !editTitle.trim()}
-              >
-                {isSubmittingEdit ? 'Saving...' : 'Save Changes'}
-              </button>
-            </form>
+      <Modal
+        isOpen={!!editUniverse}
+        onClose={() => setEditUniverse(null)}
+        title={CONTENT.universeList.editModal.title}
+        disabled={isSubmittingEdit}
+      >
+        <form onSubmit={handleEditSubmit} className={styles.form}>
+          <div className={styles.field}>
+            <label htmlFor="edit-universe-title">
+              {CONTENT.universeList.editModal.fieldTitle}
+            </label>
+            <input
+              id="edit-universe-title"
+              type="text"
+              required
+              value={editTitle}
+              onChange={(e) => setEditTitle(e.target.value)}
+              placeholder={CONTENT.universeList.editModal.fieldTitlePlaceholder}
+              maxLength={100}
+              disabled={isSubmittingEdit}
+            />
           </div>
-        </div>
-      )}
+          <div className={styles.field}>
+            <label htmlFor="edit-universe-desc">
+              {CONTENT.universeList.editModal.fieldDesc}
+            </label>
+            <textarea
+              id="edit-universe-desc"
+              value={editDesc}
+              onChange={(e) => setEditDesc(e.target.value)}
+              placeholder={CONTENT.universeList.editModal.fieldDescPlaceholder}
+              maxLength={500}
+              rows={4}
+              disabled={isSubmittingEdit}
+            />
+          </div>
+          <Button
+            type="submit"
+            isLoading={isSubmittingEdit}
+            loadingText={CONTENT.universeList.editModal.submitBtnLoading}
+          >
+            {CONTENT.universeList.editModal.submitBtn}
+          </Button>
+        </form>
+      </Modal>
 
       {/* Delete Confirmation Modal */}
-      {universeToDelete && (
-        <div
-          className={styles.modalOverlay}
-          onClick={(e) => { if (e.target === e.currentTarget) setUniverseToDelete(null); }}
-          role="dialog"
-          aria-modal="true"
-          aria-label={`Dissolve ${universeToDelete.title}`}
-        >
-          <div className={`${styles.modal} ${styles.deleteModal}`}>
-            <div className={styles.modalHeader}>
-              <h2 className={styles.deleteTitle}>Dissolve Universe</h2>
-              <button
-                className={styles.closeButton}
-                onClick={() => setUniverseToDelete(null)}
-              >
-                ✕
-              </button>
-            </div>
-            <div className={styles.modalBody} style={{ margin: '16px 0 24px 0' }}>
-              <p className={styles.warningMessage} style={{ fontSize: '1rem', color: '#FFFFFF', marginBottom: '12px', lineHeight: '1.5' }}>
-                Are you sure you want to dissolve the universe <strong>{universeToDelete.title}</strong>?
-              </p>
-              <p className={styles.warningSubtext} style={{ fontSize: '0.875rem', color: '#94A3B8', lineHeight: '1.6' }}>
-                This cosmic collapse is irreversible. All star systems, planets, and memories inside this universe will be permanently dissolved into the void.
-              </p>
-            </div>
-            <div className={styles.modalActions} style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
-              <button
-                type="button"
-                className={styles.cancelBtn}
-                onClick={() => setUniverseToDelete(null)}
-                style={{
-                  background: 'transparent',
-                  border: '1px solid #1E293B',
-                  color: '#94A3B8',
-                  padding: '8px 16px',
-                  borderRadius: '10px',
-                  cursor: 'pointer',
-                  fontWeight: 500,
-                  fontSize: '0.875rem'
-                }}
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                className={styles.confirmDeleteBtn}
-                onClick={() => handleDeleteUniverse(universeToDelete._id, universeToDelete.title)}
-                style={{
-                  background: 'rgba(239, 68, 68, 0.15)',
-                  border: '1px solid #EF4444',
-                  color: '#FF8A8A',
-                  padding: '8px 16px',
-                  borderRadius: '10px',
-                  cursor: 'pointer',
-                  fontWeight: 600,
-                  fontSize: '0.875rem',
-                  boxShadow: '0 0 12px rgba(239, 68, 68, 0.15)'
-                }}
-              >
-                Dissolve Cosmos
-              </button>
-            </div>
-          </div>
+      <Modal
+        isOpen={!!universeToDelete}
+        onClose={() => setUniverseToDelete(null)}
+        title={CONTENT.universeList.deleteModal.title}
+        variant="danger"
+      >
+        <div className={styles.modalBody}>
+          <p className={styles.warningMessage}>
+            {CONTENT.universeList.deleteModal.warningPrefix}
+            <strong>{universeToDelete?.title}</strong>
+            {CONTENT.universeList.deleteModal.warningSuffix}
+          </p>
+          <p className={styles.warningSubtext}>
+            {CONTENT.universeList.deleteModal.subtext}
+          </p>
         </div>
-      )}
+        <div className={styles.modalActions}>
+          <Button
+            variant="cancel"
+            onClick={() => setUniverseToDelete(null)}
+          >
+            {CONTENT.universeList.deleteModal.cancelBtn}
+          </Button>
+          <Button
+            variant="danger"
+            onClick={() => universeToDelete && handleDeleteUniverse(universeToDelete._id)}
+          >
+            {CONTENT.universeList.deleteModal.confirmBtn}
+          </Button>
+        </div>
+      </Modal>
 
       {/* Info Popup Modal */}
-      {infoUniverse && (
-        <div
-          className={styles.modalOverlay}
-          onClick={(e) => { if (e.target === e.currentTarget) setInfoUniverse(null); }}
-          role="dialog"
-          aria-modal="true"
-          aria-label={`About ${infoUniverse.title}`}
-        >
-          <div className={styles.modal}>
-            <div className={styles.modalHeader}>
-              <h2>{infoUniverse.title}</h2>
-              <button
-                className={styles.closeButton}
-                onClick={() => setInfoUniverse(null)}
-              >
-                ✕
-              </button>
-            </div>
-            <div className={styles.infoContent}>
-              <p className={styles.fullDesc} style={{ whiteSpace: 'pre-wrap', color: '#E2E8F0', fontSize: '0.95rem', lineHeight: '1.6' }}>
-                {infoUniverse.description || 'No description provided.'}
-              </p>
-              <div className={styles.infoFooter} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#64748B', marginTop: '24px', borderTop: '1px solid rgba(30, 41, 59, 0.5)', paddingTop: '12px' }}>
-                <span>Created: {new Date(infoUniverse.createdAt).toLocaleDateString()}</span>
-                <span>Last Updated: {new Date(infoUniverse.updatedAt).toLocaleDateString()}</span>
-              </div>
-            </div>
+      <Modal
+        isOpen={!!infoUniverse}
+        onClose={() => setInfoUniverse(null)}
+        title={infoUniverse ? `${CONTENT.universeList.infoModal.titlePrefix}${infoUniverse.title}` : ''}
+      >
+        <div className={styles.infoContent}>
+          <p className={styles.fullDesc}>
+            {infoUniverse?.description || CONTENT.universeList.infoModal.noDesc}
+          </p>
+          <div className={styles.infoFooter}>
+            <span>
+              {CONTENT.universeList.infoModal.created}{' '}
+              {infoUniverse ? new Date(infoUniverse.createdAt).toLocaleDateString() : ''}
+            </span>
+            <span>
+              {CONTENT.universeList.infoModal.updated}{' '}
+              {infoUniverse ? new Date(infoUniverse.updatedAt).toLocaleDateString() : ''}
+            </span>
           </div>
         </div>
-      )}
+      </Modal>
     </div>
   );
 }

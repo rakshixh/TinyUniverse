@@ -10,6 +10,8 @@ import { useUniverseDetail } from '@/hooks/useUniverse';
 import EmptyState from '@/components/EmptyState/EmptyState';
 import Loader from '@/components/Loader/Loader';
 import MemoryModal from '@/components/MemoryModal/MemoryModal';
+import Button from '@/components/UI/Button';
+import { CONTENT } from '@/lib/content';
 import styles from './canvasPage.module.scss';
 
 // Lazy load heavy components
@@ -99,7 +101,7 @@ export default function SolarSystemCanvasPage({ params }: Params) {
           <Link
             href={`/universe/${universeId}`}
             className={styles.backLink}
-            aria-label="Back to Systems"
+            aria-label={CONTENT.systemCanvas.backBtn}
           >
             <svg
               width="16"
@@ -123,28 +125,28 @@ export default function SolarSystemCanvasPage({ params }: Params) {
               {solarSystem?.name || 'Loading System...'}
             </h1>
             <p className={styles.universeName}>
-              System in {universe?.title || 'Universe'}
+              {CONTENT.systemCanvas.systemInLabel} {universe?.title || 'Universe'}
             </p>
           </div>
         </div>
 
         <div className={styles.headerRight}>
           {!isLoading && (
-            <span className={styles.memoryCount} aria-label={`${memories.length} memories`}>
-              {memories.length} {memories.length === 1 ? 'planet' : 'planets'}
+            <span className={styles.memoryCount} aria-label={CONTENT.systemCanvas.planetCount(memories.length)}>
+              {CONTENT.systemCanvas.planetCount(memories.length)}
             </span>
           )}
           {/* Desktop add button */}
           {!isLoading && (
-            <button
+            <Button
               className={`${styles.addButton} ${styles.desktopAdd}`}
               onClick={() => setIsAddModalOpen(true)}
               id="add-memory-header-button"
-              aria-label="Add new memory"
+              aria-label={CONTENT.systemCanvas.addMemoryBtn}
             >
               <span aria-hidden="true">+</span>
               New Memory
-            </button>
+            </Button>
           )}
         </div>
       </header>
@@ -152,7 +154,7 @@ export default function SolarSystemCanvasPage({ params }: Params) {
       {/* Main content */}
       <main className={styles.main}>
         {isLoading ? (
-          <Loader message="Forming orbit projections..." />
+          <Loader message={CONTENT.systemCanvas.loader} />
         ) : memories.length === 0 ? (
           <EmptyState onAddMemory={() => setIsAddModalOpen(true)} />
         ) : (
@@ -166,14 +168,14 @@ export default function SolarSystemCanvasPage({ params }: Params) {
 
       {/* Mobile FAB */}
       {!isLoading && memories.length > 0 && (
-        <button
+        <Button
           className={`${styles.fab} ${styles.mobileFab}`}
           onClick={() => setIsAddModalOpen(true)}
           id="add-memory-fab"
-          aria-label="Add new memory"
+          aria-label={CONTENT.systemCanvas.addMemoryBtn}
         >
           <span aria-hidden="true" className={styles.fabIcon}>+</span>
-        </button>
+        </Button>
       )}
 
       {/* Modals */}

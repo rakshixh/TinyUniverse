@@ -1,0 +1,88 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  @include flex-center;
+  z-index: $z-overlay;
+  padding: $space-4;
+  animation: modal-fade-in 0.2s $ease-smooth forwards;
+}
+
+.modal {
+  @include glass;
+  background: rgba($color-bg-card, 0.95);
+  width: 100%;
+  max-width: 500px;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-modal;
+  @include flex-column;
+  max-height: calc(100vh - #{$space-16});
+  animation: modal-slide-up 0.3s $ease-spring forwards;
+  position: relative;
+  overflow: hidden;
+
+  @include mobile {
+    max-height: calc(100vh - #{$space-8});
+  }
+}
+
+.dangerModal {
+  border-color: rgba($color-error, 0.3);
+}
+
+.header {
+  @include flex-between;
+  padding: $space-5 $space-6;
+  border-bottom: 1px solid rgba($color-border, 0.5);
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.title {
+  font-family: $font-family-primary;
+  font-size: $font-xl;
+  font-weight: $font-bold;
+  color: $color-text;
+  margin: 0;
+}
+
+.dangerTitle {
+  color: #FF8A8A;
+}
+
+.closeButton {
+  width: 32px !important;
+  height: 32px !important;
+  font-size: 14px;
+}
+
+.body {
+  padding: $space-6;
+  overflow-y: auto;
+  @include custom-scrollbar;
+  flex: 1;
+}
+
+@keyframes modal-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modal-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

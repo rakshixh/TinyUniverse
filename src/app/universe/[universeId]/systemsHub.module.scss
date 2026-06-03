@@ -353,7 +353,7 @@
   gap: $space-2;
 }
 
-.editBtn {
+button.editBtn {
   background: transparent;
   border: 1px solid rgba($color-primary, 0.3);
   color: rgba($color-text, 0.9);
@@ -363,15 +363,30 @@
   cursor: pointer;
   font-weight: $font-medium;
   @include transition(all);
+  outline: none;
 
   &:hover {
     background: rgba($color-primary, 0.15);
     border-color: $color-primary;
     color: $color-text;
   }
+
+  // Reset focused-but-not-hovered state (prevents back-nav focus restoration from showing hover style)
+  &:focus:not(:hover) {
+    background: transparent !important;
+    border-color: rgba($color-primary, 0.3) !important;
+    color: rgba($color-text, 0.9) !important;
+    box-shadow: none !important;
+  }
+
+  // Only show a subtle accessibility ring for keyboard navigation
+  &:focus-visible {
+    outline: 2px solid rgba($color-primary, 0.5) !important;
+    outline-offset: 2px;
+  }
 }
 
-.deleteBtn {
+button.deleteBtn {
   background: transparent;
   border: 1px solid rgba($color-error, 0.25);
   color: rgba($color-text, 0.8);
@@ -381,6 +396,8 @@
   cursor: pointer;
   font-weight: $font-medium;
   @include transition(all);
+  // Prevent browser focus-restoration after back-nav from triggering red hover
+  outline: none;
 
   &:hover {
     background: rgba($color-error, 0.15);
@@ -388,53 +405,22 @@
     color: $color-text;
     box-shadow: 0 0 10px rgba($color-error, 0.25);
   }
-}
 
-// ─── Modal ────────────────────────────────────────────────────
-.modalOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba($color-bg, 0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  z-index: 100;
-  @include flex-center;
-  padding: $space-4;
-  animation: fadeIn $duration-base both;
-}
+  // Reset focused-but-not-hovered: guarantees back-nav never shows the red active state
+  &:focus:not(:hover) {
+    background: transparent !important;
+    border-color: rgba($color-error, 0.25) !important;
+    color: rgba($color-text, 0.8) !important;
+    box-shadow: none !important;
+  }
 
-.modal {
-  @include card;
-  width: 100%;
-  max-width: 480px;
-  animation: scaleIn $duration-slow $ease-spring both;
-  padding: $space-6;
-}
-
-.modalHeader {
-  @include flex-between;
-  margin-bottom: $space-5;
-  border-bottom: 1px solid rgba($color-border, 0.5);
-  padding-bottom: $space-3;
-
-  h2 {
-    font-size: $font-xl;
-    font-weight: $font-semibold;
-    color: $color-text;
+  // Subtle keyboard focus ring only
+  &:focus-visible {
+    outline: 2px solid rgba($color-error, 0.4) !important;
+    outline-offset: 2px;
   }
 }
 
-.closeButton {
-  background: transparent;
-  border: none;
-  color: $color-text-subtle;
-  font-size: $font-lg;
-  cursor: pointer;
-  
-  &:hover {
-    color: $color-text;
-  }
-}
 
 .form {
   @include flex-column;
@@ -631,3 +617,54 @@
   }
 }
 
+// ─── Delete Modal Body ────────────────────────────────────────
+.modalBody {
+  margin-bottom: $space-6;
+}
+
+.warningMessage {
+  font-size: $font-base;
+  color: $color-text;
+  line-height: 1.6;
+  margin-bottom: $space-3;
+
+  strong {
+    color: $color-text;
+    font-weight: $font-semibold;
+  }
+}
+
+.warningSubtext {
+  font-size: $font-sm;
+  color: $color-text-muted;
+  line-height: 1.6;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $space-3;
+}
+
+// ─── Info Modal ───────────────────────────────────────────────
+.infoContent {
+  @include flex-column;
+  gap: $space-4;
+}
+
+.fullDesc {
+  white-space: pre-wrap;
+  color: $color-text;
+  font-size: $font-sm;
+  line-height: 1.7;
+}
+
+.infoFooter {
+  display: flex;
+  justify-content: space-between;
+  font-size: $font-xs;
+  color: $color-text-subtle;
+  margin-top: $space-6;
+  border-top: 1px solid rgba($color-border, 0.5);
+  padding-top: $space-3;
+}

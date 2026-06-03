@@ -8,6 +8,9 @@ import {
   MAX_TITLE_LENGTH,
   MAX_DESCRIPTION_LENGTH,
 } from '@/lib/constants';
+import Button from '../UI/Button';
+import Modal from '../UI/Modal';
+import { CONTENT } from '@/lib/content';
 import styles from './AddMemoryModal.module.scss';
 
 interface AddMemoryModalProps {
@@ -31,7 +34,6 @@ export default function AddMemoryModal({
   const [date, setDate] = useState(() => new Date().toISOString().substring(0, 10));
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const overlayRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLInputElement>(null);
 
   const isLoading = isSubmitting;
@@ -59,26 +61,6 @@ export default function AddMemoryModal({
     }
   }, [isOpen]);
 
-  // Lock scroll
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isOpen]);
-
-  // ESC key
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') handleClose();
-    };
-    document.addEventListener('keydown', handleKey);
-    return () => document.removeEventListener('keydown', handleKey);
-  }, [isOpen, handleClose]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim() || !date || isLoading) return;
@@ -102,149 +84,119 @@ export default function AddMemoryModal({
       const data = await res.json();
 
       if (!res.ok) {
-        toast.error(data.error || 'Failed to create memory');
+        toast.error(data.error || CONTENT.common.genericError);
         return;
       }
 
-      toast.success('Memory born into the universe 🪐');
+      toast.success(CONTENT.addMemoryModal.successToast);
       onCreated(data.memory);
       resetForm();
       onClose();
     } catch {
-      toast.error('Something went wrong. Try again.');
+      toast.error(CONTENT.addMemoryModal.errorToast);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div
-      className={styles.overlay}
-      ref={overlayRef}
-      onClick={(e) => { if (e.target === overlayRef.current) handleClose(); }}
-      role="dialog"
-      aria-modal="true"
-      aria-label="Add new memory"
+    <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      title={CONTENT.addMemoryModal.title}
+      disabled={isLoading}
     >
-      <div className={styles.modal}>
-        {/* Header */}
-        <div className={styles.header}>
-          <h2 className={styles.title}>New Memory Planet</h2>
-          <button
-            className={styles.closeButton}
-            onClick={handleClose}
-            aria-label="Close modal"
+      {/* Form */}
+      <form className={styles.form} onSubmit={handleSubmit} aria-label="Add memory form">
+        {/* Title */}
+        <div className={styles.field}>
+          <label htmlFor="memory-title" className={styles.label}>
+            {CONTENT.addMemoryModal.fieldTitle}
+          </label>
+          <input
+            ref={titleRef}
+            id="memory-title"
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder={CONTENT.addMemoryModal.fieldTitlePlaceholder}
+            className={styles.input}
+            maxLength={MAX_TITLE_LENGTH}
             disabled={isLoading}
-            id="add-memory-close"
-          >
-            ✕
-          </button>
+            aria-required="true"
+          />
+          <span className={styles.charCount}>{title.length}/{MAX_TITLE_LENGTH}</span>
         </div>
 
-        {/* Form */}
-        <form className={styles.form} onSubmit={handleSubmit} aria-label="Add memory form">
-          {/* Title */}
-          <div className={styles.field}>
-            <label htmlFor="memory-title" className={styles.label}>
-              Memory Title <span className={styles.required} aria-hidden="true">*</span>
-            </label>
-            <input
-              ref={titleRef}
-              id="memory-title"
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="What is this memory called?"
-              className={styles.input}
-              maxLength={MAX_TITLE_LENGTH}
-              disabled={isLoading}
-              aria-required="true"
-            />
-            <span className={styles.charCount}>{title.length}/{MAX_TITLE_LENGTH}</span>
-          </div>
+        {/* Date Selector */}
+        <div className={styles.field}>
+          <label htmlFor="memory-date" className={styles.label}>
+            {CONTENT.addMemoryModal.fieldDate}
+          </label>
+          <input
+            id="memory-date"
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className={styles.input}
+            disabled={isLoading}
+            required
+            aria-required="true"
+          />
+        </div>
 
-          {/* Date Selector */}
-          <div className={styles.field}>
-            <label htmlFor="memory-date" className={styles.label}>
-              Memory Date <span className={styles.required} aria-hidden="true">*</span>
-            </label>
-            <input
-              id="memory-date"
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className={styles.input}
-              disabled={isLoading}
-              required
-              aria-required="true"
-            />
+        {/* Orbit Selector */}
+        <div className={styles.field}>
+          <label className={styles.label}>
+            {CONTENT.addMemoryModal.fieldOrbit}
+          </label>
+          <div className={styles.orbitSelector}>
+            {CONTENT.addMemoryModal.orbitRings.map((ring) => (
+              <label key={ring.value} className={`${styles.orbitOption} ${orbit === ring.value ? styles.selected : ''}`}>
+                <input
+                  type="radio"
+                  name="orbit-ring"
+                  value={ring.value}
+                  checked={orbit === ring.value}
+                  onChange={() => setOrbit(ring.value)}
+                  disabled={isLoading}
+                  className={styles.radioInput}
+                />
+                {ring.label}
+              </label>
+            ))}
           </div>
+        </div>
 
-          {/* Orbit Selector */}
-          <div className={styles.field}>
-            <label className={styles.label}>
-              Orbit Ring <span className={styles.required} aria-hidden="true">*</span>
-            </label>
-            <div className={styles.orbitSelector}>
-              {[1, 2, 3, 4].map((ring) => (
-                <label key={ring} className={`${styles.orbitOption} ${orbit === ring ? styles.selected : ''}`}>
-                  <input
-                    type="radio"
-                    name="orbit-ring"
-                    value={ring}
-                    checked={orbit === ring}
-                    onChange={() => setOrbit(ring)}
-                    disabled={isLoading}
-                    className={styles.radioInput}
-                  />
-                  Ring {ring} {ring === 1 && '(Inner)'} {ring === 4 && '(Outer)'}
-                </label>
-              ))}
-            </div>
-          </div>
+        {/* Description */}
+        <div className={styles.field}>
+          <label htmlFor="memory-description" className={styles.label}>
+            {CONTENT.addMemoryModal.fieldDesc}
+          </label>
+          <textarea
+            id="memory-description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder={CONTENT.addMemoryModal.fieldDescPlaceholder}
+            className={styles.textarea}
+            maxLength={MAX_DESCRIPTION_LENGTH}
+            rows={4}
+            disabled={isLoading}
+          />
+          <span className={styles.charCount}>{description.length}/{MAX_DESCRIPTION_LENGTH}</span>
+        </div>
 
-          {/* Description */}
-          <div className={styles.field}>
-            <label htmlFor="memory-description" className={styles.label}>
-              Description <span className={styles.optional}>(optional)</span>
-            </label>
-            <textarea
-              id="memory-description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Tell the story of this memory..."
-              className={styles.textarea}
-              maxLength={MAX_DESCRIPTION_LENGTH}
-              rows={4}
-              disabled={isLoading}
-            />
-            <span className={styles.charCount}>{description.length}/{MAX_DESCRIPTION_LENGTH}</span>
-          </div>
-
-          {/* Submit */}
-          <button
-            type="submit"
-            className={styles.submitButton}
-            disabled={isLoading || !title.trim()}
-            id="submit-memory-button"
-            aria-label={isLoading ? 'Creating memory...' : 'Create memory planet'}
-          >
-            {isLoading ? (
-              <>
-                <span className={styles.spinner} aria-hidden="true" />
-                Creating planet...
-              </>
-            ) : (
-              <>
-                <span aria-hidden="true">🪐</span>
-                Create Planet
-              </>
-            )}
-          </button>
-        </form>
-      </div>
-    </div>
+        {/* Submit */}
+        <Button
+          type="submit"
+          isLoading={isLoading}
+          loadingText={CONTENT.addMemoryModal.submitBtnLoading}
+          disabled={!title.trim()}
+          id="submit-memory-button"
+        >
+          {CONTENT.addMemoryModal.submitBtn}
+        </Button>
+      </form>
+    </Modal>
   );
 }

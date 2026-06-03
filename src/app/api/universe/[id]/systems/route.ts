@@ -60,7 +60,7 @@ export async function POST(request: NextRequest, { params }: Params) {
 }
 
 /** DELETE /api/universe/[id]/systems?systemId=xxx — Dissolve a star system */
-export async function DELETE(request: NextRequest, { params }: Params) {
+export async function DELETE(request: NextRequest) {
   if (!isAuthenticated(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -91,7 +91,7 @@ const UpdateSolarSystemSchema = z.object({
 });
 
 /** PATCH /api/universe/[id]/systems?systemId=xxx — Update solar system details */
-export async function PATCH(request: NextRequest, { params }: Params) {
+export async function PATCH(request: NextRequest) {
   if (!isAuthenticated(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
