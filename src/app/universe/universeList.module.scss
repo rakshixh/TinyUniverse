@@ -31,11 +31,21 @@
   display: flex;
   align-items: center;
   gap: $space-3;
+  min-width: 0;
+
+  @include mobile {
+    gap: $space-2;
+  }
 }
 
 .logoEmoji {
   font-size: 1.75rem;
   filter: drop-shadow(0 0 8px rgba($color-primary, 0.4));
+  flex-shrink: 0;
+
+  @include mobile {
+    font-size: 1.35rem;
+  }
 }
 
 .title {
@@ -45,6 +55,11 @@
   color: $color-text;
   letter-spacing: -0.03em;
   text-transform: uppercase;
+  white-space: nowrap;
+
+  @include mobile {
+    font-size: 1.15rem;
+  }
 }
 
 .titleAccent {
@@ -54,23 +69,13 @@
   background-clip: text;
 }
 
-.igniteButton {
-  @include button-base;
-  background: $color-primary;
-  color: $color-text;
-  padding: $space-2 $space-4;
-  font-size: $font-sm;
-  height: 38px;
-  @include transition(all);
+.igniteBtn {
+  flex-shrink: 0;
 
-  &:hover {
-    background: $color-primary-dim;
-    transform: translateY(-1px);
-    box-shadow: $glow-primary;
-  }
-
-  &:active {
-    transform: translateY(0);
+  @include mobile {
+    padding: 0 $space-3 !important;
+    font-size: $font-xs !important;
+    height: 34px !important;
   }
 }
 

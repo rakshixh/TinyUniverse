@@ -228,6 +228,8 @@ export default function SolarSystemsHubPage({ params }: Params) {
         </div>
         {!isLoading && (
           <Button
+            variant="primary"
+            className={styles.igniteBtn}
             onClick={() => setIsModalOpen(true)}
             aria-label={CONTENT.systemsHub.header.igniteBtn}
           >

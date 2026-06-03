@@ -90,23 +90,12 @@
   margin-top: 2px;
 }
 
-.igniteButton {
-  @include button-base;
-  background: $color-primary;
-  color: $color-text;
-  padding: $space-2 $space-5;
-  font-size: $font-sm;
-  height: 38px;
-  @include transition(all);
+.igniteBtn {
+  flex-shrink: 0;
 
-  &:hover {
-    background: $color-primary-dim;
-    transform: translateY(-1px);
-    box-shadow: $glow-primary;
-  }
-
-  &:active {
-    transform: translateY(0);
+  @include mobile {
+    height: 36px !important;
+    font-size: $font-xs !important;
   }
 }
 

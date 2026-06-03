@@ -148,6 +148,8 @@ export default function UniverseDirectoryPage() {
           </h1>
         </div>
         <Button
+          variant="primary"
+          className={styles.igniteBtn}
           onClick={() => setIsModalOpen(true)}
           aria-label={CONTENT.universeList.header.igniteBtn}
         >
