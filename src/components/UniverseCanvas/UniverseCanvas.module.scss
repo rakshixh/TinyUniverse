@@ -103,26 +103,7 @@
   animation: nebula-spin 60s linear infinite;
 }
 
-.starRing {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: $radius-full;
-  pointer-events: none;
-  z-index: 1;
-  @include transition(width height, $duration-slow);
-}
 
-.starRingInner {
-  border-style: dashed;
-}
-
-.starRingOuter {
-  border-style: solid;
-  opacity: 0.45;
-}
 
 @keyframes sun-glow-slow {
   0%, 100% {

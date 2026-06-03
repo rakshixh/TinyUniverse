@@ -349,39 +349,7 @@ return (
           } as React.CSSProperties}
         />
 
-        {solarSystem.starType === 'giant' && (
-          <div
-            className={styles.starRing}
-            style={{
-              width: size * 1.5,
-              height: size * 1.5,
-              borderColor: `rgba(${starGlowRgb}, 0.15)`,
-            }}
-          />
-        )}
 
-        {solarSystem.starType === 'supergiant' && (
-          <>
-            <div
-              className={`${styles.starRing} ${styles.starRingInner}`}
-              style={{
-                width: size * 1.35,
-                height: size * 1.35,
-                borderColor: `rgba(${starGlowRgb}, 0.15)`,
-                animation: 'rotate-slow 35s linear infinite',
-              }}
-            />
-            <div
-              className={`${styles.starRing} ${styles.starRingOuter}`}
-              style={{
-                width: size * 1.65,
-                height: size * 1.65,
-                borderColor: `rgba(${starGlowRgb}, 0.08)`,
-                animation: 'rotate-counter 55s linear infinite',
-              }}
-            />
-          </>
-        )}
 
         {renderProps.isPulsar && (
           <div

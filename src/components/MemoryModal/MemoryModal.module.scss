@@ -315,6 +315,7 @@
   height: 48px;
   background-color: $color-bg;
   color: $color-text;
+  font-family: $font-family-sans;
   font-size: $font-base;
   cursor: pointer;
   appearance: none;
@@ -327,6 +328,7 @@
   option {
     background-color: $color-bg-card;
     color: $color-text;
+    font-family: $font-family-sans;
   }
 }
 
