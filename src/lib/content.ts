@@ -5,8 +5,21 @@
  */
 export const CONTENT = {
   metadata: {
-    title: 'Tiny Universe — Digital Cosmos of Shared Memories',
-    description: 'Every memory becomes a planet in your universe ✦',
+    layout: {
+      title: 'Tiny Universe | Your Memory Galaxy',
+      description:
+        'A shared digital universe where every memory becomes a planet floating in space. Create, explore, and cherish your memories in a beautiful starfield.',
+      keywords: ['memories', 'universe', 'space', 'journal', 'personal'],
+      openGraph: {
+        title: 'Tiny Universe | Your Memory Galaxy',
+        description: 'Every memory is a planet. Explore your universe.',
+        type: 'website' as const,
+      },
+    },
+    page: {
+      title: 'Tiny Universe | Digital Cosmos of Shared Memories',
+      description: 'Every memory becomes a planet in your universe ✦',
+    },
   },
   landingPage: {
     footer: 'Every memory becomes a planet in your universe ✦',
@@ -25,6 +38,7 @@ export const CONTENT = {
   systemsHub: {
     backToDashboard: 'Dashboard',
     backToDashboardAria: 'Back to Admin Dashboard',
+    universeTitlePrefix: 'Universe: ',
     header: {
       title: 'Systems Hub',
       igniteBtn: 'Ignite Star System',
@@ -123,7 +137,7 @@ export const CONTENT = {
     newMemoryBtn: 'New Memory',
     loader: 'Drawing orbital lanes...',
     planetCount: (count: number) => `${count} ${count === 1 ? 'planet' : 'planets'}`,
-    systemInLabel: 'System in',
+    systemInUniverse: (name: string) => `System in ${name} Universe`,
     loadingSystem: 'Loading System...',
   },
   emptyState: {

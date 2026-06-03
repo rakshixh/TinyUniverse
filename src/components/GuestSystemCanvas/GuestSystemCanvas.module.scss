@@ -56,10 +56,21 @@
     color: $color-text;
     background: rgba($color-border, 0.4);
   }
+
+  @include mobile {
+    min-width: auto;
+    padding: 0 $space-3;
+  }
 }
 
 .titleArea {
   min-width: 0;
+}
+
+.desktopTitleArea {
+  @include mobile {
+    display: none;
+  }
 }
 
 .systemName {
@@ -69,11 +80,6 @@
   letter-spacing: -0.02em;
   @include text-truncate;
   max-width: 250px;
-
-  @include mobile {
-    font-size: $font-lg;
-    max-width: 140px;
-  }
 }
 
 .universeName {
@@ -82,10 +88,39 @@
   @include text-truncate;
   max-width: 200px;
   margin-top: 2px;
+}
+
+.mobileTitleArea {
+  display: none;
 
   @include mobile {
-    display: none;
+    display: block;
+    padding: $space-3 $space-4;
+    background: rgba($color-bg, 0.7);
+    border-bottom: 1px solid rgba($color-border, 0.35);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    flex-shrink: 0;
+    z-index: $z-canvas + 1;
+    min-width: 0;
   }
+}
+
+.mobileSystemName {
+  font-size: $font-lg;
+  font-weight: $font-semibold;
+  color: $color-text;
+  letter-spacing: -0.01em;
+  @include text-truncate;
+  max-width: 100%;
+}
+
+.mobileUniverseName {
+  font-size: 10px;
+  color: $color-text-muted;
+  @include text-truncate;
+  max-width: 100%;
+  margin-top: 2px;
 }
 
 .headerRight {

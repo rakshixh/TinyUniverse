@@ -120,12 +120,12 @@ export default function GuestSystemCanvas({ universe, systemId, isAdmin }: Guest
             </svg>
             {CONTENT.systemCanvas.backToSystemsLabel}
           </Link>
-          <div className={styles.titleArea}>
+          <div className={`${styles.titleArea} ${styles.desktopTitleArea}`}>
             <h1 className={styles.systemName}>
               {solarSystem?.title || solarSystem?.name || CONTENT.systemCanvas.loadingSystem}
             </h1>
             <p className={styles.universeName}>
-              {CONTENT.systemCanvas.systemInLabel} {universe.title}
+              {CONTENT.systemCanvas.systemInUniverse(universe.title)}
             </p>
           </div>
         </div>
@@ -150,6 +150,16 @@ export default function GuestSystemCanvas({ universe, systemId, isAdmin }: Guest
           )}
         </div>
       </header>
+
+      {/* Mobile Title Area (renders below header only on mobile) */}
+      <div className={styles.mobileTitleArea}>
+        <h1 className={styles.mobileSystemName}>
+          {solarSystem?.title || solarSystem?.name || CONTENT.systemCanvas.loadingSystem}
+        </h1>
+        <p className={styles.mobileUniverseName}>
+          {CONTENT.systemCanvas.systemInUniverse(universe.title)}
+        </p>
+      </div>
 
       {/* Main content */}
       <main className={styles.main}>

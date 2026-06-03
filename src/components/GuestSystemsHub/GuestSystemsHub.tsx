@@ -236,7 +236,9 @@ export default function GuestSystemsHub({ universe, isAdmin }: GuestSystemsHubPr
 
       {/* Main Content */}
       <main className={styles.main}>
-        <h2 className={styles.universeSectionTitle}>{universe.title}</h2>
+        <h2 className={styles.universeSectionTitle}>
+          {CONTENT.systemsHub.universeTitlePrefix}{universe.title}
+        </h2>
         {isLoading ? (
           <Loader message={CONTENT.systemsHub.loader} />
         ) : systems.length === 0 ? (

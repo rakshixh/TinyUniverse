@@ -1,16 +1,16 @@
 import type { Metadata } from 'next';
 import '@/styles/globals.scss';
 import { Toaster } from 'react-hot-toast';
+import { CONTENT } from '@/lib/content';
 
 export const metadata: Metadata = {
-  title: 'Tiny Universe — Your Memory Galaxy',
-  description:
-    'A shared digital universe where every memory becomes a planet floating in space. Create, explore, and cherish your memories in a beautiful starfield.',
-  keywords: ['memories', 'universe', 'space', 'journal', 'personal'],
+  title: CONTENT.metadata.layout.title,
+  description: CONTENT.metadata.layout.description,
+  keywords: [...CONTENT.metadata.layout.keywords],
   openGraph: {
-    title: 'Tiny Universe — Your Memory Galaxy',
-    description: 'Every memory is a planet. Explore your universe.',
-    type: 'website',
+    title: CONTENT.metadata.layout.openGraph.title,
+    description: CONTENT.metadata.layout.openGraph.description,
+    type: CONTENT.metadata.layout.openGraph.type,
   },
 };
 

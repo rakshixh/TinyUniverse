@@ -14,8 +14,8 @@ import SessionGuard from '@/components/UI/SessionGuard';
 import styles from './page.module.scss';
 
 export const metadata: Metadata = {
-  title: CONTENT.metadata.title,
-  description: CONTENT.metadata.description,
+  title: CONTENT.metadata.page.title,
+  description: CONTENT.metadata.page.description,
 };
 
 interface PageProps {
