@@ -14,8 +14,8 @@ import SessionGuard from '@/components/UI/SessionGuard';
 import styles from './page.module.scss';
 
 export const metadata: Metadata = {
-  title: 'Tiny Universe — Digital Cosmos of Shared Memories',
-  description: 'Every memory becomes a planet in your universe ✦',
+  title: CONTENT.metadata.title,
+  description: CONTENT.metadata.description,
 };
 
 interface PageProps {
@@ -42,11 +42,11 @@ export default async function Page({ searchParams }: PageProps) {
           <SpaceBackground />
           <div className={styles.content}>
             <header className={styles.header}>
-              <h1 className={styles.title}>404</h1>
-              <p className={styles.subtitle}>Universe not found</p>
+              <h1 className={styles.title}>{CONTENT.landingPage.notFoundTitle}</h1>
+              <p className={styles.subtitle}>{CONTENT.landingPage.notFoundSubtitle}</p>
             </header>
             <Link href="/" style={{ color: '#a855f7', textDecoration: 'none', fontWeight: 500 }}>
-              Return to Landing Page
+              {CONTENT.landingPage.returnToLanding}
             </Link>
           </div>
         </main>
@@ -85,11 +85,11 @@ export default async function Page({ searchParams }: PageProps) {
             </div>
             <header className={styles.header}>
               <h1 className={styles.title}>
-                Unlock
-                <span className={styles.titleAccent}> Universe</span>
+                {CONTENT.guestUnlock.title}
+                <span className={styles.titleAccent}>{CONTENT.guestUnlock.titleAccent}</span>
               </h1>
               <p className={styles.subtitle}>
-                This universe is protected. Please enter the guest access code to enter.
+                {CONTENT.guestUnlock.subtitle}
               </p>
             </header>
             <section aria-label="Unlock universe form section" className={styles.formSection}>

@@ -12,25 +12,6 @@ const fetcher = async (url: string) => {
   return res.json();
 };
 
-/** Hook to fetch all universes */
-export function useUniverses() {
-  const { data, error, isLoading, mutate } = useSWR<{ universes: IUniverse[] }>(
-    '/api/universe',
-    fetcher,
-    {
-      revalidateOnFocus: false,
-      dedupingInterval: 10000,
-    }
-  );
-
-  return {
-    universes: data?.universes ?? [],
-    isLoading,
-    error,
-    mutate,
-  };
-}
-
 /** Hook to fetch all universes for Admin Dashboard */
 export function useAdminUniverses() {
   const { data, error, isLoading, mutate } = useSWR<{ universes: IUniverse[] }>(
@@ -44,25 +25,6 @@ export function useAdminUniverses() {
 
   return {
     universes: data?.universes ?? [],
-    isLoading,
-    error,
-    mutate,
-  };
-}
-
-/** Hook to fetch detail of a specific universe */
-export function useUniverseDetail(universeId: string | null) {
-  const { data, error, isLoading, mutate } = useSWR<{ universe: IUniverse }>(
-    universeId ? `/api/universe/${universeId}` : null,
-    fetcher,
-    {
-      revalidateOnFocus: false,
-      dedupingInterval: 15000,
-    }
-  );
-
-  return {
-    universe: data?.universe ?? null,
     isLoading,
     error,
     mutate,

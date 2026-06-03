@@ -51,11 +51,11 @@ export default function AdminDashboard() {
         body: JSON.stringify({ action: 'logout' }),
       });
       if (res.ok) {
-        toast.success('Logged out successfully');
+        toast.success(CONTENT.admin.dashboard.logoutSuccess);
         sessionStorage.removeItem('session_active');
         router.refresh();
       } else {
-        toast.error('Logout failed');
+        toast.error(CONTENT.admin.dashboard.logoutFailed);
       }
     } catch {
       toast.error(CONTENT.common.genericError);
@@ -184,17 +184,19 @@ export default function AdminDashboard() {
         </div>
         <div className={styles.headerRight}>
           <Button variant="secondary" onClick={handleLogout} className={styles.logoutBtn}>
-            {CONTENT.admin.dashboard.logoutBtn}
+            <span className={styles.desktopText}>{CONTENT.admin.dashboard.logoutBtn}</span>
+            <span className={styles.mobileText}>{CONTENT.admin.dashboard.logoutBtnMobile}</span>
           </Button>
           <Button variant="primary" onClick={() => setIsCreateOpen(true)} className={styles.igniteBtn}>
-            {CONTENT.admin.dashboard.createBtn}
+            <span className={styles.desktopText}>{CONTENT.admin.dashboard.createBtn}</span>
+            <span className={styles.mobileText}>{CONTENT.admin.dashboard.createBtnMobile}</span>
           </Button>
         </div>
       </header>
 
       {/* Main Stats / List */}
       <main className={styles.main}>
-        <h2 className={styles.adminSectionTitle}>Admin Dashboard</h2>
+        <h2 className={styles.adminSectionTitle}>{CONTENT.admin.dashboard.sectionTitle}</h2>
         {isLoading ? (
           <Loader message={CONTENT.universeList.loader} />
         ) : universes.length === 0 ? (
@@ -218,7 +220,7 @@ export default function AdminDashboard() {
             >
               <span className={styles.plusIcon} aria-hidden="true">＋</span>
               <h3>{CONTENT.admin.dashboard.emptyState.cta}</h3>
-              <p>Form a new universe with access codes</p>
+              <p>{CONTENT.admin.dashboard.createCardDesc}</p>
             </Card>
 
             {/* Universe Cards */}
@@ -233,7 +235,7 @@ export default function AdminDashboard() {
                   </div>
 
                   <p className={styles.cardSlug}>
-                    <strong>Slug:</strong> <code>{univ.slug}</code>
+                    <strong>{CONTENT.admin.dashboard.slugLabel}</strong> <code>{univ.slug}</code>
                   </p>
 
                   <p className={styles.cardDesc}>
@@ -242,11 +244,11 @@ export default function AdminDashboard() {
 
                   <div className={styles.cardStats}>
                     <div className={styles.stat}>
-                      <span className={styles.statLabel}>Solar Systems</span>
+                      <span className={styles.statLabel}>{CONTENT.admin.dashboard.solarSystemsLabel}</span>
                       <span className={styles.statValue}>{univ.solarSystemCount ?? 0}</span>
                     </div>
                     <div className={styles.stat}>
-                      <span className={styles.statLabel}>Memories</span>
+                      <span className={styles.statLabel}>{CONTENT.admin.dashboard.memoriesLabel}</span>
                       <span className={styles.statValue}>{univ.memoryCount ?? 0}</span>
                     </div>
                   </div>
@@ -320,7 +322,7 @@ export default function AdminDashboard() {
             />
             {title && (
               <span className={styles.slugPreview}>
-                Slug preview: <code>{getSlugPreview(title)}</code>
+                {CONTENT.admin.createModal.slugPreview} <code>{getSlugPreview(title)}</code>
               </span>
             )}
           </div>
@@ -381,7 +383,7 @@ export default function AdminDashboard() {
             />
             {editTitle && (
               <span className={styles.slugPreview}>
-                New slug preview: <code>{getSlugPreview(editTitle)}</code>
+                {CONTENT.admin.editModal.slugPreview} <code>{getSlugPreview(editTitle)}</code>
               </span>
             )}
           </div>
@@ -441,7 +443,7 @@ export default function AdminDashboard() {
           <Button variant="cancel" onClick={() => setUniverseToDelete(null)} disabled={isDeleting}>
             {CONTENT.admin.deleteModal.cancelBtn}
           </Button>
-          <Button variant="danger" onClick={() => universeToDelete && handleDeleteUniverse(universeToDelete._id)} isLoading={isDeleting} loadingText="Dissolving...">
+          <Button variant="danger" onClick={() => universeToDelete && handleDeleteUniverse(universeToDelete._id)} isLoading={isDeleting} loadingText={CONTENT.admin.deleteModal.confirmBtnLoading}>
             {CONTENT.admin.deleteModal.confirmBtn}
           </Button>
         </div>

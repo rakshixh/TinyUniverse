@@ -1,3 +1,4 @@
+import { CONTENT } from '@/lib/content';
 import styles from './Loader.module.scss';
 
 interface LoaderProps {
@@ -5,7 +6,7 @@ interface LoaderProps {
   fullScreen?: boolean;
 }
 
-export default function Loader({ message = 'Loading...', fullScreen = false }: LoaderProps) {
+export default function Loader({ message = CONTENT.common.loading, fullScreen = false }: LoaderProps) {
   return (
     <div
       className={`${styles.loader} ${fullScreen ? styles.fullScreen : ''}`}

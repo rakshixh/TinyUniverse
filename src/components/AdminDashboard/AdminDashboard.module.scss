@@ -24,6 +24,9 @@
 
   @include mobile {
     padding: $space-3 $space-4;
+    flex-direction: column;
+    align-items: stretch;
+    gap: $space-3;
   }
 }
 
@@ -44,6 +47,7 @@
   gap: $space-3;
 
   @include mobile {
+    width: 100%;
     gap: $space-2;
   }
 }
@@ -84,9 +88,11 @@
   flex-shrink: 0;
 
   @include mobile {
-    padding: 0 $space-3 !important;
+    flex: 1;
+    padding: 0 $space-2 !important;
     font-size: $font-xs !important;
-    height: 34px !important;
+    height: 36px !important;
+    justify-content: center;
   }
 }
 
@@ -399,5 +405,19 @@
   @include mobile {
     font-size: $font-lg;
     margin-bottom: $space-4;
+  }
+}
+
+.desktopText {
+  display: inline;
+  @include mobile {
+    display: none;
+  }
+}
+
+.mobileText {
+  display: none;
+  @include mobile {
+    display: inline;
   }
 }

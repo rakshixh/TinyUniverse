@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ADMIN_COOKIE_NAME } from '@/lib/constants';
+import { CONTENT } from '@/lib/content';
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,7 +23,7 @@ export async function POST(request: NextRequest) {
 
     if (!passcode || typeof passcode !== 'string') {
       return NextResponse.json(
-        { error: 'Passcode is required' },
+        { error: CONTENT.api.errors.required.passcode },
         { status: 400 }
       );
     }
@@ -32,14 +33,14 @@ export async function POST(request: NextRequest) {
     if (!correctPasscode) {
       console.error('MASTER_PASSCODE / UNIVERSE_PASSCODE is not configured in environment');
       return NextResponse.json(
-        { error: 'Server configuration error' },
+        { error: CONTENT.api.errors.server.config },
         { status: 500 }
       );
     }
 
     if (passcode !== correctPasscode) {
       return NextResponse.json(
-        { error: 'Invalid passcode' },
+        { error: CONTENT.admin.login.invalidPasscodeError },
         { status: 401 }
       );
     }
@@ -57,7 +58,7 @@ export async function POST(request: NextRequest) {
     return response;
   } catch {
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: CONTENT.api.errors.server.internal },
       { status: 500 }
     );
   }

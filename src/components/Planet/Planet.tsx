@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react';
 import type { IMemory } from '@/types/memory';
+import { CONTENT } from '@/lib/content';
 import styles from './Planet.module.scss';
 
 // Deterministic color generation from title (fallback)
@@ -77,8 +78,8 @@ export default function Planet({ memory, onClick, color, textureType }: PlanetPr
         '--rotation-duration': rotationDuration,
       } as React.CSSProperties}
       onClick={() => onClick(memory)}
-      aria-label={`Planet: ${memory.title}. Created on ${formattedDate}. Click to view memory.`}
-      title={`${memory.title} (${formattedDate})`}
+      aria-label={CONTENT.canvas.planetAriaLabel(memory.title, formattedDate)}
+      title={CONTENT.canvas.planetTitle(memory.title, formattedDate)}
       type="button"
     >
       <span className={styles.globe} aria-hidden="true">

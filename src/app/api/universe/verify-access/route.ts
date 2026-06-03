@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { getRawUniverseBySlug } from '@/services/universe.service';
+import { CONTENT } from '@/lib/content';
 
 /** POST /api/universe/verify-access — Validate guest access code */
 export async function POST(request: NextRequest) {
@@ -9,25 +10,25 @@ export async function POST(request: NextRequest) {
     const { slug, passcode } = body;
 
     if (!slug || typeof slug !== 'string') {
-      return NextResponse.json({ error: 'Universe slug is required' }, { status: 400 });
+      return NextResponse.json({ error: CONTENT.api.errors.required.slug }, { status: 400 });
     }
 
     if (!passcode || typeof passcode !== 'string') {
-      return NextResponse.json({ error: 'Access code is required' }, { status: 400 });
+      return NextResponse.json({ error: CONTENT.api.errors.required.accessCode }, { status: 400 });
     }
 
     // Fetch the universe (with the raw accessCodeHash)
     const universe = await getRawUniverseBySlug(slug);
 
     if (!universe) {
-      return NextResponse.json({ error: 'Universe not found' }, { status: 404 });
+      return NextResponse.json({ error: CONTENT.api.errors.notFound.universe }, { status: 404 });
     }
 
     // Verify access code using bcrypt
     const isValid = bcrypt.compareSync(passcode, universe.accessCodeHash);
 
     if (!isValid) {
-      return NextResponse.json({ error: 'Invalid access code' }, { status: 401 });
+      return NextResponse.json({ error: CONTENT.guestUnlock.invalidPasscodeError }, { status: 401 });
     }
 
     // Set secure HttpOnly cookie (session cookie with 1-day validation and passcode hash comparison)
@@ -43,6 +44,6 @@ export async function POST(request: NextRequest) {
     return response;
   } catch (err) {
     console.error('Verify access error:', err);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: CONTENT.api.errors.server.internal }, { status: 500 });
   }
 }

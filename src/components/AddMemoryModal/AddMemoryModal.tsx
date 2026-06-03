@@ -134,14 +134,14 @@ export default function AddMemoryModal({
         {/* Contributor Name */}
         <div className={styles.field}>
           <label htmlFor="contributor-name" className={styles.label}>
-            Your Name * (Min 4 characters)
+            {CONTENT.addMemoryModal.fieldContributor}
           </label>
           <input
             id="contributor-name"
             type="text"
             value={contributorName}
             onChange={(e) => setContributorName(e.target.value)}
-            placeholder="Enter your name..."
+            placeholder={CONTENT.addMemoryModal.fieldContributorPlaceholder}
             className={styles.input}
             maxLength={100}
             disabled={isLoading}

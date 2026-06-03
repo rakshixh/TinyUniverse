@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { getMemories, createMemory } from '@/services/memory.service';
 import { getSolarSystemById } from '@/services/solarsystem.service';
 import { isAuthorized } from '@/lib/auth';
+import { CONTENT } from '@/lib/content';
 
 /** GET /api/memories?systemId=xxx — List all memories in a star system */
 export async function GET(request: NextRequest) {
@@ -10,48 +11,48 @@ export async function GET(request: NextRequest) {
   const systemId = searchParams.get('systemId');
 
   if (!systemId) {
-    return NextResponse.json({ error: 'systemId is required' }, { status: 400 });
+    return NextResponse.json({ error: CONTENT.api.errors.required.systemId }, { status: 400 });
   }
 
   try {
     const system = await getSolarSystemById(systemId);
     if (!system) {
-      return NextResponse.json({ error: 'Solar system not found' }, { status: 404 });
+      return NextResponse.json({ error: CONTENT.api.errors.notFound.solarSystem }, { status: 404 });
     }
 
     // Check if Admin or authorized Guest
     if (!(await isAuthorized(request, system.universeId))) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: CONTENT.api.errors.unauthorized }, { status: 401 });
     }
 
     const memories = await getMemories(systemId);
     return NextResponse.json({ memories }, { status: 200 });
   } catch (err) {
     console.error('Fetch memories error:', err);
-    return NextResponse.json({ error: 'Failed to fetch memories' }, { status: 500 });
+    return NextResponse.json({ error: CONTENT.api.errors.server.fetchMemories }, { status: 500 });
   }
 }
 
 const CreateMemorySchema = z.object({
   title: z
     .string()
-    .min(1, 'Title is required')
-    .max(100, 'Title cannot exceed 100 characters')
+    .min(1, CONTENT.api.errors.required.title)
+    .max(100, CONTENT.api.errors.validation.titleTooLong)
     .trim(),
   description: z
     .string()
-    .max(1000, 'Description cannot exceed 1000 characters')
+    .max(1000, CONTENT.api.errors.validation.descTooLong1000)
     .optional()
     .default(''),
   orbit: z.number().min(1).max(4),
-  date: z.string().min(1, 'Date is required'),
-  systemId: z.string().min(1, 'System ID is required'),
+  date: z.string().min(1, CONTENT.api.errors.required.date),
+  systemId: z.string().min(1, CONTENT.api.errors.required.systemId),
   contributorName: z
     .string()
-    .min(4, 'Name must be at least 4 characters')
+    .min(4, CONTENT.addMemoryModal.fieldContributorMinError)
     .max(100)
     .trim(),
-  universeId: z.string().min(1, 'Universe ID is required'),
+  universeId: z.string().min(1, CONTENT.api.errors.required.universeId),
 });
 
 /** POST /api/memories — Create a new memory inside a system (Admin or authorized Guest) */
@@ -71,7 +72,7 @@ export async function POST(request: NextRequest) {
 
     // Check if Admin or authorized Guest
     if (!(await isAuthorized(request, universeId))) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: CONTENT.api.errors.unauthorized }, { status: 401 });
     }
 
     // Map systemId to solarSystemId inside createMemory input
@@ -83,6 +84,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ memory }, { status: 201 });
   } catch (err) {
     console.error('Create memory error:', err);
-    return NextResponse.json({ error: 'Failed to create memory' }, { status: 500 });
+    return NextResponse.json({ error: CONTENT.api.errors.server.createMemory }, { status: 500 });
   }
 }

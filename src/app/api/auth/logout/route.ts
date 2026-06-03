@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ADMIN_COOKIE_NAME } from '@/lib/constants';
+import { CONTENT } from '@/lib/content';
 
 /**
  * POST /api/auth/logout — Clears admin and guest cookies.
@@ -36,6 +37,6 @@ export async function POST(request: NextRequest) {
     return response;
   } catch (err) {
     console.error('Logout error:', err);
-    return NextResponse.json({ error: 'Failed to clear session' }, { status: 500 });
+    return NextResponse.json({ error: CONTENT.api.errors.server.clearSession }, { status: 500 });
   }
 }

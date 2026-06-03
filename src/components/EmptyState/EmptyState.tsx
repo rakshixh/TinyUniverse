@@ -1,3 +1,4 @@
+import { CONTENT } from '@/lib/content';
 import styles from './EmptyState.module.scss';
 
 interface EmptyStateProps {
@@ -6,7 +7,7 @@ interface EmptyStateProps {
 
 export default function EmptyState({ onAddMemory }: EmptyStateProps) {
   return (
-    <div className={styles.container} role="main" aria-label="Empty universe">
+    <div className={styles.container} role="main" aria-label={CONTENT.emptyState.ariaLabel}>
       <div className={styles.illustration} aria-hidden="true">
         <div className={styles.ring1} />
         <div className={styles.ring2} />
@@ -17,11 +18,11 @@ export default function EmptyState({ onAddMemory }: EmptyStateProps) {
       </div>
 
       <div className={styles.content}>
-        <h2 className={styles.title}>Your universe is empty.</h2>
+        <h2 className={styles.title}>{CONTENT.emptyState.title}</h2>
         <p className={styles.description}>
-          Every memory is a planet waiting to be born.
+          {CONTENT.emptyState.descriptionLine1}
           <br />
-          Create your first one and watch your universe come alive.
+          {CONTENT.emptyState.descriptionLine2}
         </p>
       </div>
 
@@ -29,10 +30,10 @@ export default function EmptyState({ onAddMemory }: EmptyStateProps) {
         className={styles.button}
         onClick={onAddMemory}
         id="add-first-memory-button"
-        aria-label="Create your first memory"
+        aria-label={CONTENT.emptyState.ariaLabelCta}
       >
         <span aria-hidden="true">✦</span>
-        Create First Memory
+        {CONTENT.emptyState.cta}
       </button>
     </div>
   );

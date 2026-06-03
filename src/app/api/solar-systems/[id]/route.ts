@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getSolarSystemById, updateSolarSystem, deleteSolarSystem } from '@/services/solarsystem.service';
 import { isAuthorized, isAdmin } from '@/lib/auth';
+import { CONTENT } from '@/lib/content';
 
 type Params = { params: Promise<{ id: string }> };
 
 const UpdateSolarSystemSchema = z.object({
-  name: z.string().min(1, 'Name is required').max(100, 'Name too long').trim().optional(),
-  description: z.string().max(500, 'Description too long').optional(),
+  name: z.string().min(1, CONTENT.api.errors.required.name).max(100, CONTENT.api.errors.validation.nameTooLong).trim().optional(),
+  description: z.string().max(500, CONTENT.api.errors.validation.descTooLong500).optional(),
   starColor: z.string().min(4).max(7).optional(),
   starType: z.string().optional(),
 });
@@ -30,29 +31,29 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     // Retrieve solar system to check its universe ID
     const system = await getSolarSystemById(id);
     if (!system) {
-      return NextResponse.json({ error: 'Solar system not found' }, { status: 404 });
+      return NextResponse.json({ error: CONTENT.api.errors.notFound.solarSystem }, { status: 404 });
     }
 
     // Check if Admin or authorized Guest of that universe
     if (!(await isAuthorized(request, system.universeId))) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: CONTENT.api.errors.unauthorized }, { status: 401 });
     }
 
     const updatedSystem = await updateSolarSystem(id, parsed.data);
     if (!updatedSystem) {
-      return NextResponse.json({ error: 'Solar system not found' }, { status: 404 });
+      return NextResponse.json({ error: CONTENT.api.errors.notFound.solarSystem }, { status: 404 });
     }
     return NextResponse.json({ system: updatedSystem }, { status: 200 });
   } catch (err) {
     console.error('Update solar system error:', err);
-    return NextResponse.json({ error: 'Failed to update solar system' }, { status: 500 });
+    return NextResponse.json({ error: CONTENT.api.errors.server.updateSolarSystem }, { status: 500 });
   }
 }
 
 /** DELETE /api/solar-systems/[id] — Dissolve a solar system (Admin only) */
 export async function DELETE(request: NextRequest, { params }: Params) {
   if (!isAdmin(request)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ error: CONTENT.api.errors.unauthorized }, { status: 401 });
   }
 
   const { id } = await params;
@@ -60,11 +61,11 @@ export async function DELETE(request: NextRequest, { params }: Params) {
   try {
     const success = await deleteSolarSystem(id);
     if (!success) {
-      return NextResponse.json({ error: 'Solar system not found' }, { status: 404 });
+      return NextResponse.json({ error: CONTENT.api.errors.notFound.solarSystem }, { status: 404 });
     }
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (err) {
     console.error('Delete solar system error:', err);
-    return NextResponse.json({ error: 'Failed to dissolve solar system' }, { status: 500 });
+    return NextResponse.json({ error: CONTENT.api.errors.server.deleteSolarSystem }, { status: 500 });
   }
 }

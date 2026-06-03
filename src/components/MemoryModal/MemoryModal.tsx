@@ -147,7 +147,7 @@ export default function MemoryModal({
           <div className={styles.headerMeta}>
             <span className={styles.date}>{formatDate(memory.date)}</span>
             {memory.contributorName && (
-              <span className={styles.contributor}>Added by {memory.contributorName}</span>
+              <span className={styles.contributor}>{CONTENT.memoryModal.viewMode.addedBy(memory.contributorName)}</span>
             )}
           </div>
         )}
@@ -167,9 +167,9 @@ export default function MemoryModal({
                   onClick={() => setMode('edit')}
                   className={styles.actionBtn}
                   id="edit-memory-button"
-                  aria-label="Edit memory"
+                  aria-label={CONTENT.memoryModal.viewMode.editBtn}
                 >
-                  Edit
+                  {CONTENT.memoryModal.viewMode.editBtn}
                 </Button>
                 <Button
                   variant="danger"
@@ -177,10 +177,10 @@ export default function MemoryModal({
                   className={styles.actionBtn}
                   id="delete-memory-button"
                   disabled={!isAdmin}
-                  title={isAdmin ? undefined : 'Only Admin can dissolve memories'}
-                  aria-label="Dissolve memory"
+                  title={isAdmin ? undefined : CONTENT.memoryModal.viewMode.deleteBtnTooltip}
+                  aria-label={CONTENT.memoryModal.viewMode.deleteBtn}
                 >
-                  Dissolve
+                  {CONTENT.memoryModal.viewMode.deleteBtn}
                 </Button>
               </div>
             </div>
@@ -208,7 +208,7 @@ export default function MemoryModal({
 
               <div className={styles.field}>
                 <label htmlFor="edit-contributor-name" className={styles.label}>
-                  Your Name * (Min 4 characters)
+                  {CONTENT.memoryModal.editMode.fieldContributor}
                 </label>
                 <input
                   id="edit-contributor-name"

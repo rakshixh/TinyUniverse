@@ -683,3 +683,17 @@
     margin-bottom: $space-4;
   }
 }
+
+.desktopText {
+  display: inline;
+  @include mobile {
+    display: none;
+  }
+}
+
+.mobileText {
+  display: none;
+  @include mobile {
+    display: inline;
+  }
+}

@@ -207,12 +207,12 @@ export default function GuestSystemsHub({ universe, isAdmin }: GuestSystemsHubPr
       <header className={styles.header}>
         <div className={styles.headerLeft}>
           {isAdmin ? (
-            <Link href="/" className={styles.backLink} aria-label="Back to Admin Dashboard">
+            <Link href="/" className={styles.backLink} aria-label={CONTENT.systemsHub.backToDashboardAria}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <line x1="19" y1="12" x2="5" y2="12"></line>
                 <polyline points="12 19 5 12 12 5"></polyline>
               </svg>
-              Dashboard
+              {CONTENT.systemsHub.backToDashboard}
             </Link>
           ) : (
             <span className={styles.logoEmoji} aria-hidden="true">🌌</span>
@@ -228,7 +228,8 @@ export default function GuestSystemsHub({ universe, isAdmin }: GuestSystemsHubPr
             onClick={() => setIsModalOpen(true)}
             aria-label={CONTENT.systemsHub.header.igniteBtn}
           >
-            {CONTENT.systemsHub.header.igniteBtn}
+            <span className={styles.desktopText}>{CONTENT.systemsHub.header.igniteBtn}</span>
+            <span className={styles.mobileText}>{CONTENT.systemsHub.header.igniteBtnMobile}</span>
           </Button>
         )}
       </header>
@@ -273,7 +274,7 @@ export default function GuestSystemsHub({ universe, isAdmin }: GuestSystemsHubPr
                 key={system._id}
                 onClick={() => handleCardClick(system._id)}
                 className={styles.card}
-                ariaLabel={`Enter system ${system.title}`}
+                ariaLabel={CONTENT.systemsHub.grid.card.enterSystemAria(system.title)}
               >
                 <div
                   className={styles.cardHeaderGlow}
@@ -351,8 +352,8 @@ export default function GuestSystemsHub({ universe, isAdmin }: GuestSystemsHubPr
                           setEditCustomColorText(system.starColor);
                           setEditSystemType(system.starType);
                         }}
-                        title={`Edit ${system.title}`}
-                        aria-label={`Edit ${system.title}`}
+                        title={CONTENT.systemsHub.grid.card.editSystemAria(system.title)}
+                        aria-label={CONTENT.systemsHub.grid.card.editSystemAria(system.title)}
                       >
                         {CONTENT.systemsHub.grid.card.editBtn}
                       </Button>
@@ -364,8 +365,8 @@ export default function GuestSystemsHub({ universe, isAdmin }: GuestSystemsHubPr
                           setSystemToDelete(system);
                         }}
                         disabled={!isAdmin}
-                        title={isAdmin ? `Dissolve ${system.title}` : 'Only Admin can dissolve systems'}
-                        aria-label={`Dissolve ${system.title}`}
+                        title={isAdmin ? CONTENT.systemsHub.grid.card.dissolveSystemAria(system.title) : CONTENT.systemsHub.grid.card.dissolveSystemDisabledTooltip}
+                        aria-label={CONTENT.systemsHub.grid.card.dissolveSystemAria(system.title)}
                       >
                         {CONTENT.systemsHub.grid.card.deleteBtn}
                       </Button>
@@ -649,7 +650,7 @@ export default function GuestSystemsHub({ universe, isAdmin }: GuestSystemsHubPr
             variant="danger"
             onClick={() => systemToDelete && handleDeleteSystem(systemToDelete._id)}
             isLoading={isDeleting}
-            loadingText="Dissolving..."
+            loadingText={CONTENT.systemsHub.deleteModal.confirmBtnLoading}
           >
             {CONTENT.systemsHub.deleteModal.confirmBtn}
           </Button>

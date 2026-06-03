@@ -118,11 +118,11 @@ export default function GuestSystemCanvas({ universe, systemId, isAdmin }: Guest
               <line x1="19" y1="12" x2="5" y2="12"></line>
               <polyline points="12 19 5 12 12 5"></polyline>
             </svg>
-            Systems
+            {CONTENT.systemCanvas.backToSystemsLabel}
           </Link>
           <div className={styles.titleArea}>
             <h1 className={styles.systemName}>
-              {solarSystem?.title || solarSystem?.name || 'Loading System...'}
+              {solarSystem?.title || solarSystem?.name || CONTENT.systemCanvas.loadingSystem}
             </h1>
             <p className={styles.universeName}>
               {CONTENT.systemCanvas.systemInLabel} {universe.title}
@@ -145,7 +145,7 @@ export default function GuestSystemCanvas({ universe, systemId, isAdmin }: Guest
               aria-label={CONTENT.systemCanvas.addMemoryBtn}
             >
               <span aria-hidden="true">+</span>
-              New Memory
+              {CONTENT.systemCanvas.newMemoryBtn}
             </Button>
           )}
         </div>
