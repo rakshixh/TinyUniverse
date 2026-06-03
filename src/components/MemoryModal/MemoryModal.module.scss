@@ -76,6 +76,13 @@
   color: $color-text-muted;
 }
 
+.contributor {
+  font-size: $font-sm;
+  color: $color-secondary;
+  font-weight: 500;
+  margin-top: -$space-1;
+}
+
 .closeButton {
   @include button-base;
   width: 32px;
@@ -153,38 +160,19 @@
 .actions {
   display: flex;
   gap: $space-3;
-  padding-top: $space-2;
-  border-top: 1px solid $color-border;
+  padding-top: $space-4;
+  border-top: 1px solid rgba($color-border, 0.4);
+  justify-content: flex-end;
 }
 
-.editButton {
-  @include button-base;
-  background: rgba($color-primary, 0.12);
-  color: $color-primary;
-  border: 1px solid rgba($color-primary, 0.25);
-  padding: $space-2 $space-4;
-  font-size: $font-sm;
-  height: 36px;
-  @include transition(all);
-
-  &:hover {
-    background: rgba($color-primary, 0.2);
-  }
-}
-
-.deleteButton {
-  @include button-base;
-  background: rgba($color-error, 0.08);
-  color: $color-error;
-  border: 1px solid rgba($color-error, 0.2);
-  padding: $space-2 $space-4;
-  font-size: $font-sm;
-  height: 36px;
-  @include transition(all);
-
-  &:hover {
-    background: rgba($color-error, 0.15);
-  }
+.actionBtn {
+  height: 36px !important;
+  font-size: $font-sm !important;
+  padding: 0 $space-4 !important;
+  justify-content: center;
+  flex: 1;
+  min-width: 100px;
+  max-width: 120px;
 }
 
 // ─── Edit Mode ───────────────────────────────────────────────

@@ -2,12 +2,15 @@ import mongoose, { Document, Model, Schema, Types } from 'mongoose';
 
 export interface IMemoryDocument extends Document {
   universeId: Types.ObjectId;
-  systemId: Types.ObjectId;
+  solarSystemId: Types.ObjectId;
+  systemId?: Types.ObjectId; // Legacy field
   title: string;
   description: string;
   orbit: number;
   angle: number;
   date: Date;
+  contributorName?: string;
+  imageUrl?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -20,11 +23,15 @@ const MemorySchema = new Schema<IMemoryDocument>(
       required: [true, 'Universe ID is required'],
       index: true,
     },
-    systemId: {
+    solarSystemId: {
       type: Schema.Types.ObjectId,
       ref: 'SolarSystem',
       required: [true, 'Solar System ID is required'],
       index: true,
+    },
+    systemId: {
+      type: Schema.Types.ObjectId,
+      ref: 'SolarSystem',
     },
     title: {
       type: String,
@@ -55,6 +62,16 @@ const MemorySchema = new Schema<IMemoryDocument>(
       required: [true, 'Memory date is required'],
       default: Date.now,
     },
+    contributorName: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    imageUrl: {
+      type: String,
+      trim: true,
+      default: '',
+    },
   },
   {
     timestamps: true,
@@ -63,7 +80,8 @@ const MemorySchema = new Schema<IMemoryDocument>(
 );
 
 // Compound index for listing memories in a system sorted by date
-MemorySchema.index({ systemId: 1, date: 1 });
+MemorySchema.index({ solarSystemId: 1, date: 1 });
+MemorySchema.index({ universeId: 1, solarSystemId: 1 });
 
 const Memory: Model<IMemoryDocument> =
   mongoose.models.Memory ||

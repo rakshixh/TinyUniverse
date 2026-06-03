@@ -1,21 +1,21 @@
 'use client';
 
-import { useState, useCallback, use } from 'react';
+import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import type { IMemory } from '@/types/memory';
+import type { IUniverse } from '@/types/universe';
 import { useMemories } from '@/hooks/useMemories';
 import { useSolarSystems } from '@/hooks/useSolarSystems';
-import { useUniverseDetail } from '@/hooks/useUniverse';
 import EmptyState from '@/components/EmptyState/EmptyState';
 import Loader from '@/components/Loader/Loader';
 import MemoryModal from '@/components/MemoryModal/MemoryModal';
 import Button from '@/components/UI/Button';
 import { CONTENT } from '@/lib/content';
-import styles from './canvasPage.module.scss';
+import styles from './GuestSystemCanvas.module.scss';
 import SpaceBackground from '@/components/UI/SpaceBackground';
 
-// Lazy load heavy components
+// Lazy load heavy interactive components
 const UniverseCanvas = dynamic(
   () => import('@/components/UniverseCanvas/UniverseCanvas'),
   { ssr: false }
@@ -26,15 +26,14 @@ const AddMemoryModal = dynamic(
   { ssr: false }
 );
 
-interface Params {
-  params: Promise<{ universeId: string; systemId: string }>;
+interface GuestSystemCanvasProps {
+  universe: IUniverse;
+  systemId: string;
+  isAdmin: boolean;
 }
 
-export default function SolarSystemCanvasPage({ params }: Params) {
-  const { universeId, systemId } = use(params);
-
-  const { universe } = useUniverseDetail(universeId);
-  const { systems, isLoading: isSystemsLoading } = useSolarSystems(universeId);
+export default function GuestSystemCanvas({ universe, systemId, isAdmin }: GuestSystemCanvasProps) {
+  const { systems, isLoading: isSystemsLoading } = useSolarSystems(universe._id);
   const { memories, isLoading: isMemoriesLoading, mutate } = useMemories(systemId);
 
   const [selectedMemory, setSelectedMemory] = useState<IMemory | null>(null);
@@ -93,14 +92,14 @@ export default function SolarSystemCanvasPage({ params }: Params) {
 
   return (
     <div className={styles.page}>
-      {/* Star background */}
+      {/* Space background */}
       <SpaceBackground />
 
       {/* Header */}
       <header className={styles.header}>
         <div className={styles.headerLeft}>
           <Link
-            href={`/universe/${universeId}`}
+            href={`/?u=${universe.slug}`}
             className={styles.backLink}
             aria-label={CONTENT.systemCanvas.backBtn}
           >
@@ -123,10 +122,10 @@ export default function SolarSystemCanvasPage({ params }: Params) {
           </Link>
           <div className={styles.titleArea}>
             <h1 className={styles.systemName}>
-              {solarSystem?.name || 'Loading System...'}
+              {solarSystem?.title || solarSystem?.name || 'Loading System...'}
             </h1>
             <p className={styles.universeName}>
-              {CONTENT.systemCanvas.systemInLabel} {universe?.title || 'Universe'}
+              {CONTENT.systemCanvas.systemInLabel} {universe.title}
             </p>
           </div>
         </div>
@@ -185,7 +184,8 @@ export default function SolarSystemCanvasPage({ params }: Params) {
         onClose={() => setSelectedMemory(null)}
         onUpdate={handleMemoryUpdated}
         onDelete={handleMemoryDeleted}
-        universeId={universeId}
+        universeId={universe._id}
+        isAdmin={isAdmin}
       />
 
       <AddMemoryModal
@@ -193,7 +193,7 @@ export default function SolarSystemCanvasPage({ params }: Params) {
         onClose={() => setIsAddModalOpen(false)}
         onCreated={handleMemoryCreated}
         systemId={systemId}
-        universeId={universeId}
+        universeId={universe._id}
       />
     </div>
   );

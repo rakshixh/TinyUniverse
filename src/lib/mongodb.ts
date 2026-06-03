@@ -34,9 +34,15 @@ async function connectDB(): Promise<typeof mongoose> {
       maxPoolSize: 10,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+    cached.promise = mongoose.connect(MONGODB_URI, opts).then(async (mongooseInstance) => {
       console.log('✅ MongoDB connected');
-      return mongoose;
+      try {
+        const { runMigration } = await import('./migration');
+        await runMigration();
+      } catch (err) {
+        console.error('Failed to run migration:', err);
+      }
+      return mongooseInstance;
     });
   }
 

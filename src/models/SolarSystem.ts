@@ -2,10 +2,12 @@ import mongoose, { Document, Model, Schema, Types } from 'mongoose';
 
 export interface ISolarSystemDocument extends Document {
   universeId: Types.ObjectId;
-  name: string;
+  title: string;
+  name?: string; // Legacy field
   description: string;
   starColor: string;
   starType: string;
+  orbit?: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -18,11 +20,15 @@ const SolarSystemSchema = new Schema<ISolarSystemDocument>(
       required: [true, 'Universe ID is required'],
       index: true,
     },
+    title: {
+      type: String,
+      required: [true, 'Title is required'],
+      trim: true,
+      maxlength: [100, 'Title cannot exceed 100 characters'],
+    },
     name: {
       type: String,
-      required: [true, 'Name is required'],
       trim: true,
-      maxlength: [100, 'Name cannot exceed 100 characters'],
     },
     description: {
       type: String,
@@ -39,6 +45,10 @@ const SolarSystemSchema = new Schema<ISolarSystemDocument>(
       type: String,
       default: 'dwarf',
       trim: true,
+    },
+    orbit: {
+      type: Number,
+      default: 0,
     },
   },
   {

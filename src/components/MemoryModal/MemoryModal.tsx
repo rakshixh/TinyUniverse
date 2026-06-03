@@ -21,6 +21,7 @@ interface MemoryModalProps {
   onUpdate: (memory: IMemory) => void;
   onDelete: (id: string) => void;
   universeId: string;
+  isAdmin?: boolean;
 }
 
 function formatDate(dateStr: string): string {
@@ -42,9 +43,11 @@ export default function MemoryModal({
   onUpdate,
   onDelete,
   universeId,
+  isAdmin = false,
 }: MemoryModalProps) {
   const [mode, setMode] = useState<ModalMode>('view');
   const [title, setTitle] = useState('');
+  const [contributorName, setContributorName] = useState('');
   const [description, setDescription] = useState('');
   const [orbit, setOrbit] = useState(1);
   const [date, setDate] = useState('');
@@ -57,6 +60,7 @@ export default function MemoryModal({
   if (memory && memory._id !== prevMemoryId) {
     setPrevMemoryId(memory._id);
     setTitle(memory.title);
+    setContributorName(memory.contributorName || '');
     setDescription(memory.description || '');
     setOrbit(memory.orbit || 1);
     setDate(memory.date ? memory.date.substring(0, 10) : '');
@@ -64,7 +68,7 @@ export default function MemoryModal({
   }
 
   const handleUpdate = async () => {
-    if (!memory || !title.trim() || !date) return;
+    if (!memory || !title.trim() || !date || contributorName.trim().length < 4) return;
 
     setIsSubmitting(true);
 
@@ -72,6 +76,7 @@ export default function MemoryModal({
     try {
       const body = {
         title: title.trim(),
+        contributorName: contributorName.trim(),
         description: description.trim(),
         orbit,
         date,
@@ -141,6 +146,9 @@ export default function MemoryModal({
         {mode === 'view' && (
           <div className={styles.headerMeta}>
             <span className={styles.date}>{formatDate(memory.date)}</span>
+            {memory.contributorName && (
+              <span className={styles.contributor}>Added by {memory.contributorName}</span>
+            )}
           </div>
         )}
 
@@ -157,18 +165,22 @@ export default function MemoryModal({
                 <Button
                   variant="secondary"
                   onClick={() => setMode('edit')}
+                  className={styles.actionBtn}
                   id="edit-memory-button"
-                  aria-label={CONTENT.memoryModal.viewMode.editBtn}
+                  aria-label="Edit memory"
                 >
-                  {CONTENT.memoryModal.viewMode.editBtn}
+                  Edit
                 </Button>
                 <Button
                   variant="danger"
                   onClick={() => setMode('confirm-delete')}
+                  className={styles.actionBtn}
                   id="delete-memory-button"
-                  aria-label={CONTENT.memoryModal.viewMode.deleteBtn}
+                  disabled={!isAdmin}
+                  title={isAdmin ? undefined : 'Only Admin can dissolve memories'}
+                  aria-label="Dissolve memory"
                 >
-                  {CONTENT.memoryModal.viewMode.deleteBtn}
+                  Dissolve
                 </Button>
               </div>
             </div>
@@ -190,6 +202,23 @@ export default function MemoryModal({
                   maxLength={MAX_TITLE_LENGTH}
                   autoFocus
                   disabled={isLoading}
+                  aria-required="true"
+                />
+              </div>
+
+              <div className={styles.field}>
+                <label htmlFor="edit-contributor-name" className={styles.label}>
+                  Your Name * (Min 4 characters)
+                </label>
+                <input
+                  id="edit-contributor-name"
+                  type="text"
+                  value={contributorName}
+                  onChange={(e) => setContributorName(e.target.value)}
+                  className={styles.input}
+                  maxLength={100}
+                  disabled={isLoading}
+                  required
                   aria-required="true"
                 />
               </div>
@@ -247,6 +276,7 @@ export default function MemoryModal({
                   variant="cancel"
                   onClick={() => {
                     setTitle(memory.title);
+                    setContributorName(memory.contributorName || '');
                     setDescription(memory.description || '');
                     setOrbit(memory.orbit || 1);
                     setDate(memory.date ? memory.date.substring(0, 10) : '');
@@ -260,7 +290,7 @@ export default function MemoryModal({
                 <Button
                   variant="primary"
                   onClick={handleUpdate}
-                  disabled={isLoading || !title.trim()}
+                  disabled={isLoading || !title.trim() || !date || contributorName.trim().length < 4}
                   isLoading={isLoading}
                   loadingText={CONTENT.memoryModal.editMode.saveBtnLoading}
                   id="save-memory-button"

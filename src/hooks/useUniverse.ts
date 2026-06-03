@@ -31,6 +31,25 @@ export function useUniverses() {
   };
 }
 
+/** Hook to fetch all universes for Admin Dashboard */
+export function useAdminUniverses() {
+  const { data, error, isLoading, mutate } = useSWR<{ universes: IUniverse[] }>(
+    '/api/admin/universes',
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      dedupingInterval: 5000,
+    }
+  );
+
+  return {
+    universes: data?.universes ?? [],
+    isLoading,
+    error,
+    mutate,
+  };
+}
+
 /** Hook to fetch detail of a specific universe */
 export function useUniverseDetail(universeId: string | null) {
   const { data, error, isLoading, mutate } = useSWR<{ universe: IUniverse }>(

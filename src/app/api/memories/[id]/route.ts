@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { updateMemory, deleteMemory } from '@/services/memory.service';
-import { SESSION_COOKIE_NAME, SESSION_COOKIE_VALUE } from '@/lib/constants';
-
-function isAuthenticated(request: NextRequest): boolean {
-  const cookie = request.cookies.get(SESSION_COOKIE_NAME);
-  return cookie?.value === SESSION_COOKIE_VALUE;
-}
+import { isAuthorized, isAdmin } from '@/lib/auth';
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -23,15 +18,16 @@ const UpdateMemorySchema = z.object({
     .optional(),
   orbit: z.number().min(1).max(4).optional(),
   date: z.string().optional(),
+  contributorName: z
+    .string()
+    .min(4, 'Name must be at least 4 characters')
+    .max(100)
+    .trim(),
   universeId: z.string().min(1, 'Universe ID is required'),
 });
 
-/** PATCH /api/memories/:id — Update a memory */
+/** PATCH /api/memories/:id — Update a memory (Admin or authorized Guest) */
 export async function PATCH(request: NextRequest, { params }: Params) {
-  if (!isAuthenticated(request)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
   const { id } = await params;
 
   try {
@@ -47,6 +43,11 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
     const { universeId, ...updateData } = parsed.data;
 
+    // Check if Admin or authorized Guest
+    if (!(await isAuthorized(request, universeId))) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const memory = await updateMemory(id, universeId, updateData);
 
     if (!memory) {
@@ -54,14 +55,15 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     }
 
     return NextResponse.json({ memory }, { status: 200 });
-  } catch {
+  } catch (err) {
+    console.error('Update memory error:', err);
     return NextResponse.json({ error: 'Failed to update memory' }, { status: 500 });
   }
 }
 
-/** DELETE /api/memories/:id — Delete a memory */
+/** DELETE /api/memories/:id — Delete a memory (Admin only) */
 export async function DELETE(request: NextRequest, { params }: Params) {
-  if (!isAuthenticated(request)) {
+  if (!isAdmin(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -81,7 +83,8 @@ export async function DELETE(request: NextRequest, { params }: Params) {
     }
 
     return NextResponse.json({ success: true }, { status: 200 });
-  } catch {
+  } catch (err) {
+    console.error('Delete memory error:', err);
     return NextResponse.json({ error: 'Failed to delete memory' }, { status: 500 });
   }
 }

@@ -18,7 +18,7 @@ const fetcher = async (url: string): Promise<SolarSystemsResponse> => {
 
 export function useSolarSystems(universeId: string | null) {
   const { data, error, isLoading, mutate } = useSWR<SolarSystemsResponse>(
-    universeId ? `/api/universe/${universeId}/systems` : null,
+    universeId ? `/api/solar-systems?universeId=${universeId}` : null,
     fetcher,
     {
       revalidateOnFocus: false,

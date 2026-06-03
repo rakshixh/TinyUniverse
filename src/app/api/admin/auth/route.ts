@@ -1,9 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { SESSION_COOKIE_NAME, SESSION_COOKIE_VALUE } from '@/lib/constants';
+import { ADMIN_COOKIE_NAME } from '@/lib/constants';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+
+    // Check for logout request
+    if (body.action === 'logout') {
+      const response = NextResponse.json({ success: true });
+      response.cookies.set(ADMIN_COOKIE_NAME, '', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 0,
+        path: '/',
+      });
+      return response;
+    }
+
     const { passcode } = body;
 
     if (!passcode || typeof passcode !== 'string') {
@@ -13,10 +27,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const correctPasscode = process.env.UNIVERSE_PASSCODE;
+    const correctPasscode = process.env.MASTER_PASSCODE || process.env.UNIVERSE_PASSCODE;
 
     if (!correctPasscode) {
-      console.error('UNIVERSE_PASSCODE environment variable is not set');
+      console.error('MASTER_PASSCODE / UNIVERSE_PASSCODE is not configured in environment');
       return NextResponse.json(
         { error: 'Server configuration error' },
         { status: 500 }
@@ -30,14 +44,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Set secure HttpOnly cookie
+    // Set secure HttpOnly cookie (session cookie with 1-day validation built-in)
     const response = NextResponse.json({ success: true });
 
-    response.cookies.set(SESSION_COOKIE_NAME, SESSION_COOKIE_VALUE, {
+    response.cookies.set(ADMIN_COOKIE_NAME, `authenticated_${Date.now()}`, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 30, // 30 days
       path: '/',
     });
 

@@ -29,6 +29,7 @@ export default function AddMemoryModal({
   universeId,
 }: AddMemoryModalProps) {
   const [title, setTitle] = useState('');
+  const [contributorName, setContributorName] = useState('');
   const [description, setDescription] = useState('');
   const [orbit, setOrbit] = useState(1);
   const [date, setDate] = useState(() => new Date().toISOString().substring(0, 10));
@@ -41,6 +42,7 @@ export default function AddMemoryModal({
   // Reset form
   const resetForm = useCallback(() => {
     setTitle('');
+    setContributorName('');
     setDescription('');
     setOrbit(1);
     setDate(new Date().toISOString().substring(0, 10));
@@ -63,7 +65,7 @@ export default function AddMemoryModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !date || isLoading) return;
+    if (!title.trim() || !contributorName.trim() || contributorName.trim().length < 4 || !date || isLoading) return;
 
     // Create memory
     setIsSubmitting(true);
@@ -73,6 +75,7 @@ export default function AddMemoryModal({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: title.trim(),
+          contributorName: contributorName.trim(),
           description: description.trim(),
           orbit,
           date,
@@ -126,6 +129,25 @@ export default function AddMemoryModal({
             aria-required="true"
           />
           <span className={styles.charCount}>{title.length}/{MAX_TITLE_LENGTH}</span>
+        </div>
+
+        {/* Contributor Name */}
+        <div className={styles.field}>
+          <label htmlFor="contributor-name" className={styles.label}>
+            Your Name * (Min 4 characters)
+          </label>
+          <input
+            id="contributor-name"
+            type="text"
+            value={contributorName}
+            onChange={(e) => setContributorName(e.target.value)}
+            placeholder="Enter your name..."
+            className={styles.input}
+            maxLength={100}
+            disabled={isLoading}
+            aria-required="true"
+            required
+          />
         </div>
 
         {/* Date Selector */}
@@ -191,7 +213,7 @@ export default function AddMemoryModal({
           type="submit"
           isLoading={isLoading}
           loadingText={CONTENT.addMemoryModal.submitBtnLoading}
-          disabled={!title.trim()}
+          disabled={!title.trim() || contributorName.trim().length < 4}
           id="submit-memory-button"
         >
           {CONTENT.addMemoryModal.submitBtn}

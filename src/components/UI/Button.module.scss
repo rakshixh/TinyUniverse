@@ -71,15 +71,16 @@
 }
 
 .danger {
-  background: rgba($color-error, 0.15);
-  border: 1px solid $color-error;
+  background: transparent;
+  border: 1px solid rgba($color-error, 0.45);
   color: #FF8A8A;
-  box-shadow: 0 0 12px rgba($color-error, 0.15);
 
   &:hover:not(:disabled) {
-    background: rgba($color-error, 0.25);
+    background: $color-error;
+    border-color: $color-error;
+    color: $color-text;
     transform: translateY(-1px);
-    box-shadow: 0 0 16px rgba($color-error, 0.3);
+    box-shadow: 0 0 16px rgba($color-error, 0.45);
   }
 
   &:active:not(:disabled) {

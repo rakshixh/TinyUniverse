@@ -15,6 +15,8 @@ export const MAX_UNIVERSE_DESC_LENGTH  = 500;
 // ─── Cookie ───────────────────────────────────────────────────
 export const SESSION_COOKIE_NAME = 'tiny_universe_session';
 export const SESSION_COOKIE_VALUE = 'authenticated';
+export const ADMIN_COOKIE_NAME = 'tiny_universe_admin_session';
+export const ADMIN_COOKIE_VALUE = 'authenticated';
 
 // ─── API Paths ────────────────────────────────────────────────
 export const API_PATHS = {

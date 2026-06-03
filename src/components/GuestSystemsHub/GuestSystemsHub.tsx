@@ -1,21 +1,21 @@
 'use client';
 
-import { useState, FormEvent, use } from 'react';
+import { useState, FormEvent } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import { useUniverseDetail } from '@/hooks/useUniverse';
 import { useSolarSystems } from '@/hooks/useSolarSystems';
 import Loader from '@/components/Loader/Loader';
 import Button from '@/components/UI/Button';
 import Card from '@/components/UI/Card';
 import Modal from '@/components/UI/Modal';
 import { CONTENT } from '@/lib/content';
-import styles from './systemsHub.module.scss';
+import type { IUniverse } from '@/types/universe';
 import type { ISolarSystem } from '@/types/solarsystem';
 import SpaceBackground from '@/components/UI/SpaceBackground';
+import styles from './GuestSystemsHub.module.scss';
 
-// Star colors and types are sourced from CONTENT
+// Star colors and classifications from CONTENT
 const STAR_COLORS = CONTENT.systemsHub.starColors;
 const STAR_TYPES = CONTENT.systemsHub.starTypes;
 
@@ -32,16 +32,14 @@ const getDisplayColor = (text: string) => {
   return text;
 };
 
-interface Params {
-  params: Promise<{ universeId: string }>;
+interface GuestSystemsHubProps {
+  universe: IUniverse;
+  isAdmin: boolean;
 }
 
-export default function SolarSystemsHubPage({ params }: Params) {
-  const { universeId } = use(params);
+export default function GuestSystemsHub({ universe, isAdmin }: GuestSystemsHubProps) {
   const router = useRouter();
-  
-  const { universe, isLoading: isUnivLoading } = useUniverseDetail(universeId);
-  const { systems, isLoading: isSystemsLoading, mutate } = useSolarSystems(universeId);
+  const { systems, isLoading, mutate } = useSolarSystems(universe._id);
 
   // Solar system ignite form states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -88,6 +86,7 @@ export default function SolarSystemsHubPage({ params }: Params) {
 
   // Delete System Modal States
   const [systemToDelete, setSystemToDelete] = useState<ISolarSystem | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Solar System Info popup state
   const [infoSystem, setInfoSystem] = useState<ISolarSystem | null>(null);
@@ -98,10 +97,11 @@ export default function SolarSystemsHubPage({ params }: Params) {
 
     setIsSubmitting(true);
     try {
-      const res = await fetch(`/api/universe/${universeId}/systems`, {
+      const res = await fetch('/api/solar-systems', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          universeId: universe._id,
           name: name.trim(),
           description: description.trim(),
           starColor,
@@ -137,7 +137,7 @@ export default function SolarSystemsHubPage({ params }: Params) {
 
     setIsSubmittingEditSystem(true);
     try {
-      const res = await fetch(`/api/universe/${universeId}/systems?systemId=${editSystem._id}`, {
+      const res = await fetch(`/api/solar-systems/${editSystem._id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -173,8 +173,9 @@ export default function SolarSystemsHubPage({ params }: Params) {
   };
 
   const handleDeleteSystem = async (id: string) => {
+    setIsDeleting(true);
     try {
-      const res = await fetch(`/api/universe/${universeId}/systems?systemId=${id}`, {
+      const res = await fetch(`/api/solar-systems/${id}`, {
         method: 'DELETE',
       });
 
@@ -189,14 +190,14 @@ export default function SolarSystemsHubPage({ params }: Params) {
       setSystemToDelete(null);
     } catch {
       toast.error(CONTENT.common.genericError);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
   const handleCardClick = (id: string) => {
-    router.push(`/universe/${universeId}/system/${id}`);
+    router.push(`/?u=${universe.slug}&system=${id}`);
   };
-
-  const isLoading = isUnivLoading || isSystemsLoading;
 
   return (
     <div className={styles.page}>
@@ -205,27 +206,20 @@ export default function SolarSystemsHubPage({ params }: Params) {
       {/* Header */}
       <header className={styles.header}>
         <div className={styles.headerLeft}>
-          <Link href="/universe" className={styles.backLink} aria-label={CONTENT.systemsHub.backBtn}>
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              style={{ flexShrink: 0 }}
-              aria-hidden="true"
-            >
-              <line x1="19" y1="12" x2="5" y2="12"></line>
-              <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
-            Universes
-          </Link>
-          <div className={styles.titleArea}>
-            <h1 className={styles.universeTitle}>{universe?.title || 'Loading Universe...'}</h1>
-          </div>
+          {isAdmin ? (
+            <Link href="/" className={styles.backLink} aria-label="Back to Admin Dashboard">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+              Dashboard
+            </Link>
+          ) : (
+            <span className={styles.logoEmoji} aria-hidden="true">🌌</span>
+          )}
+          <h1 className={styles.title}>
+            TINY <span className={styles.titleAccent}>UNIVERSE</span>
+          </h1>
         </div>
         {!isLoading && (
           <Button
@@ -241,6 +235,7 @@ export default function SolarSystemsHubPage({ params }: Params) {
 
       {/* Main Content */}
       <main className={styles.main}>
+        <h2 className={styles.universeSectionTitle}>{universe.title}</h2>
         {isLoading ? (
           <Loader message={CONTENT.systemsHub.loader} />
         ) : systems.length === 0 ? (
@@ -278,7 +273,7 @@ export default function SolarSystemsHubPage({ params }: Params) {
                 key={system._id}
                 onClick={() => handleCardClick(system._id)}
                 className={styles.card}
-                ariaLabel={`Enter system ${system.name}`}
+                ariaLabel={`Enter system ${system.title}`}
               >
                 <div
                   className={styles.cardHeaderGlow}
@@ -300,7 +295,7 @@ export default function SolarSystemsHubPage({ params }: Params) {
                         aria-hidden="true"
                       />
                       <div>
-                        <h3>{system.name}</h3>
+                        <h3>{system.title}</h3>
                         <span className={styles.starTypeBadge}>{system.starType}</span>
                       </div>
                     </div>
@@ -340,7 +335,9 @@ export default function SolarSystemsHubPage({ params }: Params) {
                   </p>
 
                   <div className={styles.cardFooter}>
-                    <span>Click to enter system ➔</span>
+                    <span>{CONTENT.systemsHub.grid.card.enterPrompt}</span>
+                    
+                    {/* Render action buttons for both Admin and Guest (Dissolve disabled for guest) */}
                     <div className={styles.cardActions}>
                       <Button
                         variant="secondary"
@@ -348,14 +345,14 @@ export default function SolarSystemsHubPage({ params }: Params) {
                         onClick={(e) => {
                           e.stopPropagation();
                           setEditSystem(system);
-                          setEditSystemName(system.name);
+                          setEditSystemName(system.title);
                           setEditSystemDesc(system.description || '');
                           setEditSystemColor(system.starColor);
                           setEditCustomColorText(system.starColor);
                           setEditSystemType(system.starType);
                         }}
-                        title={`Edit ${system.name}`}
-                        aria-label={`Edit ${system.name}`}
+                        title={`Edit ${system.title}`}
+                        aria-label={`Edit ${system.title}`}
                       >
                         {CONTENT.systemsHub.grid.card.editBtn}
                       </Button>
@@ -366,8 +363,9 @@ export default function SolarSystemsHubPage({ params }: Params) {
                           e.stopPropagation();
                           setSystemToDelete(system);
                         }}
-                        title={`Dissolve ${system.name}`}
-                        aria-label={`Dissolve ${system.name}`}
+                        disabled={!isAdmin}
+                        title={isAdmin ? `Dissolve ${system.title}` : 'Only Admin can dissolve systems'}
+                        aria-label={`Dissolve ${system.title}`}
                       >
                         {CONTENT.systemsHub.grid.card.deleteBtn}
                       </Button>
@@ -467,7 +465,7 @@ export default function SolarSystemsHubPage({ params }: Params) {
 
             {/* Custom Color Selector */}
             <div className={styles.customColorContainer}>
-              <label htmlFor="custom-star-color">Or choose custom color:</label>
+              <label htmlFor="custom-star-color">{CONTENT.systemsHub.igniteModal.customColorLabel}</label>
               <div className={styles.customColorRow}>
                 <div className={styles.colorSlideContainer}>
                   <div 
@@ -587,7 +585,7 @@ export default function SolarSystemsHubPage({ params }: Params) {
 
             {/* Custom Color Selector */}
             <div className={styles.customColorContainer}>
-              <label htmlFor="edit-custom-star-color">Or choose custom color:</label>
+              <label htmlFor="edit-custom-star-color">{CONTENT.systemsHub.editModal.customColorLabel}</label>
               <div className={styles.customColorRow}>
                 <div className={styles.colorSlideContainer}>
                   <div 
@@ -614,6 +612,7 @@ export default function SolarSystemsHubPage({ params }: Params) {
             type="submit"
             isLoading={isSubmittingEditSystem}
             loadingText={CONTENT.systemsHub.editModal.submitBtnLoading}
+            disabled={!editSystemName.trim() || isSubmittingEditSystem}
           >
             {CONTENT.systemsHub.editModal.submitBtn}
           </Button>
@@ -626,11 +625,12 @@ export default function SolarSystemsHubPage({ params }: Params) {
         onClose={() => setSystemToDelete(null)}
         title={CONTENT.systemsHub.deleteModal.title}
         variant="danger"
+        disabled={isDeleting}
       >
         <div className={styles.modalBody}>
           <p className={styles.warningMessage}>
             {CONTENT.systemsHub.deleteModal.warningPrefix}
-            <strong>{systemToDelete?.name}</strong>
+            <strong>{systemToDelete?.title}</strong>
             {CONTENT.systemsHub.deleteModal.warningSuffix}
           </p>
           <p className={styles.warningSubtext}>
@@ -641,12 +641,15 @@ export default function SolarSystemsHubPage({ params }: Params) {
           <Button
             variant="cancel"
             onClick={() => setSystemToDelete(null)}
+            disabled={isDeleting}
           >
             {CONTENT.systemsHub.deleteModal.cancelBtn}
           </Button>
           <Button
             variant="danger"
             onClick={() => systemToDelete && handleDeleteSystem(systemToDelete._id)}
+            isLoading={isDeleting}
+            loadingText="Dissolving..."
           >
             {CONTENT.systemsHub.deleteModal.confirmBtn}
           </Button>
@@ -657,7 +660,7 @@ export default function SolarSystemsHubPage({ params }: Params) {
       <Modal
         isOpen={!!infoSystem}
         onClose={() => setInfoSystem(null)}
-        title={infoSystem?.name || ''}
+        title={infoSystem?.title || ''}
       >
         <div className={styles.infoContent}>
           <span className={styles.starTypeBadge}>

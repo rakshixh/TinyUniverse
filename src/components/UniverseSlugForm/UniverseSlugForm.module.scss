@@ -1,0 +1,45 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.form {
+  @include flex-column;
+  gap: $space-4;
+  width: 100%;
+  max-width: 400px;
+  animation: fadeIn $duration-slow $ease-smooth both;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.icon {
+  position: absolute;
+  left: $space-4;
+  font-size: $font-lg;
+  pointer-events: none;
+  z-index: 1;
+  line-height: 1;
+}
+
+.input {
+  @include input-base;
+  padding-left: calc($space-4 + $space-6 + $space-2);
+  font-size: $font-base;
+  height: 56px;
+}
+
+.submitButton {
+  width: 100% !important;
+  height: 52px !important;
+  font-size: $font-base !important;
+  letter-spacing: 0.02em;
+  padding: $space-4 $space-8 !important;
+  border-radius: $radius-md !important;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px) !important;
+  }
+}

@@ -1,16 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getUniverses, createUniverse } from '@/services/universe.service';
-import { SESSION_COOKIE_NAME, SESSION_COOKIE_VALUE } from '@/lib/constants';
+import { isAdmin } from '@/lib/auth';
 
-function isAuthenticated(request: NextRequest): boolean {
-  const cookie = request.cookies.get(SESSION_COOKIE_NAME);
-  return cookie?.value === SESSION_COOKIE_VALUE;
-}
-
-/** GET /api/universe — List all universes */
+/** GET /api/admin/universes — List all universes for Admin Dashboard */
 export async function GET(request: NextRequest) {
-  if (!isAuthenticated(request)) {
+  if (!isAdmin(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -25,11 +20,12 @@ export async function GET(request: NextRequest) {
 const CreateUniverseSchema = z.object({
   title: z.string().min(1, 'Title is required').max(100, 'Title too long').trim(),
   description: z.string().max(500, 'Description too long').optional().default(''),
+  accessCode: z.string().min(1, 'Access code is required').trim(),
 });
 
-/** POST /api/universe — Create a new universe */
+/** POST /api/admin/universes — Create a new universe with access code */
 export async function POST(request: NextRequest) {
-  if (!isAuthenticated(request)) {
+  if (!isAdmin(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -46,7 +42,8 @@ export async function POST(request: NextRequest) {
 
     const universe = await createUniverse(parsed.data);
     return NextResponse.json({ universe }, { status: 201 });
-  } catch {
+  } catch (err) {
+    console.error('Failed to create universe:', err);
     return NextResponse.json({ error: 'Failed to create universe' }, { status: 500 });
   }
 }

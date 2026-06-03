@@ -1,12 +1,15 @@
 export interface IMemory {
   _id: string;
   universeId: string;
-  systemId: string;
+  solarSystemId: string;
+  systemId?: string; // Legacy support
   title: string;
   description: string;
   orbit: number;
   angle: number;
   date: string; // ISO String format
+  contributorName?: string;
+  imageUrl?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -16,7 +19,10 @@ export interface CreateMemoryInput {
   description?: string;
   orbit: number;
   date: string;
-  systemId: string;
+  solarSystemId?: string;
+  systemId?: string; // Legacy support
+  contributorName?: string;
+  imageUrl?: string;
 }
 
 export interface UpdateMemoryInput {
@@ -24,4 +30,6 @@ export interface UpdateMemoryInput {
   description?: string;
   orbit?: number;
   date?: string;
+  contributorName?: string;
+  imageUrl?: string;
 }
