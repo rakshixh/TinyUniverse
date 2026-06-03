@@ -1,0 +1,423 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.dashboard {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  @include flex-column;
+  background: $color-bg;
+}
+
+// ─── Header ──────────────────────────────────────────────────
+.header {
+  @include flex-between;
+  padding: $space-4 $space-6;
+  border-bottom: 1px solid rgba($color-border, 0.4);
+  background: rgba($color-bg, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 10;
+  position: sticky;
+  top: 0;
+  flex-shrink: 0;
+
+  @include mobile {
+    padding: $space-3 $space-4;
+    flex-direction: column;
+    align-items: stretch;
+    gap: $space-3;
+  }
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  min-width: 0;
+
+  @include mobile {
+    gap: $space-2;
+  }
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+
+  @include mobile {
+    width: 100%;
+    gap: $space-2;
+  }
+}
+
+.logoEmoji {
+  font-size: 1.75rem;
+  filter: drop-shadow(0 0 8px rgba($color-primary, 0.4));
+  flex-shrink: 0;
+
+  @include mobile {
+    font-size: 1.35rem;
+  }
+}
+
+.title {
+  font-family: 'Outfit', sans-serif;
+  font-size: $font-2xl;
+  font-weight: $font-bold;
+  color: $color-text;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  @include mobile {
+    font-size: 1.15rem;
+  }
+}
+
+.titleAccent {
+  background: linear-gradient(90deg, #a855f7 0%, $color-primary 45%, $color-secondary 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.igniteBtn,
+.logoutBtn {
+  flex-shrink: 0;
+
+  @include mobile {
+    flex: 1;
+    padding: 0 $space-2 !important;
+    font-size: $font-xs !important;
+    height: 36px !important;
+    justify-content: center;
+  }
+}
+
+// ─── Main ────────────────────────────────────────────────────
+.main {
+  flex: 1;
+  padding: $space-8 $space-6;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  z-index: 2;
+
+  @include mobile {
+    padding: $space-6 $space-4;
+  }
+}
+
+.emptyState {
+  @include flex-column-center;
+  text-align: center;
+  padding: $space-12 0;
+  max-width: 480px;
+  margin: 0 auto;
+  gap: $space-4;
+
+  h2 {
+    font-size: $font-2xl;
+    font-weight: $font-semibold;
+    color: $color-text;
+  }
+
+  p {
+    font-size: $font-base;
+    color: $color-text-muted;
+    line-height: 1.6;
+  }
+}
+
+.emptyIcon {
+  font-size: 4rem;
+  animation: float 4s ease-in-out infinite;
+}
+
+// ─── Grid ────────────────────────────────────────────────────
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: $space-6;
+  width: 100%;
+}
+
+.createCard {
+  @include flex-column-center;
+  justify-content: center;
+  text-align: center;
+  border: 2px dashed rgba($color-border, 0.4);
+  background: rgba($color-border, 0.05);
+  border-radius: $radius-lg;
+  padding: $space-8 $space-6;
+  cursor: pointer;
+  @include transition(all);
+  min-height: 250px;
+
+  .plusIcon {
+    font-size: 2.25rem;
+    color: $color-primary;
+    margin-bottom: $space-2;
+    @include transition(transform, $duration-base, $ease-spring);
+  }
+
+  h3 {
+    font-size: $font-lg;
+    font-weight: $font-semibold;
+    color: $color-text;
+    margin-bottom: $space-1;
+  }
+
+  p {
+    font-size: $font-sm;
+    color: $color-text-subtle;
+    max-width: 240px;
+  }
+
+  &:hover {
+    border-color: $color-primary;
+    background: rgba($color-primary, 0.04);
+    
+    .plusIcon {
+      transform: scale(1.2) rotate(90deg);
+    }
+  }
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  min-height: 250px;
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: $space-6;
+  gap: $space-4;
+
+  @include mobile {
+    padding: $space-4;
+    gap: $space-3;
+  }
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+
+  .cardIcon {
+    font-size: 1.5rem;
+    filter: drop-shadow(0 0 6px rgba($color-primary, 0.3));
+  }
+
+  h3 {
+    font-size: $font-lg;
+    font-weight: $font-semibold;
+    color: $color-text;
+    @include text-truncate;
+  }
+}
+
+.cardHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  flex: 1;
+  min-width: 0;
+}
+
+.cardSlug {
+  font-size: $font-xs;
+  color: $color-text-muted;
+  
+  code {
+    background: rgba($color-border, 0.3);
+    padding: $space-1 $space-2;
+    border-radius: $radius-sm;
+    color: $color-secondary;
+  }
+}
+
+.cardDesc {
+  font-size: $font-sm;
+  color: $color-text-muted;
+  line-height: 1.5;
+  display: -webkit-box;
+  line-clamp: 3;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1;
+}
+
+.cardStats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-3;
+  background: rgba($color-border, 0.15);
+  border-radius: $radius-md;
+  padding: $space-3;
+  text-align: center;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+}
+
+.statLabel {
+  font-size: $font-xs;
+  color: $color-text-subtle;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.statValue {
+  font-size: $font-lg;
+  font-weight: $font-bold;
+  color: $color-text;
+}
+
+.cardFooter {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  border-top: 1px solid rgba($color-border, 0.3);
+  padding-top: $space-3;
+  margin-top: auto;
+}
+
+.cardDate {
+  font-size: $font-xs;
+  color: $color-text-subtle;
+}
+
+.cardActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  width: 100%;
+}
+
+.actionBtn {
+  flex: 1;
+  min-width: 70px;
+  height: 32px !important;
+  font-size: $font-xs !important;
+  padding: 0 $space-2 !important;
+  justify-content: center;
+}
+
+// ─── Forms & Modals ──────────────────────────────────────────
+.form {
+  @include flex-column;
+  gap: $space-4;
+}
+
+.field {
+  @include flex-column;
+  gap: $space-2;
+
+  label {
+    font-size: $font-sm;
+    font-weight: $font-medium;
+    color: $color-text-muted;
+  }
+
+  input,
+  textarea {
+    @include input-base;
+    font-size: $font-sm;
+  }
+
+  input {
+    height: 44px;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+}
+
+.slugPreview {
+  font-size: $font-xs;
+  color: $color-text-subtle;
+  margin-top: -$space-1;
+
+  code {
+    background: rgba($color-border, 0.3);
+    padding: 2px $space-1;
+    border-radius: $radius-sm;
+    color: $color-primary;
+  }
+}
+
+// ─── Delete Modal ─────────────────────────────────────────────
+.modalBody {
+  margin-bottom: $space-6;
+}
+
+.warningMessage {
+  font-size: $font-base;
+  color: $color-text;
+  line-height: 1.6;
+  margin-bottom: $space-3;
+
+  strong {
+    color: $color-text;
+    font-weight: $font-semibold;
+  }
+}
+
+.warningSubtext {
+  font-size: $font-sm;
+  color: $color-text-muted;
+  line-height: 1.6;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $space-3;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.adminSectionTitle {
+  font-family: 'Outfit', sans-serif;
+  font-size: $font-xl;
+  font-weight: $font-semibold;
+  color: $color-text;
+  margin-bottom: $space-6;
+  letter-spacing: -0.01em;
+  
+  @include mobile {
+    font-size: $font-lg;
+    margin-bottom: $space-4;
+  }
+}
+
+.desktopText {
+  display: inline;
+  @include mobile {
+    display: none;
+  }
+}
+
+.mobileText {
+  display: none;
+  @include mobile {
+    display: inline;
+  }
+}

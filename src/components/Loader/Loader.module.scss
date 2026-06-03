@@ -1,0 +1,70 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.loader {
+  @include flex-column-center;
+  gap: $space-6;
+  padding: $space-8;
+}
+
+.fullScreen {
+  position: fixed;
+  inset: 0;
+  background: $color-bg;
+  z-index: $z-overlay;
+}
+
+.orbitSystem {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  @include flex-center;
+}
+
+.sun {
+  width: 20px;
+  height: 20px;
+  background: radial-gradient(circle, #FCD34D 0%, #F59E0B 100%);
+  border-radius: $radius-full;
+  box-shadow: 0 0 16px rgba(252, 211, 77, 0.6), 0 0 32px rgba(245, 158, 11, 0.3);
+  animation: pulse-glow 2s ease-in-out infinite;
+  position: relative;
+  z-index: 2;
+}
+
+.orbit1 {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  border: 1px solid rgba($color-border, 0.6);
+  border-radius: $radius-full;
+  animation: rotate-slow 1.5s linear infinite;
+}
+
+.orbit2 {
+  position: absolute;
+  width: 96px;
+  height: 96px;
+  border: 1px solid rgba($color-border, 0.4);
+  border-radius: $radius-full;
+  animation: rotate-counter 2.5s linear infinite;
+}
+
+.planet {
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  background: var(--color, $color-primary);
+  border-radius: $radius-full;
+  box-shadow: 0 0 8px var(--color, $color-primary);
+}
+
+.message {
+  font-size: $font-sm;
+  color: $color-text-muted;
+  letter-spacing: 0.05em;
+  animation: fadeIn 1s ease-in-out infinite alternate;
+}

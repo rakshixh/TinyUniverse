@@ -1,0 +1,197 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.planet {
+  position: absolute;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transform: translate(-50%, -50%);
+  z-index: $z-canvas;
+  width: var(--planet-size, 44px);
+  height: var(--planet-size, 44px);
+
+  // Accessibility: focus ring
+  &:focus-visible {
+    outline: 2px solid var(--planet-color, $color-primary);
+    outline-offset: 6px;
+    border-radius: $radius-full;
+  }
+
+  &:hover .globe {
+    transform: scale(1.15);
+    box-shadow:
+      0 0 20px var(--planet-color, $color-primary),
+      0 0 40px rgba(139, 92, 246, 0.4);
+  }
+
+  &:hover .label {
+    transform: translateX(-50%) scale(1.05);
+    .dateText {
+      color: rgba($color-text, 0.8);
+    }
+  }
+
+  &:active .globe {
+    transform: scale(1.05);
+  }
+}
+
+
+.globe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: $radius-full;
+  position: relative;
+  box-shadow:
+    0 0 12px rgba(139, 92, 246, 0.2),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.5);
+  @include transition(transform box-shadow, $duration-base, $ease-spring);
+  overflow: hidden;
+  flex-shrink: 0;
+  background-color: #1e1b4b;
+  z-index: 2;
+}
+
+// ─── Textures ────────────────────────────────────────────────
+.texture {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  background-repeat: repeat-x;
+  animation: spinPlanet var(--rotation-duration, 20s) linear infinite;
+  z-index: 1;
+}
+
+.rocky {
+  background-color: var(--planet-color);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.22' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.25'/%3E%3Ccircle cx='20' cy='30' r='5' fill='%23000' opacity='0.2'/%3E%3Ccircle cx='65' cy='70' r='7' fill='%23000' opacity='0.16'/%3E%3Ccircle cx='78' cy='25' r='4' fill='%23000' opacity='0.22'/%3E%3Ccircle cx='38' cy='75' r='3.5' fill='%23000' opacity='0.18'/%3E%3C/svg%3E");
+  background-size: 50% 100%;
+}
+
+.gaseous {
+  background-color: var(--planet-color);
+  background-image: 
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.18) 0%,
+      rgba(255, 255, 255, 0.18) 12%,
+      transparent 12%,
+      transparent 24%,
+      rgba(0, 0, 0, 0.18) 24%,
+      rgba(0, 0, 0, 0.18) 38%,
+      transparent 38%,
+      transparent 52%,
+      rgba(255, 255, 255, 0.22) 52%,
+      rgba(255, 255, 255, 0.22) 64%,
+      transparent 64%,
+      transparent 78%,
+      rgba(0, 0, 0, 0.22) 78%,
+      rgba(0, 0, 0, 0.22) 88%,
+      transparent 88%
+    ),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.04 0.45' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.2'/%3E%3C/svg%3E");
+  background-size: 50% 100%;
+}
+
+.oceanic {
+  background-color: var(--planet-color);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10,25 Q30,12 52,32 T82,42 T92,22 L100,0 L0,0 Z M22,62 Q42,82 72,62 T96,87 L100,100 L0,100 Z' fill='%23ffffff' opacity='0.3'/%3E%3Ccircle cx='32' cy='48' r='9' fill='%23ffffff' opacity='0.3'/%3E%3Ccircle cx='76' cy='52' r='13' fill='%23ffffff' opacity='0.3'/%3E%3C/svg%3E");
+  background-size: 50% 100%;
+}
+
+.magma {
+  background-color: #0f0b18;
+  background-image: 
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 10 0 L 20 30 L 42 42 L 52 82 L 62 100 M 0 52 L 32 58 L 72 52 L 100 62 M 82 0 L 76 32 L 92 72 L 86 100' stroke='%23ff3a00' stroke-width='2' fill='none' opacity='0.75'/%3E%3Cpath d='M 10 0 L 20 30 L 42 42 L 52 82 L 62 100 M 0 52 L 32 58 L 72 52' stroke='%23ffaa00' stroke-width='0.8' fill='none' opacity='0.9'/%3E%3C/svg%3E"),
+    radial-gradient(circle, transparent 20%, rgba(0,0,0,0.8) 100%);
+  background-size: 50% 100%, 100% 100%;
+  
+  // Blend with the primary color
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--planet-color);
+    mix-blend-mode: color;
+    opacity: 0.55;
+    z-index: 2;
+  }
+}
+
+// ─── 3D Overlays ─────────────────────────────────────────────
+.shading {
+  position: absolute;
+  inset: 0;
+  border-radius: $radius-full;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, 0.22) 0%,
+    transparent 55%,
+    rgba(0, 0, 0, 0.8) 100%
+  );
+  z-index: 3;
+}
+
+.shine {
+  position: absolute;
+  top: 12%;
+  left: 15%;
+  width: 32%;
+  height: 26%;
+  background: rgba(255, 255, 255, 0.38);
+  border-radius: $radius-full;
+  transform: rotate(-30deg);
+  filter: blur(1.5px);
+  pointer-events: none;
+  z-index: 4;
+}
+
+.label {
+  position: absolute;
+  top: calc(100% + #{$space-2});
+  left: 50%;
+  transform: translateX(-50%);
+  @include flex-column-center;
+  gap: 2px;
+  pointer-events: none;
+  width: 120px;
+  text-align: center;
+  text-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.9),
+    0 0 10px rgba(0, 0, 0, 0.5);
+  line-height: 1.2;
+  @include transition(transform color, $duration-base);
+}
+
+.titleText {
+  font-size: $font-xs;
+  font-weight: $font-semibold;
+  color: rgba($color-text, 0.9);
+  max-width: 100px;
+  @include text-truncate;
+  letter-spacing: 0.02em;
+}
+
+.dateText {
+  font-size: 10px;
+  font-weight: $font-normal;
+  color: rgba($color-text, 0.55);
+  letter-spacing: 0.01em;
+  @include transition(color, $duration-base);
+}
+
+// ─── Keyframes ───────────────────────────────────────────────
+@keyframes spinPlanet {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
