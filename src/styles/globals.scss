@@ -134,56 +134,6 @@ button {
   to   { transform: rotate(360deg); }
 }
 
-/* ─── Star Field (pseudo-element decoration) ─────────────────── */
-.star-field {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  overflow: hidden;
-
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-      radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.7) 0%, transparent 100%),
-      radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,0.5) 0%, transparent 100%),
-      radial-gradient(1px 1px at 50% 70%, rgba(255,255,255,0.8) 0%, transparent 100%),
-      radial-gradient(1px 1px at 75% 20%, rgba(255,255,255,0.6) 0%, transparent 100%),
-      radial-gradient(1px 1px at 90% 55%, rgba(255,255,255,0.7) 0%, transparent 100%),
-      radial-gradient(1.5px 1.5px at 15% 80%, rgba(255,255,255,0.4) 0%, transparent 100%),
-      radial-gradient(1px 1px at 35% 10%, rgba(255,255,255,0.6) 0%, transparent 100%),
-      radial-gradient(1.5px 1.5px at 60% 90%, rgba(255,255,255,0.5) 0%, transparent 100%),
-      radial-gradient(1px 1px at 80% 35%, rgba(255,255,255,0.8) 0%, transparent 100%),
-      radial-gradient(1px 1px at 45% 50%, rgba(255,255,255,0.4) 0%, transparent 100%),
-      radial-gradient(1px 1px at 5% 45%, rgba(255,255,255,0.6) 0%, transparent 100%),
-      radial-gradient(1.5px 1.5px at 70% 60%, rgba(255,255,255,0.5) 0%, transparent 100%),
-      radial-gradient(1px 1px at 30% 25%, rgba(255,255,255,0.7) 0%, transparent 100%),
-      radial-gradient(1px 1px at 55% 35%, rgba(255,255,255,0.3) 0%, transparent 100%),
-      radial-gradient(1px 1px at 85% 75%, rgba(255,255,255,0.6) 0%, transparent 100%),
-      radial-gradient(2px 2px at 20% 60%, rgba(139,92,246,0.4) 0%, transparent 100%),
-      radial-gradient(2px 2px at 65% 15%, rgba(56,189,248,0.3) 0%, transparent 100%),
-      radial-gradient(1.5px 1.5px at 40% 85%, rgba(248,113,113,0.3) 0%, transparent 100%);
-    animation: twinkle 3s ease-in-out infinite;
-  }
-
-  &::after {
-    background-image:
-      radial-gradient(1px 1px at 18% 30%, rgba(255,255,255,0.5) 0%, transparent 100%),
-      radial-gradient(1px 1px at 42% 65%, rgba(255,255,255,0.7) 0%, transparent 100%),
-      radial-gradient(1px 1px at 68% 45%, rgba(255,255,255,0.4) 0%, transparent 100%),
-      radial-gradient(1.5px 1.5px at 88% 20%, rgba(255,255,255,0.6) 0%, transparent 100%),
-      radial-gradient(1px 1px at 7% 70%, rgba(255,255,255,0.8) 0%, transparent 100%),
-      radial-gradient(1px 1px at 52% 10%, rgba(255,255,255,0.5) 0%, transparent 100%),
-      radial-gradient(1px 1px at 77% 85%, rgba(255,255,255,0.6) 0%, transparent 100%),
-      radial-gradient(1px 1px at 33% 92%, rgba(255,255,255,0.4) 0%, transparent 100%),
-      radial-gradient(2px 2px at 95% 40%, rgba(167,139,250,0.35) 0%, transparent 100%),
-      radial-gradient(2px 2px at 12% 55%, rgba(52,211,153,0.3) 0%, transparent 100%);
-    animation: twinkle 4.5s ease-in-out infinite 1.5s;
-  }
-}
 
 /* ─── Focus Visible Global ──────────────────────────────────── */
 :focus-visible {

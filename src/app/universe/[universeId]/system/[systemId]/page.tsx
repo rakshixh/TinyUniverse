@@ -13,6 +13,7 @@ import MemoryModal from '@/components/MemoryModal/MemoryModal';
 import Button from '@/components/UI/Button';
 import { CONTENT } from '@/lib/content';
 import styles from './canvasPage.module.scss';
+import SpaceBackground from '@/components/UI/SpaceBackground';
 
 // Lazy load heavy components
 const UniverseCanvas = dynamic(
@@ -93,7 +94,7 @@ export default function SolarSystemCanvasPage({ params }: Params) {
   return (
     <div className={styles.page}>
       {/* Star background */}
-      <div className="star-field" aria-hidden="true" />
+      <SpaceBackground />
 
       {/* Header */}
       <header className={styles.header}>

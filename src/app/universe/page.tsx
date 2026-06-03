@@ -11,6 +11,7 @@ import Modal from '@/components/UI/Modal';
 import { CONTENT } from '@/lib/content';
 import styles from './universeList.module.scss';
 import type { IUniverse } from '@/types/universe';
+import SpaceBackground from '@/components/UI/SpaceBackground';
 
 export default function UniverseDirectoryPage() {
   const { universes, isLoading, mutate } = useUniverses();
@@ -136,7 +137,7 @@ export default function UniverseDirectoryPage() {
 
   return (
     <div className={styles.page}>
-      <div className="star-field" aria-hidden="true" />
+      <SpaceBackground />
 
       {/* Header */}
       <header className={styles.header}>

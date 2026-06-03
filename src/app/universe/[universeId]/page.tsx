@@ -13,6 +13,7 @@ import Modal from '@/components/UI/Modal';
 import { CONTENT } from '@/lib/content';
 import styles from './systemsHub.module.scss';
 import type { ISolarSystem } from '@/types/solarsystem';
+import SpaceBackground from '@/components/UI/SpaceBackground';
 
 // Star colors and types are sourced from CONTENT
 const STAR_COLORS = CONTENT.systemsHub.starColors;
@@ -199,7 +200,7 @@ export default function SolarSystemsHubPage({ params }: Params) {
 
   return (
     <div className={styles.page}>
-      <div className="star-field" aria-hidden="true" />
+      <SpaceBackground />
 
       {/* Header */}
       <header className={styles.header}>

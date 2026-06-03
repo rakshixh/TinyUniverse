@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import PasscodeForm from '@/components/PasscodeForm/PasscodeForm';
 import { CONTENT } from '@/lib/content';
+import SpaceBackground from '@/components/UI/SpaceBackground';
 import styles from './page.module.scss';
 
 export const metadata: Metadata = {
@@ -12,7 +13,7 @@ export default function LandingPage() {
   return (
     <main className={styles.main}>
       {/* Animated star field */}
-      <div className="star-field" aria-hidden="true" />
+      <SpaceBackground />
 
       {/* Background nebula glow */}
       <div className={styles.nebula} aria-hidden="true" />
