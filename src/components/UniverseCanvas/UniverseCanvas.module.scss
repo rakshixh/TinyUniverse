@@ -9,14 +9,16 @@
   overflow: hidden;
   min-height: 0; // important for flex children
   user-select: none;
-  touch-action: none; // prevent browser scrolling/pinching
+  touch-action: none; // prevent browser default scroll/pinch
+  -webkit-user-select: none;
 }
 
 .canvas {
   position: relative;
   flex-shrink: 0;
-  // Make transition smooth for controls-based zoom and recentering
-  transition: transform 0.35s $ease-smooth;
+  // Transition is controlled inline by React (disabled during gesture, enabled after release)
+  will-change: transform;
+  touch-action: none;
 
   &.zoomedOut {
     // When zoomed out, fade the planet labels to reduce visual clutter
