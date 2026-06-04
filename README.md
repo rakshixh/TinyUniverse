@@ -126,6 +126,6 @@ src/
 ## Architectural Notes
 
 - **Multi-Universe Model**: Designed for scaling. Administrators can spawn separate universes with custom slugs, descriptions, and separate entry codes.
-- **Access Verification**: Done using server-side cookies (HttpOnly, Secure) with standard expiry times, validated by Next.js middleware hooks.
+- **Access Verification**: Done using server-side cookies (HttpOnly, Secure) with standard expiry times, validated by Next.js proxy hooks.
 - **Dynamic Orbital Calculations**: Position angles of planets are determined dynamically based on the number of objects per ring to guarantee zero visual overlapping or crowding.
 - **Planet Coloring**: Planet color gradients are resolved deterministically from a hash of the planet's name, maintaining consistency across logins.
